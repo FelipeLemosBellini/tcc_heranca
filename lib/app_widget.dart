@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
         textSelectionTheme: TextSelectionThemeData(
