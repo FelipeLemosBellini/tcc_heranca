@@ -32,7 +32,7 @@ class LoadingAndAlertOverlayWidget extends StatelessWidget {
         Visibility(
           visible: isLoading,
           child: Container(
-            color: AppColors.navyBlue.withOpacity(0.1),
+            color: AppColors.primary.withOpacity(0.2),
             alignment: Alignment.center,
             child: const CircularProgressIndicator(),
           ),

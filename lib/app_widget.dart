@@ -10,11 +10,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: AppColors.navyBlue,
-          selectionColor: Colors.black26,
-          selectionHandleColor: AppColors.navyBlue,
+          cursorColor: Colors.white,
+          selectionColor: AppColors.primary,
+          selectionHandleColor: AppColors.primary,
         ),
         bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: Colors.white),

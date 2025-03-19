@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 
 enum ErrorType { error, warning, success }
 
@@ -6,10 +7,7 @@ class AlertData {
   ErrorType errorType;
   String message;
 
-  AlertData({
-    required this.message,
-    required this.errorType,
-  });
+  AlertData({required this.message, required this.errorType});
 }
 
 abstract class AlertHelper {
@@ -26,10 +24,7 @@ abstract class AlertHelper {
     }
   }
 
-  static void _showSnackBarSuccess(
-    BuildContext context,
-    String message,
-  ) {
+  static void _showSnackBarSuccess(BuildContext context, String message) {
     _showSnackBar(
       context: context,
       message: message,
@@ -38,10 +33,7 @@ abstract class AlertHelper {
     );
   }
 
-  static void _showSnackBarError(
-    BuildContext context,
-    String message,
-  ) {
+  static void _showSnackBarError(BuildContext context, String message) {
     _showSnackBar(
       context: context,
       message: message,
@@ -50,10 +42,7 @@ abstract class AlertHelper {
     );
   }
 
-  static void _showSnackBarWarning(
-    BuildContext context,
-    String message,
-  ) {
+  static void _showSnackBarWarning(BuildContext context, String message) {
     _showSnackBar(
       context: context,
       message: message,
@@ -71,11 +60,7 @@ abstract class AlertHelper {
     SnackBar snackBar = SnackBar(
       content: Text(
         message,
-        style: TextStyle(
-          color: fontColor,
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-        ),
+        style: AppFonts.labelLarge.copyWith(color: fontColor),
       ),
       duration: const Duration(seconds: 1),
       backgroundColor: background,

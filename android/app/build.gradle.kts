@@ -18,11 +18,19 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    }
+
     defaultConfig {
+        ndkVersion = "27.0.12077973"
         applicationId = "com.tcc_heranca"
         minSdk = 23
-        ndkVersion = flutter.ndkVersion
-        targetSdk = flutter.targetSdkVersion
+//        ndkVersion = flutter.ndkVersion
+        targetSdk = 35
+        compileSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -37,6 +45,7 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-analytics")
+//    implementation(project(":metamask-android-sdk"))
 }
 
 flutter {

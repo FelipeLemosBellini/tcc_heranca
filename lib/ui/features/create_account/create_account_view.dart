@@ -5,8 +5,9 @@ import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/create_account/create_account_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/widgets/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
-import 'package:tcc/ui/widgets/elevated_button_widget.dart';
+import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
@@ -44,67 +45,67 @@ class _CreateAccountViewState extends State<CreateAccountView> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-        listenable: controller,
-        builder: (context, _) {
-          return LoadingAndAlertOverlayWidget(
-            isLoading: controller.isLoading,
-            alertData: controller.alertData,
-            child: Scaffold(
-              appBar: AppBar(
-                  title: Text(
-                'Crie sua conta',
-                style: TextStyle(
-                    color: AppColors.titleView, fontSize: 18, fontWeight: FontWeight.bold),
-              )),
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextFieldWidget(
-                        hintText: "Digite o seu nome",
-                        controller: nameController,
-                        focusNode: nameFocus,
-                      ),
-                      const SizedBox(height: 20),
-                      TextFieldWidget(
-                        hintText: "Digite o seu melhor email",
-                        controller: emailController,
-                        focusNode: emailFocus,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 20),
-                      TextFieldWidget(
-                        hintText: "Crie uma senha",
-                        controller: passwordController,
-                        focusNode: passwordFocus,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 20),
-                      TextFieldWidget(
-                        hintText: "Digite a senha novamente",
-                        controller: repeatPasswordController,
-                        focusNode: repeatPasswordFocus,
-                        obscureText: true,
-                      ),
-                    ],
-                  ),
+      listenable: controller,
+      builder: (context, _) {
+        return LoadingAndAlertOverlayWidget(
+          isLoading: controller.isLoading,
+          alertData: controller.alertData,
+          child: Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBarSimpleWidget(
+              onTap: () {
+                context.pop();
+              },
+              title: "Criar conta",
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFieldWidget(
+                      hintText: "Digite o seu nome",
+                      controller: nameController,
+                      focusNode: nameFocus,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFieldWidget(
+                      hintText: "Digite o seu melhor email",
+                      controller: emailController,
+                      focusNode: emailFocus,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFieldWidget(
+                      hintText: "Crie uma senha",
+                      controller: passwordController,
+                      focusNode: passwordFocus,
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFieldWidget(
+                      hintText: "Digite a senha novamente",
+                      controller: repeatPasswordController,
+                      focusNode: repeatPasswordFocus,
+                      obscureText: true,
+                    ),
+                  ],
                 ),
               ),
-              bottomSheet: ElevatedButtonWidget(
-                onTap: () => register(context),
-                text: "Criar conta",
-              ),
             ),
-          );
-        });
+            bottomSheet: ElevatedButtonWidget(onTap: () => register(context), text: "Criar conta"),
+          ),
+        );
+      },
+    );
   }
 
   void register(BuildContext context) async {
     if (passwordController.text != repeatPasswordController.text) {
       controller.setMessage(
-          AlertData(message: "As senhas precisam ser iguais", errorType: ErrorType.warning));
+        AlertData(message: "As senhas precisam ser iguais", errorType: ErrorType.warning),
+      );
       return;
     }
 
@@ -112,15 +113,17 @@ class _CreateAccountViewState extends State<CreateAccountView> {
         passwordController.text.isNotEmpty &&
         Validators.isValidEmail(emailController.text)) {
       bool successCreateAccount = await controller.createAccount(
-          name: nameController.text,
-          email: emailController.text,
-          password: passwordController.text);
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      );
       if (successCreateAccount) {
         context.go(RouterApp.home);
       }
     } else {
-      controller
-          .setMessage(AlertData(message: "Preencha os campos!", errorType: ErrorType.warning));
+      controller.setMessage(
+        AlertData(message: "Preencha os campos!", errorType: ErrorType.warning),
+      );
     }
   }
 }

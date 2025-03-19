@@ -7,10 +7,12 @@ import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
-import 'package:tcc/ui/widgets/elevated_button_widget.dart';
+import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
-import 'package:tcc/ui/widgets/pill_button_widget.dart';
+import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 import 'login_controller.dart';
 
@@ -31,6 +33,11 @@ class _LoginViewState extends State<LoginView> {
   FocusNode passwordFocus = FocusNode();
 
   @override
+  initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
@@ -49,7 +56,11 @@ class _LoginViewState extends State<LoginView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Spacer(flex: 1),
-                      Icon(Icons.psychology, size: MediaQuery.sizeOf(context).width * 0.3, color: AppColors.navyBlue),
+                      Icon(
+                        Icons.psychology,
+                        size: MediaQuery.sizeOf(context).width * 0.3,
+                        color: AppColors.primary,
+                      ),
                       const Spacer(flex: 1),
                       TextFieldWidget(
                         hintText: "Digite seu email",
@@ -70,18 +81,37 @@ class _LoginViewState extends State<LoginView> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            PillButtonWidget(onTap: () => context.go(RouterApp.createAccount), text: "Criar conta"),
+                            PillButtonWidget(
+                              onTap: () => context.go(RouterApp.createAccount),
+                              text: "Criar conta",
+                            ),
                             GestureDetector(
                               onTap: () => context.go(RouterApp.forgotPassword),
                               child: const Text(
                                 "Esqueci minha senha",
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16,color: Colors.white),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      ElevatedButtonWidget(
+                        onTap: () {
+                          context.push(RouterApp.materialDesign);
+                        },
+                        text: "open material design",
+                      ),
                       const Spacer(flex: 3),
+                      ElevatedButtonWidget(
+                        onTap: () {
+                          context.push(RouterApp.materialDesign);
+                        },
+                        text: "getAccount",
+                      ),
                     ],
                   ),
                 ),

@@ -1,7 +1,10 @@
 import 'package:flutter/animation.dart';
 
 abstract class AppColors {
-  static Color navyBlue = const Color(0xFF706D87);
-  static Color titleView = const Color.fromARGB(255, 150, 163, 163);
-  static Color background = const Color(0xFF18192B);
+  static Color primary = const Color(0xff0076c9);
+  static Color secondary = const Color(0xFF37F4FA);
+  static Color disable = const Color(0xFF706D87);
+  static Color lines = const Color(0xFF322DAF);
+  static Color gray = const Color(0xFFA4A4A4);
+  static Color background = const Color(0xFF16214D);
 }
