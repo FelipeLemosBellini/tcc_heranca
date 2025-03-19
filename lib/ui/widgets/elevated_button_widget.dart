@@ -10,23 +10,36 @@ class ElevatedButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.white,
-      margin: padding ?? const EdgeInsets.all(24),
-      width: MediaQuery.sizeOf(context).width,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.navyBlue,
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return
+      GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 48,
+          margin: padding ?? const EdgeInsets.all(24),
+          width: MediaQuery.sizeOf(context).width,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.4), // Sombra mais definida
+                blurRadius: 25, // Mais difuso
+                spreadRadius: 5, // Aumenta a área da sombra
+                offset: const Offset(0, 10), // Mantém para baixo
+              ),
+            ],
+          ),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-    );
+      );
+
   }
 }

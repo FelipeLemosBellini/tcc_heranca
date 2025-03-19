@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "348769056794",
+    "project_id": "tcc-heranca",
+    "storage_bucket": "tcc-heranca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348769056794:android:923fafb7c69536663bf9a3",
+        "android_client_info": {
+          "package_name": "com.tcc_heranca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP5sJRjZlHkXd0r4qynDsZG355CE6-_B8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

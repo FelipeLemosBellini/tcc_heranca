@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -32,71 +34,61 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
-      builder: (_, __) => LoadingAndAlertOverlayWidget(
-        isLoading: controller.isLoading,
-        alertData: controller.alertData,
-        child: Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 1),
-                  Icon(
-                    Icons.psychology,
-                    size: MediaQuery.sizeOf(context).width * 0.3,
-                    color: AppColors.navyBlue,
-                  ),
-                  const Spacer(flex: 1),
-                  TextFieldWidget(
-                    hintText: "Digite seu email",
-                    controller: emailController,
-                    focusNode: emailFocus,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFieldWidget(
-                    hintText: "Digite sua senha",
-                    controller: passwordController,
-                    focusNode: passwordFocus,
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        PillButtonWidget(
-                          onTap: () => context.go(RouterApp.createAccount),
-                          text: "Criar conta",
-                        ),
-                        GestureDetector(
-                          onTap: () => context.go(RouterApp.forgotPassword),
-                          child: const Text(
-                            "Esqueci minha senha",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
+      builder:
+          (_, __) => LoadingAndAlertOverlayWidget(
+            isLoading: controller.isLoading,
+            alertData: controller.alertData,
+            child: Scaffold(
+              backgroundColor: AppColors.background,
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Spacer(flex: 1),
+                      Icon(Icons.psychology, size: MediaQuery.sizeOf(context).width * 0.3, color: AppColors.navyBlue),
+                      const Spacer(flex: 1),
+                      TextFieldWidget(
+                        hintText: "Digite seu email",
+                        controller: emailController,
+                        focusNode: emailFocus,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFieldWidget(
+                        hintText: "Digite sua senha",
+                        controller: passwordController,
+                        focusNode: passwordFocus,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            PillButtonWidget(onTap: () => context.go(RouterApp.createAccount), text: "Criar conta"),
+                            GestureDetector(
+                              onTap: () => context.go(RouterApp.forgotPassword),
+                              child: const Text(
+                                "Esqueci minha senha",
+                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16,color: Colors.white),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const Spacer(flex: 3),
+                    ],
                   ),
-                  const Spacer(flex: 3),
-                ],
+                ),
               ),
+              bottomSheet: ElevatedButtonWidget(onTap: () => login(context), text: "Entrar"),
             ),
           ),
-          bottomSheet: ElevatedButtonWidget(
-            onTap: () => login(context),
-            text: "Entrar",
-          ),
-        ),
-      ),
     );
   }
 
@@ -108,10 +100,7 @@ class _LoginViewState extends State<LoginView> {
         context.go(RouterApp.home);
       }
     } else {
-      controller.setMessage(AlertData(
-        message: "Preencha os campos",
-        errorType: ErrorType.warning,
-      ));
+      controller.setMessage(AlertData(message: "Preencha os campos", errorType: ErrorType.warning));
     }
   }
 }

@@ -1,17 +1,21 @@
-
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tcc/app_widget.dart';
 import 'package:tcc/core/dependence_injection/di.dart';
+// import '';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyDP5sJRjZlHkXd0r4qynDsZG355CE6-_B8",
+      appId: "tcc-heranca",
+      messagingSenderId: "",
+      projectId: "tcc-heranca",
+      storageBucket: "tcc-heranca.firebasestorage.app",
+    ),
     // options: DefaultFirebaseOptions.currentPlatform,
   );
   DI.setDependencies();
   runApp(const MyApp());
 }
-
-

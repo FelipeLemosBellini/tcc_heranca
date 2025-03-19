@@ -1,4 +1,4 @@
-package com.example.tcc
+package com.tcc_heranca
 
 import io.flutter.embedding.android.FlutterActivity
 

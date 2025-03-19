@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final Function(String)? onChanged;
@@ -45,18 +46,24 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         keyboardType: widget.keyboardType,
         onChanged: widget.onChanged ?? (_) {},
         onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          labelText: widget.hintText,
           alignLabelWithHint: true,
-          border: const OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(strokeAlign: 2, color: AppColors.navyBlue, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(strokeAlign: 2, color: AppColors.navyBlue, width: 1),
+          ),
+          isDense: true,
+
           suffixIcon: Visibility(
             visible: widget.obscureText,
             child: GestureDetector(
               onTap: setVisibilityEye,
-              child: Icon(
-                showText ? Icons.visibility_off : Icons.visibility,
-                color: Colors.black,
-              ),
+              child: Icon(showText ? Icons.visibility_off : Icons.visibility, color: Colors.white),
             ),
           ),
         ),
