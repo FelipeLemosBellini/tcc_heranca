@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/ui/features/forgot_password/forgot_password_controller.dart';
-import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/widgets/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -52,15 +52,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           //     ),
           //   ),
           // ),
-
           Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              title: Text(
-                'Esqueceu sua senha?',
-                style: TextStyle(color: AppColors.lines, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
+            appBar: AppBarSimpleWidget(title: 'Esqueceu sua senha?', onTap: () => context.pop()),
+
             body: Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
               child: Column(
@@ -74,7 +68,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 ],
               ),
             ),
-            bottomSheet: ElevatedButtonWidget(text: "Enviar email", onTap: () => sendEmail(context)),
+            bottomSheet: ElevatedButtonWidget(
+              text: "Enviar email",
+              onTap: () => sendEmail(context),
+            ),
           ),
         );
       },
@@ -86,7 +83,9 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       bool success = await controller.sendEmailToResetPassword(emailController.text);
 
       if (success) {
-        controller.setMessage(AlertData(message: "Email enviado com sucesso", errorType: ErrorType.success));
+        controller.setMessage(
+          AlertData(message: "Email enviado com sucesso", errorType: ErrorType.success),
+        );
         context.pop();
       }
     } else {

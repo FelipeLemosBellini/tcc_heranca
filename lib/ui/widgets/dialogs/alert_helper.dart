@@ -58,10 +58,7 @@ abstract class AlertHelper {
     required Color fontColor,
   }) {
     SnackBar snackBar = SnackBar(
-      content: Text(
-        message,
-        style: AppFonts.labelLarge.copyWith(color: fontColor),
-      ),
+      content: Text(message, style: AppFonts.labelMedium.copyWith(color: fontColor)),
       duration: const Duration(seconds: 1),
       backgroundColor: background,
       behavior: SnackBarBehavior.floating,
