@@ -19,4 +19,14 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
       return Left(ExceptionMessage(""));
     }
   }
+
+  @override
+  Future<Either<ExceptionMessage, void>> createProfile(String uid, Map<String, dynamic> data) async {
+    try {
+      await firestore.collection("").doc(uid).set(data);
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage(""));
+    }
+  }
 }

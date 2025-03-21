@@ -16,19 +16,21 @@ class LoginController extends BaseController {
     setLoading(true);
     bool loginSuccess = false;
 
-    // Either<ExceptionMessage, bool> response =
-    //     await firebaseAuthRepository.login(email: email, password: password);
-    // response.fold((ExceptionMessage error) {
-    setMessage(AlertData(message: "Erro login", errorType: ErrorType.error));
-
-    Future.delayed(Duration(seconds: 2));
-    setMessage(AlertData(message: "warning", errorType: ErrorType.warning));
-
-    Future.delayed(Duration(seconds: 2));
-    setMessage(AlertData(message: "success", errorType: ErrorType.success));
-    // }, (bool success) {
-    loginSuccess = true;
-    // });
+     Either<ExceptionMessage, bool> response =
+         await firebaseAuthRepository.login(email: email, password: password);
+     response.fold(
+       (error) {
+         setMessage(
+           AlertData(
+             message: "Erro ao entrar na sua conta",
+             errorType: ErrorType.error,
+           ),
+         );
+       },
+       (bool success) {
+         loginSuccess = success;
+       },
+     );
     setLoading(false);
     return loginSuccess;
   }

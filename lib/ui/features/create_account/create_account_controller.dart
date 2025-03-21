@@ -9,39 +9,58 @@ class CreateAccountController extends BaseController {
   final FirebaseAuthRepository firebaseAuthRepository;
   final FirestoreRepository firestoreRepository;
 
-  CreateAccountController({required this.firebaseAuthRepository, required this.firestoreRepository});
+  CreateAccountController({
+    required this.firebaseAuthRepository,
+    required this.firestoreRepository,
+  });
 
-  Future<bool> createAccount({required String name, required String email, required String password}) async {
+  Future<bool> createAccount({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
     setLoading(true);
-    // String uid = "";
+    String? uid;
     bool successCreateAccount = false;
-    // Either<Exception, String> response = await firebaseAuthRepository.createAccount(email: email, password: password);
-    // response.fold(
-    //   (error) {
-    //     setMessage(AlertData(message: "Erro ao criar a conta", errorType: ErrorType.error));
-    //   },
-    //   (String success) async {
-    //     uid = success;
-    //   },
-    // );
-    //
-    // if (uid.isNotEmpty) {
-      // Either<Exception, void> responseCreateProfile = await firestoreRepository.createProfile(
-      //   uid,
-      //   UserModel(name: name, email: email),
-      // );
-      //
-      // responseCreateProfile.fold(
-      //   (error) {
-      //     setMessage(AlertData(message: "Erro ao criar a conta", errorType: ErrorType.error));
-      //   },
-      //   (_) {
-          successCreateAccount = true;
-      //   },
-      // );
-    // }
 
-    Future.delayed(Duration(seconds: 2));
+    Either<Exception, String> response = await firebaseAuthRepository
+        .createAccount(email: email, password: password);
+    response.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: "Erro ao criar a conta",
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (String success) {
+        uid = success;
+        successCreateAccount = true;
+      },
+    );
+
+    if (uid != null && uid!.isNotEmpty) {
+      Either<Exception, void> responseCreateProfile = await firestoreRepository
+          .createProfile(uid!, UserModel(name: name, email: email).toMap());
+
+      responseCreateProfile.fold(
+        (error) {
+          setMessage(
+            AlertData(
+              message: "Erro ao criar o perfil",
+              errorType: ErrorType.error,
+            ),
+          );
+          successCreateAccount = false;
+        },
+        (_) {
+          successCreateAccount = true;
+        },
+      );
+    }
+
+    await Future.delayed(Duration(seconds: 2));
     setLoading(false);
     return successCreateAccount;
   }
