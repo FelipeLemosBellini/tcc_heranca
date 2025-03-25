@@ -45,23 +45,22 @@ abstract class RouterApp {
         routes: <RouteBase>[
           GoRoute(
             path: materialDesign,
-            builder: (BuildContext context, GoRouterState state) {
-              return const MaterialDesignView();
+            pageBuilder: (context, state) {
+              return customTransitionPage(MaterialDesignView());
             },
           ),
           GoRoute(
             path: forgotPassword,
-            builder: (BuildContext context, GoRouterState state) {
-              return const ForgotPasswordView();
+            pageBuilder: (context, state) {
+              return customTransitionPage(ForgotPasswordView());
             },
           ),
           GoRoute(
             path: createAccount,
-            builder: (BuildContext context, GoRouterState state) {
-              return const CreateAccountView();
+            pageBuilder: (context, state) {
+              return customTransitionPage(CreateAccountView());
             },
           ),
-
           GoRoute(
             path: home,
             builder: (BuildContext context, GoRouterState state) {
@@ -71,6 +70,28 @@ abstract class RouterApp {
         ],
       ),
     ],
+  );
+}
+
+CustomTransitionPage<dynamic> customTransitionPage(Widget child) {
+  return CustomTransitionPage(
+    key: ValueKey(child),
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Animação de Fade + Slide
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: animation.drive(
+            Tween<Offset>(
+              begin: const Offset(1, 0), // Começa da direita
+              end: Offset.zero, // Vai para o centro
+            ),
+          ),
+          child: child,
+        ),
+      );
+    },
   );
 }
 

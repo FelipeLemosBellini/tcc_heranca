@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -87,13 +88,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             GestureDetector(
                               onTap: () => context.go(RouterApp.forgotPassword),
-                              child: const Text(
+                              child: Text(
                                 "Esqueci minha senha",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
+                                style: AppFonts.labelMedium,
                               ),
                             ),
                           ],
