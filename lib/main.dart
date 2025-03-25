@@ -20,6 +20,7 @@ void main() async {
   DI.setDependencies();
   runApp(DevicePreview(
     enabled: true,
-    builder: (context) => const MyApp(),
+    builder: (context) => MyApp(),
   ));
 }
+
