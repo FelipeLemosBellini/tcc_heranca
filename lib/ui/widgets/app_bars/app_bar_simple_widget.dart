@@ -29,15 +29,3 @@ class AppBarSimpleWidget extends PreferredSize {
         ),
       );
 }
-
-// AppBar(
-// backgroundColor: AppColors.background,
-// title: Text(
-// 'Crie sua conta',
-// style: TextStyle(
-// color: AppColors.titleView,
-// fontSize: 18,
-// fontWeight: FontWeight.bold,
-// ),
-// ),
-// )

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
+
 
 class TestadorView extends StatelessWidget {
   const TestadorView({super.key});
@@ -27,9 +29,8 @@ class TestadorView extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Testamentos Criados'), centerTitle: true),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0).copyWith(top: 0),
         child: ListView.builder(
           itemCount: testamentos.length,
           itemBuilder: (context, index) {
@@ -51,7 +52,7 @@ class TestadorView extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       "Criado em: ${testamento["data"]}",
-                      style: const TextStyle(color: Colors.black54),
+                      style: TextStyle(color: AppColors.white),
                     ),
                     const Divider(),
 

@@ -7,4 +7,5 @@ abstract class AppColors {
   static Color lines = const Color(0xFF322DAF);
   static Color gray = const Color(0xFFA4A4A4);
   static Color background = const Color(0xFF16214D);
+  static Color white = const Color(0xFFFFFFFF);
 }
