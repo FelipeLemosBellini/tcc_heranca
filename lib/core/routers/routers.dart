@@ -5,6 +5,7 @@ import 'package:tcc/ui/features/create_account/create_account_view.dart';
 import 'package:tcc/ui/features/forgot_password/forgot_password_view.dart';
 import 'package:tcc/ui/features/home/home_view.dart';
 import 'package:tcc/ui/features/login/login_view.dart';
+import 'package:tcc/ui/features/testador/new_testament/amountStep_view.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_view.dart';
 
 abstract class RouterApp {
@@ -13,6 +14,7 @@ abstract class RouterApp {
   static const String createAccount = "/createAccount";
   static const String forgotPassword = "/forgotPassword";
   static const String home = "/home";
+  static const String teste = "/teste";
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
@@ -66,6 +68,12 @@ abstract class RouterApp {
             path: home,
             builder: (BuildContext context, GoRouterState state) {
               return const HomeView();
+            },
+          ),
+          GoRoute(
+            path: teste,
+            builder: (BuildContext context, GoRouterState state) {
+              return const AmountStepView();
             },
           ),
         ],
