@@ -14,7 +14,7 @@ abstract class RouterApp {
   static const String createAccount = "/createAccount";
   static const String forgotPassword = "/forgotPassword";
   static const String home = "/home";
-  static const String teste = "/teste";
+  static const String amountStep = "/amountStep";
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
@@ -71,11 +71,11 @@ abstract class RouterApp {
             },
           ),
           GoRoute(
-            path: teste,
+            path: amountStep,
             builder: (BuildContext context, GoRouterState state) {
               return const AmountStepView();
             },
-          ),
+          ) ,
         ],
       ),
     ],

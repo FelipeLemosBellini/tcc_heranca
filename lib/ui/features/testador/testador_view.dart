@@ -107,7 +107,7 @@ class TestadorView extends StatelessWidget {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pushNamed(RouterApp.teste);
+          context.push(RouterApp.amountStep);
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),

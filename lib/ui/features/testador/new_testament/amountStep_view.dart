@@ -37,33 +37,38 @@ class _AmountStepViewState extends State<AmountStepView> {
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Pegando o valor digitado
-                  String amount = _amountController.text.trim();
+            Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                String amount = _amountController.text.trim();
 
-                  // if (amount.isNotEmpty) {
-                  //   // Navegar para a próxima etapa e passar o valor
-                  //   // Navigator.push(
-                  //   //   context,
-                  //     // MaterialPageRoute(
-                  //     //   builder: (context) => AddressStepView(amount: amount),
-                  //     // ),
-                  //   );
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(
-                  //       content: Text('Por favor, insira um valor válido!'),
-                  //       backgroundColor: Colors.red,
-                  //     ),
-                  //   );
-                  // }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
+                // if (amount.isNotEmpty) {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => AddressStepView(amount: amount),
+                //     ),
+                //   );
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Por favor, insira um valor válido!'),
+                //       backgroundColor: Colors.red,
+                //     ),
+                //   );
+                // }
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 60),
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text('Next'),
+              ),
+              child: const Text(
+                'Next',
+                style: TextStyle(fontSize: 18),
               ),
             ),
           ],
