@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/ui/features/create_account/create_account_view.dart';
 import 'package:tcc/ui/features/forgot_password/forgot_password_view.dart';
+import 'package:tcc/ui/features/home/home_view.dart';
 import 'package:tcc/ui/features/login/login_view.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_view.dart';
 
@@ -64,7 +65,7 @@ abstract class RouterApp {
           GoRoute(
             path: home,
             builder: (BuildContext context, GoRouterState state) {
-              return const Scaffold();
+              return const HomeView();
             },
           ),
         ],

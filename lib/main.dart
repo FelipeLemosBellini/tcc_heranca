@@ -16,6 +16,10 @@ void main() async {
     ),
   );
   DI.setDependencies();
+  runApp(DevicePreview(
+    enabled: true,
+    builder: (context) => MyApp(),
+  ));
   runApp(MyApp());
   // runApp(DevicePreview(
   //   enabled: true,
