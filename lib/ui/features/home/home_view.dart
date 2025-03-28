@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/features/home/wallet_view/wallet_view.dart';
 import 'package:tcc/ui/features/testador/testador_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,9 +15,15 @@ class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const CarteiraScreen(),
+    const WalletView(),
     const TestadorView(),
     const HerdeiroScreen(),
+  ];
+
+  final List<String> _titles = [
+    'Carteira',
+    'Testamentos Criados',
+    'Heranças Recebidas',
   ];
 
   void _onItemTapped(int index) {
@@ -27,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Carteira de Cripto'), centerTitle: true),
+      appBar: AppBarHomeWidget(title: _titles[_selectedIndex], onTap: () {}),
       body:
       IndexedStack(children: _screens, index: _selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -48,54 +56,6 @@ class _HomeViewState extends State<HomeView> {
             label: 'Herdeiro',
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CarteiraScreen extends StatelessWidget {
-  const CarteiraScreen({super.key});
-
-  final String enderecoUsuario = "0x1234...ABCD";
-  final double saldoEth = 2.345;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min, // Para evitar overflow
-            children: [
-              const Text(
-                "Saldo da Conta",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "$saldoEth ETH",
-                style: const TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
-              ),
-              const Divider(),
-              const SizedBox(height: 8),
-              const Text(
-                "Endereço da Carteira",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                enderecoUsuario,
-                style: const TextStyle(fontSize: 14, color: Colors.blueAccent),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

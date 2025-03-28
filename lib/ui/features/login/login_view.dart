@@ -31,6 +31,14 @@ class _LoginViewState extends State<LoginView> {
   FocusNode passwordFocus = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    emailController.text = "teste@gmail.com";
+    passwordController.text = "123456";
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
