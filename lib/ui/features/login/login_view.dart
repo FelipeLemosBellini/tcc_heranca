@@ -41,7 +41,7 @@ class _LoginViewState extends State<LoginView> {
           body: Stack(
             children: [
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF1E1E2C), Color(0xFF23233A)],
                     begin: Alignment.topCenter,
@@ -55,60 +55,56 @@ class _LoginViewState extends State<LoginView> {
                   child: Container(color: Colors.black.withOpacity(0.2)),
                 ),
               ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.wallet_travel,
-                        size: 80,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFieldWidget(
-                        hintText: "Digite seu email",
-                        controller: emailController,
-                        focusNode: emailFocus,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFieldWidget(
-                        hintText: "Digite sua senha",
-                        controller: passwordController,
-                        focusNode: passwordFocus,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          PillButtonWidget(
-                            onTap: () => context.go(RouterApp.createAccount),
-                            text: "Criar conta",
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wallet_travel,
+                      size: 80,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      hintText: "Digite seu email",
+                      controller: emailController,
+                      focusNode: emailFocus,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      hintText: "Digite sua senha",
+                      controller: passwordController,
+                      focusNode: passwordFocus,
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        PillButtonWidget(
+                          onTap: () => context.go(RouterApp.createAccount),
+                          text: "Criar conta",
+                        ),
+                        GestureDetector(
+                          onTap: () => context.go(RouterApp.forgotPassword),
+                          child: Text(
+                            "Esqueci minha senha",
+                            style: AppFonts.labelMedium,
                           ),
-                          GestureDetector(
-                            onTap: () => context.go(RouterApp.forgotPassword),
-                            child: Text(
-                              "Esqueci minha senha",
-                              style: AppFonts.labelMedium,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      // Botão de login
-                      ElevatedButtonWidget(
-                        onTap: () => login(context),
-                        text: "Entrar",
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
+          ),
+          bottomSheet: ElevatedButtonWidget(
+            onTap: () => login(context),
+            text: "Entrar",
           ),
         ),
       ),

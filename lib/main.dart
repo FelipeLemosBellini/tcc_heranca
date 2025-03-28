@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tcc/app_widget.dart';
 import 'package:tcc/core/dependence_injection/di.dart';
-// import '';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +14,11 @@ void main() async {
       projectId: "tcc-heranca",
       storageBucket: "tcc-heranca.firebasestorage.app",
     ),
-    // options: DefaultFirebaseOptions.currentPlatform,
   );
   DI.setDependencies();
-  runApp(DevicePreview(
-    enabled: true,
-    builder: (context) => const MyApp(),
-  ));
+  runApp(MyApp());
+  // runApp(DevicePreview(
+  //   enabled: true,
+  //   builder: (context) => const MyApp(),
+  // ));
 }

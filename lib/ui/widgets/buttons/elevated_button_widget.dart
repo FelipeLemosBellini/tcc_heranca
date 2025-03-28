@@ -22,7 +22,7 @@ class ElevatedButtonWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 48,
-        margin: padding ?? const EdgeInsets.all(24),
+        margin: padding ?? const EdgeInsets.all(24).copyWith(bottom: 40),
         width: MediaQuery.sizeOf(context).width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
