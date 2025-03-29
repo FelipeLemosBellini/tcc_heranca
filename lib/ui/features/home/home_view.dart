@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tcc/ui/features/home/wallet_view/wallet_view.dart';
+import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
 import 'package:tcc/ui/features/testador/testador_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
@@ -13,6 +14,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [const WalletView(), const TestadorView(), const HerdeiroScreen()];
@@ -37,7 +39,15 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarHomeWidget(title: _titles[_selectedIndex], onTap: () {}),
+      key: scaffoldKey,
+      appBar: AppBarHomeWidget(
+        title: _titles[_selectedIndex],
+        onTap: () {},
+        openDrawer: () {
+          scaffoldKey.currentState?.openDrawer();
+        },
+      ),
+      drawer: DrawerHomeWidget(),
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,

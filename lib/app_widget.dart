@@ -23,9 +23,8 @@ class MyApp extends StatelessWidget {
           indent: 1,
           space: 1,
           thickness: 1,
-          color: AppColors.gray,
+          color: AppColors.gray5,
         ),
-
         navigationBarTheme: NavigationBarThemeData(
           surfaceTintColor: Colors.black,
           backgroundColor: AppColors.primary5,

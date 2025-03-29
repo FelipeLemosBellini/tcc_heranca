@@ -6,8 +6,9 @@ import 'package:tcc/ui/helpers/app_fonts.dart';
 class AppBarHomeWidget extends PreferredSize {
   final String title;
   final Function() onTap;
+  final Function() openDrawer;
 
-  AppBarHomeWidget({super.key, required this.title, required this.onTap})
+  AppBarHomeWidget({super.key, required this.title, required this.onTap, required this.openDrawer})
     : super(
         preferredSize: Size.fromHeight(64),
         child: SafeArea(
@@ -15,6 +16,13 @@ class AppBarHomeWidget extends PreferredSize {
             decoration: BoxDecoration(color: AppColors.primary5),
             child: Stack(
               children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: IconButton(onPressed: openDrawer, icon: Icon(Icons.menu)),
+                  ),
+                ),
                 Center(child: Text(title, style: AppFonts.labelHeadBold)),
               ],
             ),

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
-
 class TestadorView extends StatelessWidget {
   const TestadorView({super.key});
 
@@ -14,19 +13,19 @@ class TestadorView extends StatelessWidget {
         "titulo": "Testamento de João",
         "data": "12/03/2025",
         "endereco": "0x1234...ABCD",
-        "valor": "3.5 ETH"
+        "valor": "3.5 ETH",
       },
       {
         "titulo": "Testamento de Maria",
         "data": "05/06/2024",
         "endereco": "0x5678...EFGH",
-        "valor": "1.2 ETH"
+        "valor": "1.2 ETH",
       },
       {
         "titulo": "Testamento de Carlos",
         "data": "20/09/2023",
         "endereco": "0x9ABC...XYZ1",
-        "valor": "5.0 ETH"
+        "valor": "5.0 ETH",
       },
     ];
 
@@ -74,20 +73,20 @@ class TestadorView extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "Valor:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                            const Text("Valor:", style: TextStyle(fontWeight: FontWeight.bold)),
                             Text(
                               testamento["valor"]!,
-                              style: const TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
 
                         ElevatedButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -109,8 +108,8 @@ class TestadorView extends StatelessWidget {
         onPressed: () {
           context.push(RouterApp.amountStep);
         },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: AppColors.primary,
+        child: Icon(Icons.add, color: AppColors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

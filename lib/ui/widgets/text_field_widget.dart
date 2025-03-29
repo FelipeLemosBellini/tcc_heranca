@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 
@@ -11,6 +12,7 @@ class TextFieldWidget extends StatefulWidget {
   final int? maxLines;
   final bool obscureText;
   final TextInputType keyboardType;
+  final bool onlyNumber;
 
   const TextFieldWidget({
     super.key,
@@ -21,6 +23,7 @@ class TextFieldWidget extends StatefulWidget {
     this.padding,
     this.maxLines,
     this.obscureText = false,
+    this.onlyNumber = false,
     this.keyboardType = TextInputType.text,
   });
 
@@ -59,10 +62,10 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   ? []
                   : [
                     BoxShadow(
-                      color: AppColors.primaryLight.withOpacity(0.2), // Sombra mais definida
-                      blurRadius: 25, // Mais difuso
-                      spreadRadius: 1, // Aumenta a área da sombra
-                      offset: const Offset(0, 0), // Mantém para baixo
+                      color: AppColors.primaryLight.withOpacity(0.2),
+                      blurRadius: 25,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 0),
                     ),
                   ],
         ),
@@ -73,6 +76,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           onChanged: widget.onChanged ?? (_) {},
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
           style: AppFonts.labelSmallLight,
+          inputFormatters: [
+            if (widget.onlyNumber) FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*$')),
+          ],
           decoration: InputDecoration(
             fillColor: AppColors.primary7,
             alignLabelWithHint: true,

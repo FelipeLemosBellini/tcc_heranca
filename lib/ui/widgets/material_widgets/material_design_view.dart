@@ -39,7 +39,11 @@ class _MaterialDesignViewState extends State<MaterialDesignView> {
               children: [
                 SizedBox(
                   height: 64,
-                  child: AppBarHomeWidget(title: "title", onTap: () => context.pop()),
+                  child: AppBarHomeWidget(
+                    title: "title",
+                    onTap: () => context.pop(),
+                    openDrawer: () => Scaffold.of(context).openDrawer(),
+                  ),
                 ),
                 SizedBox(height: 16),
                 TextFieldWidget(
