@@ -60,7 +60,7 @@ abstract class AlertHelper {
   }) {
     SnackBar snackBar = SnackBar(
       content: Text(message, style: AppFonts.labelMediumMedium.copyWith(color: fontColor)),
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 3),
       backgroundColor: background,
       behavior: SnackBarBehavior.floating,
     );

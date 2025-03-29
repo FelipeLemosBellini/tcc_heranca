@@ -7,6 +7,7 @@ import 'package:tcc/ui/features/create_account/create_account_controller.dart';
 import 'package:tcc/ui/features/forgot_password/forgot_password_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/login/login_controller.dart';
+import 'package:tcc/ui/features/testador/new_testament/address/address_step_controller.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_controller.dart';
 
 abstract class DI {
@@ -31,5 +32,6 @@ abstract class DI {
     );
     getIt.registerFactory(() => LoginController(firebaseAuthRepository: FirebaseAuthRepository()));
     getIt.registerFactory(() => HomeController());
+    getIt.registerFactory(() => AddressStepController());
   }
 }
