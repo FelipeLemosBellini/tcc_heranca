@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
 
@@ -85,9 +87,6 @@ class TestadorView extends StatelessWidget {
 
                         ElevatedButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Abrindo ${testamento["titulo"]}")),
-                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
@@ -108,9 +107,7 @@ class TestadorView extends StatelessWidget {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Adicionar novo testamento")),
-          );
+          context.push(RouterApp.amountStep);
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
