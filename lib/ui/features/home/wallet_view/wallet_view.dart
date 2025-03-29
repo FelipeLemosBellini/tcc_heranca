@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
-import 'package:tcc/ui/helpers/app_fonts.dart';
+import 'package:tcc/core/models/asset_model.dart';
+import 'package:tcc/ui/features/home/widgets/card_wallet_widget.dart';
 
 class WalletView extends StatefulWidget {
   const WalletView({super.key});
@@ -10,48 +10,31 @@ class WalletView extends StatefulWidget {
 }
 
 class _WalletViewState extends State<WalletView> {
-  final String enderecoUsuario = "0x1234...ABCD";
+  final String addressUser = "0x1234...ABCD";
 
-  final double saldoEth = 2.345;
+  final double balanceETH = 2.345;
+
+  final List<AssetModel> myAssets = [
+    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
+    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
+    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
+    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min, // Para evitar overflow
-            children: [
-              Text(
-                "Saldo da Conta",
-                style: AppFonts.labelMediumMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "$saldoEth ETH",
-                style: const TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
-              ),
-              const Divider(),
-              const SizedBox(height: 8),
-              const Text(
-                "Endereço da Carteira",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                enderecoUsuario,
-                style: const TextStyle(fontSize: 14, color: Colors.blueAccent),
-              ),
-            ],
-          ),
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        CardWalletWidget(addressUser: addressUser, balanceETH: balanceETH.toString()),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: myAssets.length,
+          itemBuilder: (context, index) {
+            return Container();
+          },
         ),
-      ),
+      ],
     );
   }
 }
