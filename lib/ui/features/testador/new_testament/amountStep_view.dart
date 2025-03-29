@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/features/testador/new_testament/addressStep_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
 class AmountStepView extends StatefulWidget {
@@ -14,10 +15,6 @@ class _AmountStepViewState extends State<AmountStepView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Criação de Testamento'),
-        backgroundColor: AppColors.primary,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -31,7 +28,7 @@ class _AmountStepViewState extends State<AmountStepView> {
             TextField(
               controller: _amountController,
               decoration: const InputDecoration(
-                labelText: 'Amount',
+                labelText: 'Valor em ETH',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
@@ -43,21 +40,21 @@ class _AmountStepViewState extends State<AmountStepView> {
                 String amount = _amountController.text.trim();
 
                 //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
-                // if (amount.isNotEmpty) {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => AddressStepView(amount: amount),
-                //     ),
-                //   );
-                // } else {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Por favor, insira um valor válido!'),
-                //       backgroundColor: Colors.red,
-                //     ),
-                //   );
-                // }
+                if (amount.isNotEmpty) {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => AddressStepView(amount: amount),
+                     ),
+                   );
+                 } else {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     const SnackBar(
+                       content: Text('Por favor, insira um valor válido!'),
+                       backgroundColor: Colors.red,
+                     ),
+                   );
+                 }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 60),
