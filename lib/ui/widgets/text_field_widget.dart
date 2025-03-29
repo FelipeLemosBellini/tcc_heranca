@@ -52,7 +52,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       padding: widget.padding ?? EdgeInsets.zero,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: AppColors.primary7,
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow:
               !widget.focusNode.hasFocus
@@ -74,34 +74,34 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
           style: AppFonts.labelMedium,
           decoration: InputDecoration(
-            fillColor: AppColors.background,
+            fillColor: AppColors.primary7,
             alignLabelWithHint: true,
             hintText: widget.hintText,
             hintStyle: AppFonts.labelMedium.copyWith(
-              color: widget.focusNode.hasFocus ? AppColors.disable : Colors.white60,
+              color: widget.focusNode.hasFocus ? AppColors.gray4 : AppColors.white,
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
-              borderSide: BorderSide(strokeAlign: 2, color: AppColors.gray, width: 2),
+              borderSide: BorderSide(strokeAlign: 1, color: AppColors.gray7, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
-              borderSide: BorderSide(strokeAlign: 2, color: AppColors.gray, width: 1),
+              borderSide: BorderSide(strokeAlign: 1, color: AppColors.gray, width: 1),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
-              borderSide: BorderSide(strokeAlign: 2, color: AppColors.lines, width: 2),
+              borderSide: BorderSide(strokeAlign: 1, color: AppColors.primary2, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
               borderSide: BorderSide(
-                strokeAlign: 2,
+                strokeAlign: 1,
                 style: BorderStyle.solid,
-                color: AppColors.lines,
-                width: 2,
+                color: AppColors.primary2,
+                width: 1,
               ),
             ),
-            focusColor: AppColors.lines,
+            focusColor: AppColors.primary2,
             isDense: true,
             suffixIcon: Visibility(
               visible: widget.obscureText,

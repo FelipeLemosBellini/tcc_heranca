@@ -17,14 +17,15 @@ class PillButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      hoverColor: AppColors.primary,
-      splashColor: AppColors.primary,
+      hoverColor: AppColors.primary4,
+      splashColor: AppColors.primary4,
       borderRadius: const BorderRadius.all(Radius.circular(100)),
       onTap: () => onTap.call(),
       child: Container(
         decoration: BoxDecoration(
+          color: AppColors.primary7,
           borderRadius: const BorderRadius.all(Radius.circular(100)),
-          border: Border.all(color: AppColors.lines, width: 2),
+          border: Border.all(color: AppColors.primary2, width: 1),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(

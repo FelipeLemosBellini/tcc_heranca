@@ -16,23 +16,23 @@ abstract class RouterApp {
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
-      // User? user = FirebaseAuth.instance.currentUser;
-      // final bool isLoggedIn = user != null;
-      //
-      // //allowed routes
-      // List<String> allowedRoutes = [login, createAccount, forgotPassword];
-      //
-      // // if is not logged in go to allowedRoutes
-      // if (!isLoggedIn && !allowedRoutes.contains(state.topRoute?.path)) {
-      //   return login;
-      // }
-      //
-      // //if is logged in go to home
-      // if (isLoggedIn && state.topRoute?.path == login) {
-      //   return home;
-      // }
-
-      // go to any page if logged in
+    //   User? user = FirebaseAuth.instance.currentUser;
+    //   final bool isLoggedIn = user != null;
+    //
+    //   //allowed routes
+    //   List<String> allowedRoutes = [login, createAccount, forgotPassword];
+    //
+    //   // if is not logged in go to allowedRoutes
+    //   if (!isLoggedIn && !allowedRoutes.contains(state.topRoute?.path)) {
+    //     return login;
+    //   }
+    //
+    //   //if is logged in go to home
+    //   if (isLoggedIn && state.topRoute?.path == login) {
+    //     return home;
+    //   }
+    //
+    //   // go to any page if logged in
     //   return null;
     // },
     routes: <RouteBase>[

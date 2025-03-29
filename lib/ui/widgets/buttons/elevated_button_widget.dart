@@ -26,9 +26,9 @@ class ElevatedButtonWidget extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: inverterColor ? AppColors.background : AppColors.primary,
+          color: inverterColor ? AppColors.primary7 : AppColors.primary,
           borderRadius: BorderRadius.circular(30),
-          border: inverterColor ? Border.all(color: AppColors.lines, width: 2) : null,
+          border: inverterColor ? Border.all(color: AppColors.primary2, width: 2) : null,
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withOpacity(0.4), // Sombra mais definida

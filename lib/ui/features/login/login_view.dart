@@ -37,85 +37,84 @@ class _LoginViewState extends State<LoginView> {
     passwordController.text = "123456";
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
-      builder: (_, __) => LoadingAndAlertOverlayWidget(
-        isLoading: controller.isLoading,
-        alertData: controller.alertData,
-        child: Scaffold(
-          body: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1E1E2C), Color(0xFF23233A)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+      builder:
+          (_, __) => LoadingAndAlertOverlayWidget(
+            isLoading: controller.isLoading,
+            alertData: controller.alertData,
+            child: Scaffold(
+              body: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1E1E2C), Color(0xFF23233A)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Positioned.fill(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                  child: Container(color: Colors.black.withOpacity(0.2)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.wallet_travel,
-                      size: 80,
-                      color: AppColors.primary,
+                  Positioned.fill(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(color: Colors.black.withOpacity(0.2)),
                     ),
-                    const SizedBox(height: 16),
-                    TextFieldWidget(
-                      hintText: "Digite seu email",
-                      controller: emailController,
-                      focusNode: emailFocus,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFieldWidget(
-                      hintText: "Digite sua senha",
-                      controller: passwordController,
-                      focusNode: passwordFocus,
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        PillButtonWidget(
-                          onTap: () => context.go(RouterApp.createAccount),
-                          text: "Criar conta",
+                        Icon(Icons.wallet_travel, size: 80, color: AppColors.primary),
+                        const SizedBox(height: 16),
+                        TextFieldWidget(
+                          hintText: "Digite seu email",
+                          controller: emailController,
+                          focusNode: emailFocus,
+                          keyboardType: TextInputType.emailAddress,
                         ),
-                        GestureDetector(
-                          onTap: () => context.go(RouterApp.forgotPassword),
-                          child: Text(
-                            "Esqueci minha senha",
-                            style: AppFonts.labelMedium,
-                          ),
+                        const SizedBox(height: 16),
+                        TextFieldWidget(
+                          hintText: "Digite sua senha",
+                          controller: passwordController,
+                          focusNode: passwordFocus,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            PillButtonWidget(
+                              onTap: () => context.go(RouterApp.createAccount),
+                              text: "Criar conta",
+                            ),
+                            GestureDetector(
+                              onTap: () => context.go(RouterApp.forgotPassword),
+                              child: Text("Esqueci minha senha", style: AppFonts.labelMedium),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+              bottomSheet: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButtonWidget(
+                    onTap: () => context.push(RouterApp.materialDesign),
+                    text: "material design",
+                  ),
+                  ElevatedButtonWidget(onTap: () => login(context), text: "Entrar"),
+                ],
+              ),
+            ),
           ),
-          bottomSheet: ElevatedButtonWidget(
-            onTap: () => login(context),
-            text: "Entrar",
-          ),
-        ),
-      ),
     );
   }
 
