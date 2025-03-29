@@ -94,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             GestureDetector(
                               onTap: () => context.go(RouterApp.forgotPassword),
-                              child: Text("Esqueci minha senha", style: AppFonts.labelMedium),
+                              child: Text("Esqueci minha senha", style: AppFonts.labelMediumMedium),
                             ),
                           ],
                         ),

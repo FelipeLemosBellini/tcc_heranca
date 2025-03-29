@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.primary7,
         primaryColor: AppColors.primary,
         indicatorColor: AppColors.primary,
+        progressIndicatorTheme: ProgressIndicatorThemeData(),
         dividerTheme: DividerThemeData(
           endIndent: 1,
           indent: 1,
@@ -24,10 +25,16 @@ class MyApp extends StatelessWidget {
           thickness: 1,
           color: AppColors.gray,
         ),
+
         navigationBarTheme: NavigationBarThemeData(
           surfaceTintColor: Colors.black,
           backgroundColor: AppColors.primary5,
           elevation: 1,
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((Set<WidgetState> states) {
+            return states.contains(WidgetState.selected)
+                ? AppFonts.labelSmallBold
+                : AppFonts.labelSmallLight;
+          }),
           indicatorColor: AppColors.primary2,
         ),
         textSelectionTheme: TextSelectionThemeData(

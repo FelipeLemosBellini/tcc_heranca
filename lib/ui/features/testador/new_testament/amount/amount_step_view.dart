@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tcc/ui/features/testador/new_testament/addressStep_view.dart';
+import 'package:tcc/ui/features/testador/new_testament/address/address_step_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
 class AmountStepView extends StatefulWidget {

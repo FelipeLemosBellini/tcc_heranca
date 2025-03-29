@@ -17,13 +17,13 @@ class PillButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      hoverColor: AppColors.primary4,
-      splashColor: AppColors.primary4,
+      hoverColor: AppColors.primaryLight,
+      splashColor: AppColors.primaryLight,
       borderRadius: const BorderRadius.all(Radius.circular(100)),
       onTap: () => onTap.call(),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.primary7,
+          color: AppColors.primary6,
           borderRadius: const BorderRadius.all(Radius.circular(100)),
           border: Border.all(color: AppColors.primary2, width: 1),
         ),
@@ -31,7 +31,7 @@ class PillButtonWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(text, style: AppFonts.titleSmall),
+            Text(text, style: AppFonts.labelMediumMedium),
             SizedBox(width: 12),
             Icon(Icons.arrow_forward, color: Colors.white),
           ],

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 
 class WalletView extends StatefulWidget {
   const WalletView({super.key});
@@ -26,9 +27,9 @@ class _WalletViewState extends State<WalletView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min, // Para evitar overflow
             children: [
-              const Text(
+              Text(
                 "Saldo da Conta",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: AppFonts.labelMediumMedium,
               ),
               const SizedBox(height: 8),
               Text(

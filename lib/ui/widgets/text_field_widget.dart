@@ -59,7 +59,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   ? []
                   : [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.2), // Sombra mais definida
+                      color: AppColors.primaryLight.withOpacity(0.2), // Sombra mais definida
                       blurRadius: 25, // Mais difuso
                       spreadRadius: 1, // Aumenta a área da sombra
                       offset: const Offset(0, 0), // Mantém para baixo
@@ -72,12 +72,12 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           keyboardType: widget.keyboardType,
           onChanged: widget.onChanged ?? (_) {},
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: AppFonts.labelMedium,
+          style: AppFonts.labelSmallLight,
           decoration: InputDecoration(
             fillColor: AppColors.primary7,
             alignLabelWithHint: true,
             hintText: widget.hintText,
-            hintStyle: AppFonts.labelMedium.copyWith(
+            hintStyle: AppFonts.labelSmallLight.copyWith(
               color: widget.focusNode.hasFocus ? AppColors.gray4 : AppColors.white,
             ),
             disabledBorder: OutlineInputBorder(

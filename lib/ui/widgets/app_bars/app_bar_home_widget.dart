@@ -15,7 +15,7 @@ class AppBarHomeWidget extends PreferredSize {
             decoration: BoxDecoration(color: AppColors.primary5),
             child: Stack(
               children: [
-                Center(child: Text(title, style: AppFonts.headlineSmall)),
+                Center(child: Text(title, style: AppFonts.labelHeadBold)),
               ],
             ),
           ),

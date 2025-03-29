@@ -19,10 +19,7 @@ class LoadingAndAlertOverlayWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (alertData != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        AlertHelper.showAlertSnackBar(
-          context: context,
-          alertData: alertData,
-        );
+        AlertHelper.showAlertSnackBar(context: context, alertData: alertData);
       });
     }
 
@@ -32,9 +29,9 @@ class LoadingAndAlertOverlayWidget extends StatelessWidget {
         Visibility(
           visible: isLoading,
           child: Container(
-            color: AppColors.primary.withOpacity(0.2),
+            color: AppColors.primaryLight2.withOpacity(0.2),
             alignment: Alignment.center,
-            child: const CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 6),
           ),
         ),
       ],

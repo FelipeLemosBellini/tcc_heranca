@@ -23,7 +23,7 @@ class AppBarSimpleWidget extends PreferredSize {
                   ),
                 ),
               ),
-              Center(child: Text(title, style: AppFonts.headlineSmall)),
+              Center(child: Text(title, style: AppFonts.labelHeadBold)),
             ],
           ),
         ),

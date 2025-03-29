@@ -22,11 +22,12 @@ abstract class AppColors {
   static Color primaryLight5 = const Color(0xff405dd4);
   static Color primaryLight6 = const Color(0xff2e52d2);
 
-
   //errorColor
   static Color error = const Color(0xfff01f44);
   static Color error2 = const Color(0xfff01f44);
 
+  //warningColor
+  static Color warning = const Color(0xFFffc400);
 
   //primaryColor theme
   static Color gray = const Color(0xffefefef);

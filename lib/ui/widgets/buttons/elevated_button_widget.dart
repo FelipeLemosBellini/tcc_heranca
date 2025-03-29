@@ -38,7 +38,7 @@ class ElevatedButtonWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Text(text, style: AppFonts.labelLarge),
+        child: Text(text, style: AppFonts.labelHeadBold),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 
 enum ErrorType { error, warning, success }
@@ -28,8 +29,8 @@ abstract class AlertHelper {
     _showSnackBar(
       context: context,
       message: message,
-      background: Colors.green,
-      fontColor: Colors.white,
+      background: AppColors.primaryLight5,
+      fontColor: AppColors.white,
     );
   }
 
@@ -37,8 +38,8 @@ abstract class AlertHelper {
     _showSnackBar(
       context: context,
       message: message,
-      background: Colors.redAccent,
-      fontColor: Colors.white,
+      background: AppColors.error2,
+      fontColor: AppColors.white,
     );
   }
 
@@ -46,8 +47,8 @@ abstract class AlertHelper {
     _showSnackBar(
       context: context,
       message: message,
-      background: Colors.amberAccent,
-      fontColor: Colors.black,
+      background: AppColors.warning,
+      fontColor: AppColors.black,
     );
   }
 
@@ -58,7 +59,7 @@ abstract class AlertHelper {
     required Color fontColor,
   }) {
     SnackBar snackBar = SnackBar(
-      content: Text(message, style: AppFonts.labelMedium.copyWith(color: fontColor)),
+      content: Text(message, style: AppFonts.labelMediumMedium.copyWith(color: fontColor)),
       duration: const Duration(seconds: 1),
       backgroundColor: background,
       behavior: SnackBarBehavior.floating,

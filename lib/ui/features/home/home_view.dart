@@ -22,7 +22,6 @@ class _HomeViewState extends State<HomeView> {
   late PageController _pageController;
 
   void _onItemTapped(int index) {
-    
     setState(() {
       _selectedIndex = index;
       _pageController.jumpToPage(index);
@@ -44,8 +43,6 @@ class _HomeViewState extends State<HomeView> {
         controller: _pageController,
         children: _screens,
       ),
-
-      // IndexedStack(children: _screens, index: _selectedIndex),
       bottomNavigationBar: BottomNavigationBarHomeWidget(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
