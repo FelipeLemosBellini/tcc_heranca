@@ -73,6 +73,11 @@ class _TestatorViewState extends State<TestatorView> {
                         "Criado em: ${testament.date}",
                         style: AppFonts.labelSmallLight.copyWith(color: AppColors.primaryLight2),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Prova de vida: ${testament.date}",
+                        style: AppFonts.labelSmallBold.copyWith(color: AppColors.error2),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Divider(color: AppColors.white),
@@ -100,12 +105,12 @@ class _TestatorViewState extends State<TestatorView> {
                               ),
                             ],
                           ),
-                          PillButtonWidget(onTap: () {
-                            context.push(
-                              RouterApp.seeDetails,
-                              extra: testament,
-                            );
-                          }, text: "Ver detalhes"),
+                          PillButtonWidget(
+                            onTap: () {
+                              context.push(RouterApp.seeDetails, extra: testament);
+                            },
+                            text: "Ver detalhes",
+                          ),
                         ],
                       ),
                     ],
