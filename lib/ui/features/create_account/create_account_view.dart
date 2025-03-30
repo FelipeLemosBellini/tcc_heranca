@@ -51,7 +51,6 @@ class _CreateAccountViewState extends State<CreateAccountView> {
           isLoading: controller.isLoading,
           alertData: controller.alertData,
           child: Scaffold(
-            backgroundColor: AppColors.background,
             appBar: AppBarSimpleWidget(
               onTap: () {
                 context.pop();

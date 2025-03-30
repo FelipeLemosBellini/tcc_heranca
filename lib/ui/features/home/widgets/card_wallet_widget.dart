@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 
@@ -27,41 +28,50 @@ class CardWalletWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
-                        Row(
-                          children: [
-                            Text(
-                              addressUser,
-                              style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
-                            ),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                print("copy address");
-                              },
-                              icon: Icon(Icons.copy, color: AppColors.white, size: 16),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
+                      Row(
+                        children: [
+                          Text(
+                            addressUser,
+                            style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
+                          ),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              print("copy address");
+                            },
+                            icon: Icon(Icons.copy, color: AppColors.white, size: 16),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-
-                  Expanded(
-                    flex: 2,
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.monetization_on, size: 40, color: AppColors.white),
+                  const Spacer(),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary6,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.network("https://worldvectorlogo.com/download/ethereum-eth.svg"),
+                        SizedBox(width: 8),
+                        Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.primaryLight2),
+                      ],
                     ),
                   ),
                 ],
               ),
-              Padding(padding: const EdgeInsets.only(top: 8, bottom: 16), child: const Divider()),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 16),
+                child: Divider(color: AppColors.white),
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -76,7 +86,10 @@ class CardWalletWidget extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
-                  Icon(Icons.visibility, color: AppColors.gray3),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.visibility, color: AppColors.gray3),
+                  ),
                 ],
               ),
             ],

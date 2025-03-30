@@ -1,8 +1,6 @@
 import 'package:flutter/animation.dart';
 
 abstract class AppColors {
-  static Color secondary = const Color(0xFF37F4FA);
-  static Color background = const Color(0xFF16214D);
   static Color white = const Color(0xFFFFFFFF);
   static Color black = const Color(0xFF000000);
 

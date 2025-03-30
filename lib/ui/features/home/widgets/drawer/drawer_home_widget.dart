@@ -37,6 +37,7 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("App", style: AppFonts.labelLargeRegular),
               SizedBox(height: 16),

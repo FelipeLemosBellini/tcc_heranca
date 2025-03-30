@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tcc/ui/features/testador/new_testament/address/address_step_view.dart';
+import 'package:tcc/ui/features/testator/new_testament/address/address_step_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
-
-import '../../../../widgets/text_field_widget.dart';
+import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class AmountStepView extends StatefulWidget {
   const AmountStepView({super.key});

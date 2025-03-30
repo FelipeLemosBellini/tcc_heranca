@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/ui/features/create_account/create_account_view.dart';
 import 'package:tcc/ui/features/forgot_password/forgot_password_view.dart';
 import 'package:tcc/ui/features/home/home_view.dart';
 import 'package:tcc/ui/features/login/login_view.dart';
-import 'package:tcc/ui/features/testador/new_testament/amount/amount_step_view.dart';
+import 'package:tcc/ui/features/testator/new_testament/amount/amount_step_view.dart';
+import 'package:tcc/ui/features/testator/see_details/see_details_view.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_view.dart';
 
 abstract class RouterApp {
@@ -15,6 +16,7 @@ abstract class RouterApp {
   static const String forgotPassword = "/forgotPassword";
   static const String home = "/home";
   static const String amountStep = "/amountStep";
+  static const String seeDetails = "/seeDetails";
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
@@ -38,8 +40,6 @@ abstract class RouterApp {
     //   return null;
     // },
     routes: <RouteBase>[
-
-
       GoRoute(
         path: login,
         builder: (BuildContext context, GoRouterState state) {
@@ -75,7 +75,13 @@ abstract class RouterApp {
             builder: (BuildContext context, GoRouterState state) {
               return const AmountStepView();
             },
-          ) ,
+          ),
+          GoRoute(
+            path: seeDetails,
+            builder: (BuildContext context, GoRouterState state) {
+              return SeeDetailsView(testamentModel: state.extra as TestamentModel);
+            },
+          ),
         ],
       ),
     ],

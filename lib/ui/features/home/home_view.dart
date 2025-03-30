@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/home/wallet_view/wallet_view.dart';
 import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
-import 'package:tcc/ui/features/testador/testador_view.dart';
+import 'package:tcc/ui/features/testator/testator_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
 import 'package:tcc/ui/widgets/bottom_navigation/bottom_navigation_bar_home_widget.dart';
@@ -17,9 +19,9 @@ class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [const WalletView(), const TestadorView(), const HerdeiroScreen()];
+  final List<Widget> _screens = [const WalletView(), const TestatorView(), const HerdeiroScreen()];
 
-  final List<String> _titles = ['Carteira', 'Testamentos Criados', 'Heranças Recebidas'];
+  final List<String> _titles = ['Carteira', 'Meus testamentos', 'Heranças'];
 
   late PageController _pageController;
 
@@ -57,6 +59,18 @@ class _HomeViewState extends State<HomeView> {
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
+      floatingActionButton:
+          _selectedIndex == 1
+              ? FloatingActionButton(
+                onPressed: () {
+                  context.push(RouterApp.amountStep);
+                },
+                backgroundColor: AppColors.primary,
+                child: Icon(Icons.add, color: AppColors.primaryLight2),
+              )
+              : null,
+      floatingActionButtonLocation:
+          _selectedIndex == 1 ? FloatingActionButtonLocation.endFloat : null,
     );
   }
 }
