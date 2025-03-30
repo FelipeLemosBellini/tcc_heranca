@@ -13,29 +13,51 @@ class CardWalletWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Card(
-        color: AppColors.primary6,
-        elevation: 4,
+        color: AppColors.primary,
+        surfaceTintColor: AppColors.white,
+        shadowColor: AppColors.primaryLight4,
+        elevation: 16,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min, // Para evitar overflow
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    addressUser,
-                    style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray4),
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
+                        Row(
+                          children: [
+                            Text(
+                              addressUser,
+                              style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
+                            ),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                print("copy address");
+                              },
+                              icon: Icon(Icons.copy, color: AppColors.white, size: 16),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      print("copy address");
-                    },
-                    icon: Icon(Icons.copy, color: AppColors.white, size: 16),
+
+                  Expanded(
+                    flex: 2,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.monetization_on, size: 40, color: AppColors.white),
+                    ),
                   ),
                 ],
               ),
