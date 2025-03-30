@@ -60,7 +60,16 @@ class CardWalletWidget extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgPicture.network("https://worldvectorlogo.com/download/ethereum-eth.svg"),
+                        SvgPicture.network(
+                          "https://worldvectorlogo.com/download/ethereum-eth.svg",
+                          placeholderBuilder: (_) {
+                            return Icon(
+                              Icons.monetization_on,
+                              color: AppColors.primaryLight2,
+                              size: 32,
+                            );
+                          },
+                        ),
                         SizedBox(width: 8),
                         Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.primaryLight2),
                       ],
