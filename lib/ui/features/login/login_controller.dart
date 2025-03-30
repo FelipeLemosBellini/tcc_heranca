@@ -1,16 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
+import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class LoginController extends BaseController {
-  final FirebaseAuthRepository firebaseAuthRepository;
+  final FirebaseAuthRepositoryInterface firebaseAuthRepository;
 
   LoginController({required this.firebaseAuthRepository});
-
-  String messageError = "";
 
   Future<bool> login(String email, String password) async {
     setLoading(true);

@@ -53,5 +53,5 @@ class FirebaseAuthRepository implements FirebaseAuthRepositoryInterface {
   }
 
   @override
-  Future<void> logout() => firebaseAuth.signOut();
+  Future<void> signOut() => firebaseAuth.signOut();
 }
