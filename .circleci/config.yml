@@ -31,14 +31,11 @@ jobs:
 
       - flutter/install_sdk_and_pub:
           version: 3.29.2
+          cache-version: v2
 
       - run:
           name: Flutter doctor
           command: flutter doctor -v
-
-      - run:
-          name: license
-          command: flutter doctor --android-licenses
 
       - run:
           name: Build Android using Flutter
