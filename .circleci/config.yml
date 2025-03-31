@@ -8,8 +8,10 @@ orbs:
 
 executors:
   android-executor:
-    machine:
-      image: ubuntu-22.04  # Atualize para a versão correta
+    name: android/android-machine
+    resource-class: medium
+    tag: 2021.10.1
+
     environment:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
