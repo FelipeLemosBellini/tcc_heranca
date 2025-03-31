@@ -56,19 +56,19 @@ abstract class RouterApp {
           GoRoute(
             path: materialDesign,
             pageBuilder: (context, state) {
-              return customTransitionPage(MaterialDesignView());
+              return customTransitionPage(MaterialDesignView(), state);
             },
           ),
           GoRoute(
             path: forgotPassword,
             pageBuilder: (context, state) {
-              return customTransitionPage(ForgotPasswordView());
+              return customTransitionPage(ForgotPasswordView(), state);
             },
           ),
           GoRoute(
             path: createAccount,
             pageBuilder: (context, state) {
-              return customTransitionPage(CreateAccountView());
+              return customTransitionPage(CreateAccountView(), state);
             },
           ),
           GoRoute(
@@ -80,25 +80,25 @@ abstract class RouterApp {
           GoRoute(
             path: amountStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(AmountStepView());
+              return customTransitionPage(AmountStepView(), state);
             },
           ),
           GoRoute(
             path: addressStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(AddressStepView());
+              return customTransitionPage(AddressStepView(), state);
             },
           ),
           GoRoute(
             path: proofOfLifeStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(ProveOfLifeStepView());
+              return customTransitionPage(ProveOfLifeStepView(), state);
             },
           ),
           GoRoute(
             path: summary,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(SummaryView());
+              return customTransitionPage(SummaryView(), state);
             },
           ),
           GoRoute(
@@ -106,6 +106,7 @@ abstract class RouterApp {
             pageBuilder: (BuildContext context, GoRouterState state) {
               return customTransitionPage(
                 SeeDetailsView(testamentModel: state.extra as TestamentModel),
+                state
               );
             },
           ),
@@ -115,18 +116,20 @@ abstract class RouterApp {
   );
 }
 
-CustomTransitionPage<dynamic> customTransitionPage(Widget child) {
+CustomTransitionPage<dynamic> customTransitionPage(Widget child, GoRouterState state) {
   return CustomTransitionPage(
-    key: ValueKey(child),
+    key: ValueKey(state.uri.path), // Usa a rota atual como chave única
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      // Animação de Fade + Slide
+      // Detecta se está avançando ou voltando
+      bool isPushing = state.fullPath == state.uri.path;
+
       return SlideTransition(
         position: animation.drive(
           Tween<Offset>(
-            begin: const Offset(1, 0), // Começa da direita
+            begin: isPushing ? const Offset(1, 0) : const Offset(-1, 0), // Direita para esquerda ou esquerda para direita
             end: Offset.zero, // Vai para o centro
-          ),
+          ).chain(CurveTween(curve: Curves.easeInOut)), // Suaviza a animação
         ),
         child: child,
       );
