@@ -14,7 +14,7 @@ executors:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
 jobs:
-  deploy_android:
+  deploy_firebase_android:
     executor: android-executor
     type: build
 
@@ -44,4 +44,4 @@ workflows:
   version: 2
   deploy:
     jobs:
-      - deploy_homolog_android
+      - deploy_firebase_android
