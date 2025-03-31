@@ -8,17 +8,16 @@ orbs:
 
 executors:
   android-executor:
-    name: android/android-machine
-    resource-class: medium
-    tag: 2021.10.1
 
-    environment:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
 jobs:
   deploy_firebase_android:
-    executor: android-executor
-    type: build
+    machine:
+      image: android/android-machine:2021.10.1  # Define a imagem correta
+      resource_class: medium  # Define a classe de recursos
+
+      environment:
+        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
     steps:
       - checkout
