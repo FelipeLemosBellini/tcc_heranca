@@ -76,8 +76,8 @@ class _HomeViewState extends State<HomeView> {
                     onPressed: () {
                       context.push(RouterApp.amountStep);
                     },
-                    backgroundColor: AppColors.primary,
-                    child: Icon(Icons.add, color: AppColors.primaryLight2),
+                    backgroundColor: AppColors.primaryLight2,
+                    child: Icon(Icons.add_sharp, color: AppColors.primary),
                   )
                   : null,
           floatingActionButtonLocation:
