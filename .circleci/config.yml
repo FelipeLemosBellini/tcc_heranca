@@ -16,13 +16,10 @@ executors:
 jobs:
   deploy_homolog_android:
     executor: android-executor
+    type: build
 
     steps:
       - checkout
-
-      - run:
-          name: Flutter doctor
-          command: flutter doctor -v
 
       - run:
           name: Install Java 17
@@ -33,6 +30,10 @@ jobs:
 
       - flutter/install_sdk_and_pub:
           version: 3.29.2
+
+      - run:
+          name: Flutter doctor
+          command: flutter doctor -v
 
       - run:
           name: Build Android using Flutter
