@@ -78,27 +78,24 @@ class _AddressStepViewState extends State<AddressStepView> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            Visibility(
-                              visible: index != 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.remove_circle),
-                                onPressed: () {
-                                  setState(() {
-                                    if (addressControllers.length == 1) {
-                                      AlertHelper.showAlertSnackBar(
-                                        context: context,
-                                        alertData: AlertData(
-                                          message: 'Você deve ter pelo menos um endereço!',
-                                          errorType: ErrorType.warning,
-                                        ),
-                                      );
-                                    } else {
-                                      addressControllers.removeAt(index);
-                                      percentageControllers.removeAt(index);
-                                    }
-                                  });
-                                },
-                              ),
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle),
+                              onPressed: () {
+                                setState(() {
+                                  if (addressControllers.length == 1) {
+                                    AlertHelper.showAlertSnackBar(
+                                      context: context,
+                                      alertData: AlertData(
+                                        message: 'Você deve ter pelo menos um endereço!',
+                                        errorType: ErrorType.warning,
+                                      ),
+                                    );
+                                  } else {
+                                    addressControllers.removeAt(index);
+                                    percentageControllers.removeAt(index);
+                                  }
+                                });
+                              },
                             ),
                           ],
                         ),
