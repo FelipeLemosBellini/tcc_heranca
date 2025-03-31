@@ -27,19 +27,19 @@ jobs:
 #
       - flutter/install_sdk_and_pub:
           version: 3.29.2
-#
+
       - run:
           name: Flutter doctor
           command: flutter doctor -v
-#
-#      - run:
-#          name: Check Flutter version
-#          command: flutter --version
-#
-#      - run:
-#          name: Build Android using Flutter
-#          command: flutter build apk --release
 
+
+      - run:
+          name: Build Android using Flutter
+          command: flutter build apk --release
+
+      - store_artifacts:
+          path: build/app/outputs/flutter-apk/app-release.apk
+          destination: app-release.apk
 
 workflows:
   version: 2
