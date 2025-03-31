@@ -23,6 +23,7 @@ dependencies:
   google_fonts: 6.0.0
   device_preview: ^1.2.0
   flutter_svg: ^2.0.17
+  web3dart: ^2.0.0
 
 dev_dependencies:
   flutter_test:

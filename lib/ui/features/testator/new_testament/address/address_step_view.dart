@@ -9,6 +9,7 @@ import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
+import 'package:web3dart/credentials.dart';
 
 class AddressStepView extends StatefulWidget {
   final String amount;
@@ -146,6 +147,26 @@ class _AddressStepViewState extends State<AddressStepView> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
+                          if(addressControllers.any((element) => element.text.isEmpty) || percentageControllers.any((element) => element.text.isEmpty)) {
+                            AlertHelper.showAlertSnackBar(
+                              context: context,
+                              alertData: AlertData(
+                                message: 'Preencha todos os campos!',
+                                errorType: ErrorType.warning,
+                              ),
+                            );
+                            return;
+                          }
+                          if(isValidEthereumAddress(addressControllers.last.text) == false) {
+                            AlertHelper.showAlertSnackBar(
+                              context: context,
+                              alertData: AlertData(
+                                message: 'Endereço Ethereum inválido!',
+                                errorType: ErrorType.warning,
+                              ),
+                            );
+                            return;
+                          }
                           for (int i = 0; i < addressControllers.length; i++) {
                             String address = addressControllers[i].text.trim();
                             String percentage = percentageControllers[i].text.trim();
@@ -178,3 +199,14 @@ class _AddressStepViewState extends State<AddressStepView> {
     );
   }
 }
+
+
+bool isValidEthereumAddress(String address) {
+  try {
+    EthereumAddress.fromHex(address);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
