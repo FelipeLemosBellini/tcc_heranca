@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
+import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet_view/wallet_view.dart';
 import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
 import 'package:tcc/ui/features/testator/testator_view.dart';
@@ -16,6 +18,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  HomeController homeController = GetIt.I.get<HomeController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
@@ -40,37 +43,47 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBarHomeWidget(
-        title: _titles[_selectedIndex],
-        onTap: () {},
-        openDrawer: () {
-          scaffoldKey.currentState?.openDrawer();
-        },
-      ),
-      drawer: DrawerHomeWidget(),
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        children: _screens,
-      ),
-      bottomNavigationBar: BottomNavigationBarHomeWidget(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-      floatingActionButton:
-          _selectedIndex == 1
-              ? FloatingActionButton(
-                onPressed: () {
-                  context.push(RouterApp.amountStep);
-                },
-                backgroundColor: AppColors.primary,
-                child: Icon(Icons.add, color: AppColors.primaryLight2),
-              )
-              : null,
-      floatingActionButtonLocation:
-          _selectedIndex == 1 ? FloatingActionButtonLocation.endFloat : null,
+    return ListenableBuilder(
+      listenable: homeController,
+      builder: (context, _) {
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBarHomeWidget(
+            title: _titles[_selectedIndex],
+            onTap: () {},
+            openDrawer: () {
+              scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+          drawer: DrawerHomeWidget(
+            signOut: () {
+              homeController.signOut();
+              context.go(RouterApp.login);
+            },
+          ),
+          body: PageView(
+            physics: NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            children: _screens,
+          ),
+          bottomNavigationBar: BottomNavigationBarHomeWidget(
+            selectedIndex: _selectedIndex,
+            onItemTapped: _onItemTapped,
+          ),
+          floatingActionButton:
+              _selectedIndex == 1
+                  ? FloatingActionButton(
+                    onPressed: () {
+                      context.push(RouterApp.amountStep);
+                    },
+                    backgroundColor: AppColors.primary,
+                    child: Icon(Icons.add, color: AppColors.primaryLight2),
+                  )
+                  : null,
+          floatingActionButtonLocation:
+              _selectedIndex == 1 ? FloatingActionButtonLocation.endFloat : null,
+        );
+      },
     );
   }
 }

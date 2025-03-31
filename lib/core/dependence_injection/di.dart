@@ -33,7 +33,7 @@ abstract class DI {
       ),
     );
     getIt.registerFactory(() => LoginController(firebaseAuthRepository: FirebaseAuthRepository()));
-    getIt.registerFactory(() => HomeController());
+    getIt.registerFactory(() => HomeController(authRepository: FirebaseAuthRepository()));
     getIt.registerFactory(() => AddressStepController());
     getIt.registerFactory(() => TestatorController());
     getIt.registerFactory(() => SeeDetailsController());

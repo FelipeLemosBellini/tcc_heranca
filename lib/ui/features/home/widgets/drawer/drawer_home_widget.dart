@@ -5,7 +5,9 @@ import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'item_drawer_widget.dart' show ItemDrawerWidget;
 
 class DrawerHomeWidget extends StatefulWidget {
-  const DrawerHomeWidget({super.key});
+  final Function() signOut;
+
+  const DrawerHomeWidget({super.key, required this.signOut});
 
   @override
   State<DrawerHomeWidget> createState() => _DrawerHomeWidgetState();
@@ -64,7 +66,7 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
                 isIn: isInSettings,
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () => widget.signOut.call(),
                 child: Container(
                   padding: EdgeInsets.all(16),
                   margin: EdgeInsets.only(bottom: 8),

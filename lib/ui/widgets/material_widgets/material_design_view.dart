@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/bottom_navigation/bottom_navigation_bar_home_widget.dart';
+import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
+import 'package:tcc/ui/widgets/buttons/elevated_button_thematic_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -35,7 +37,9 @@ class _MaterialDesignViewState extends State<MaterialDesignView> {
               },
               title: "Title app bar",
             ),
-            body: Column(
+            body: ListView(
+              shrinkWrap: true,
+
               children: [
                 SizedBox(
                   height: 64,
@@ -70,18 +74,48 @@ class _MaterialDesignViewState extends State<MaterialDesignView> {
                 PillButtonWidget(onTap: controller.showWarning, text: "Show Warning"),
                 SizedBox(height: 8),
                 PillButtonWidget(onTap: controller.showSuccess, text: "Show Success"),
+
+                Row(
+                  children: [
+                    SizedBox(height: 8),
+                    ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.delete),
+                    SizedBox(height: 8),
+                    ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.send),
+                    SizedBox(height: 8),
+                    ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.edit),
+                  ],
+                ),
                 SizedBox(height: 8),
-              ],
-            ),
-            bottomSheet: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
                 ElevatedButtonWidget(text: "Elevated button", onTap: () {}),
+                SizedBox(height: 8),
                 ElevatedButtonWidget(
                   text: "Elevated button inverted",
                   onTap: () {},
                   inverterColor: true,
+                  padding: EdgeInsets.zero,
                 ),
+                SizedBox(height: 8),
+                ElevatedButtonThematicWidget(
+                  text: "text",
+                  onTap: () {},
+                  thematicEnum: ThematicButtonEnum.blue,
+                  padding: EdgeInsets.zero,
+                ),
+                SizedBox(height: 8),
+                ElevatedButtonThematicWidget(
+                  text: "text",
+                  onTap: () {},
+                  thematicEnum: ThematicButtonEnum.red,
+                  padding: EdgeInsets.zero,
+                ),
+                SizedBox(height: 8),
+                ElevatedButtonThematicWidget(
+                  text: "text",
+                  onTap: () {},
+                  thematicEnum: ThematicButtonEnum.green,
+                  padding: EdgeInsets.zero,
+                ),
+                SizedBox(height: 8),
               ],
             ),
             bottomNavigationBar: BottomNavigationBarHomeWidget(

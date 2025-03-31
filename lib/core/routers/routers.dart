@@ -72,14 +72,16 @@ abstract class RouterApp {
           ),
           GoRoute(
             path: amountStep,
-            builder: (BuildContext context, GoRouterState state) {
-              return const AmountStepView();
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return customTransitionPage(AmountStepView());
             },
           ),
           GoRoute(
             path: seeDetails,
-            builder: (BuildContext context, GoRouterState state) {
-              return SeeDetailsView(testamentModel: state.extra as TestamentModel);
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return customTransitionPage(
+                SeeDetailsView(testamentModel: state.extra as TestamentModel),
+              );
             },
           ),
         ],

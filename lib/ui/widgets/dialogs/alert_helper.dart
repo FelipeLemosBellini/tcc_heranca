@@ -29,8 +29,8 @@ abstract class AlertHelper {
     _showSnackBar(
       context: context,
       message: message,
-      background: AppColors.primaryLight5,
-      fontColor: AppColors.white,
+      background: AppColors.success2,
+      fontColor: AppColors.success,
     );
   }
 
@@ -39,7 +39,7 @@ abstract class AlertHelper {
       context: context,
       message: message,
       background: AppColors.error2,
-      fontColor: AppColors.white,
+      fontColor: AppColors.error,
     );
   }
 

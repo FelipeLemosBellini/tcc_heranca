@@ -12,5 +12,5 @@ abstract class FirebaseAuthRepositoryInterface {
 
   Future<Either<ExceptionMessage, void>> forgotPassword({required String email});
 
-  void logout();
+  void signOut();
 }
