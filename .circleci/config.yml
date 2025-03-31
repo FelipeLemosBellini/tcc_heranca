@@ -7,7 +7,7 @@ orbs:
   android: circleci/android@3.1.0
 
 jobs:
-  deploy_firebase_android:
+  deploy:
     executor:
       name: android/android-machine
       resource-class: large
@@ -46,4 +46,4 @@ workflows:
   version: 2
   deploy:
     jobs:
-      - deploy_firebase_android
+      - deploy
