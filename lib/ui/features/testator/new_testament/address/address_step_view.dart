@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/ui/features/testator/new_testament/address/address_step_controller.dart';
+import 'package:tcc/ui/features/testator/new_testament/prove_of_life/prove_of_live_step_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
@@ -62,7 +63,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                         child: Row(
                           children: [
                             Expanded(
-                              flex: 10,
+                              flex: 3,
                               child: TextFieldWidget(
                                 controller: addressControllers[index],
                                 hintText: 'Endereço',
@@ -71,7 +72,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                             ),
                             const SizedBox(width: 10),
                             Expanded(
-                              flex: 1,
+                              flex: 2,
                               child: TextFieldWidget(
                                 controller: percentageControllers[index],
                                 hintText: '%',
@@ -150,6 +151,12 @@ class _AddressStepViewState extends State<AddressStepView> {
                             String percentage = percentageControllers[i].text.trim();
                             print('Endereço: $address, Porcentagem: $percentage');
                           }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProveOfLiveStepView(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 60),

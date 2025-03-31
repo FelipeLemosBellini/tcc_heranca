@@ -20,9 +20,9 @@ void main() async {
     enabled: true,
     builder: (context) => MyApp(),
   ));
-  runApp(MyApp());
+  /*runApp(MyApp());
   // runApp(DevicePreview(
   //   enabled: true,
   //   builder: (context) => const MyApp(),
-  // ));
+  // ));*/
 }
