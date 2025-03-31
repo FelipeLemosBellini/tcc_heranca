@@ -8,8 +8,8 @@ orbs:
 
 executors:
   android-executor:
-    docker:
-      - image: circleci/flutter:3.29.2  # Atualize para a versão correta
+    machine:
+      image: ubuntu-22.04  # Atualize para a versão correta
     environment:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
@@ -22,11 +22,13 @@ jobs:
       - checkout
 
       - run:
-          name: Install Java 17
+          name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk
-            java -version
+            sudo apt update
+            sudo apt install -y openjdk-17-jdk unzip
+            curl -s https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.3-stable.tar.xz | tar -xJ -C $HOME
+            echo 'export PATH="$HOME/flutter/bin:$PATH"' >> $HOME/.bashrc
+            source $HOME/.bashrc
 
       - flutter/install_sdk_and_pub:
           version: 3.29.2
@@ -34,6 +36,10 @@ jobs:
       - run:
           name: Flutter doctor
           command: flutter doctor -v
+
+      - run:
+          name: Check Flutter version
+          command: flutter --version
 
       - run:
           name: Build Android using Flutter
