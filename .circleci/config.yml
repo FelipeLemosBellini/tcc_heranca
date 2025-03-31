@@ -8,9 +8,10 @@ orbs:
 
 jobs:
   deploy_firebase_android:
-    machine:
-      image: android/android-machine:2021.10.1  # Define a imagem correta
-      resource_class: medium  # Define a classe de recursos
+    executor:
+      name: android/android-machine
+      resource-class: medium
+      tag: 2021.10.1
 
       environment:
         JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
