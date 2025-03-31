@@ -25,6 +25,10 @@ jobs:
             sudo apt-get install -y openjdk-17-jdk
             java -version
 #
+      - run:
+          name: print java
+          command: java --version
+
       - flutter/install_sdk_and_pub:
           version: 3.29.2
 
