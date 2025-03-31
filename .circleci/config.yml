@@ -7,14 +7,13 @@ orbs:
   android: circleci/android@3.1.0
 
 jobs:
-  deploy:
-    executor:
-      name: android/android-machine
-      resource-class: large
-      tag: 2021.10.1
+  deploy_firebase_android:
+    docker:
+      - image: cimg/android:2024.01.1
+    resource_class: medium
 
-    environment:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+#    environment:
+#      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
     steps:
       - checkout
@@ -46,4 +45,4 @@ workflows:
   version: 2
   deploy:
     jobs:
-      - deploy
+      - deploy_firebase_android
