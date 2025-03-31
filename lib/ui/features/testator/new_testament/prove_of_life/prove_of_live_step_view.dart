@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/ui/features/testator/new_testament/sumary/sumary_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
 class ProveOfLiveStepView extends StatefulWidget {
@@ -73,7 +74,14 @@ class _ProveOfLiveStepViewState extends State<ProveOfLiveStepView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SumaryView(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 60),
                       backgroundColor: AppColors.primary,
