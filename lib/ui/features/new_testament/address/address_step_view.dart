@@ -109,7 +109,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                               child: TextFieldWidget(
                                 controller: addressControllers[index],
                                 hintText: 'Endereço',
-                                focusNode: focusNodes[index],
+                                focusNode: FocusNode(),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -118,7 +118,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                               child: TextFieldWidget(
                                 controller: percentageControllers[index],
                                 hintText: '%',
-                                focusNode: FocusNode(),
+                                focusNode: focusNodes[index],
                                 keyboardType: TextInputType.number,
                                 maxLines: 1,
                               ),
@@ -127,21 +127,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                             IconButton(
                               icon: const Icon(Icons.remove_circle),
                               onPressed: () {
-                                setState(() {
-                                  if (addressControllers.length == 1) {
-                                    AlertHelper.showAlertSnackBar(
-                                      context: context,
-                                      alertData: AlertData(
-                                        message: 'Você deve ter pelo menos um endereço!',
-                                        errorType: ErrorType.warning,
-                                      ),
-                                    );
-                                  } else {
-                                    addressControllers.removeAt(index);
-                                    percentageControllers.removeAt(index);
-                                    focusNodes.removeAt(index);
-                                  }
-                                });
+                                _removeField(index);
                               },
                             ),
                           ],
@@ -193,6 +179,24 @@ class _AddressStepViewState extends State<AddressStepView> {
     }
 
     context.push(RouterApp.proofOfLifeStep);
+  }
+
+  void _removeField(int index) {
+    if (addressControllers.length == 1) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: 'Você deve ter pelo menos um endereço!',
+          errorType: ErrorType.warning,
+        ),
+      );
+    } else {
+      setState(() {
+        addressControllers.removeAt(index);
+        percentageControllers.removeAt(index);
+        focusNodes.removeAt(index);
+      });
+    }
   }
 }
 
