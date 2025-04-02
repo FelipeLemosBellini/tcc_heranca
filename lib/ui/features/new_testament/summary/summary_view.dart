@@ -47,7 +47,7 @@ class _SummaryViewState extends State<SummaryView> {
           const SizedBox(height: 24),
           Text('Valor: ${testament.value} ETH', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 24),
-          Text('Frequência da Prova de Vida: ${testament.proveOfLiveRecorrence}', style: AppFonts.bodyMediumLight),
+          Text('Frequência da Prova de Vida: ${testament.proveOfLiveRecorrence.name}', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 24),
           Text('Herdeiros:', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 18),
@@ -75,7 +75,10 @@ class _SummaryViewState extends State<SummaryView> {
           ),
         ],
       ),
-      bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: () {}),
+      bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: () {
+        summaryController.saveTestament(testament);
+        Navigator.popUntil(context, ModalRoute.withName('/home'));
+      }),
     );
   }
 }

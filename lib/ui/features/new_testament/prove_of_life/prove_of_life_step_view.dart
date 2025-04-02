@@ -73,7 +73,7 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
           }
           EnumProveOfLiveRecorrence? proveOfLiveEnum = mapStringToEnum(selectedOption!);
           proveOfLiveStepController.setProveOfLiveRecorrence(proveOfLiveEnum!);
-          context.push(RouterApp.summary);
+          context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
         },
       ),
     );

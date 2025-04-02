@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/helpers/datetime_extensions.dart';
+import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
@@ -22,31 +22,15 @@ class TestatorView extends StatefulWidget {
 
 class _TestatorViewState extends State<TestatorView> {
   TestatorController testatorController = GetIt.I.get<TestatorController>();
-  final List<TestamentModel> listTestament = [
-    TestamentModel(
-      title: "Testamento de João",
-      value: 3,
-      listHeir: [
-        HeirModel(
-          address: "Maria",
-          percentage: 50,
-        ),
-        HeirModel(
-          address: "Carlos",
-          percentage: 50,
-        ),
-      ],
-      dateCreated: DateTime.now(),
-      lastProveOfLife: DateTime.now(), 
-      proveOfLiveRecorrence: EnumProveOfLiveRecorrence.TRIMESTRAL,
-    ),
-  ];
+  TestamentController testamentController = GetIt.I.get<TestamentController>();
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: testatorController,
+      listenable: testamentController,
       builder: (context, _) {
+        final listTestament = testamentController.listTestament;
+
         return ListView.builder(
           itemCount: listTestament.length,
           padding: const EdgeInsets.all(24.0),

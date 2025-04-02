@@ -187,7 +187,7 @@ class _AddressStepViewState extends State<AddressStepView> {
       heirs.add(HeirModel(address: address, percentage: int.parse(percentage)));
     }
     addressStepController.setListHeir(heirs);
-    context.push(RouterApp.proofOfLifeStep);
+    context.push(RouterApp.proofOfLifeStep, extra: widget.flowTestamentEnum);
   }
 
   void _removeField(int index) {

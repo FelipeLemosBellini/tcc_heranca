@@ -65,7 +65,7 @@ class _AmountStepViewState extends State<AmountStepView> {
           //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
           if (amount.isNotEmpty && amount != '0' && amount != '' && amount != '0.0') {
             amountStepController.setAmount(double.parse(amount));
-            context.push(RouterApp.addressStep);
+            context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
           } else {
             AlertHelper.showAlertSnackBar(
               context: context,

@@ -6,6 +6,8 @@ import 'package:tcc/core/models/testament_model.dart';
 class TestamentController extends ChangeNotifier {
   TestamentModel _testament = TestamentModel.createWithDefaultValues();
 
+  List<TestamentModel> listTestament = [];
+
   TestamentModel get testament => _testament;
 
   void setTitle(String title) {
@@ -41,6 +43,15 @@ class TestamentController extends ChangeNotifier {
   void clearTestament() {
     _testament = TestamentModel.createWithDefaultValues();
     notifyListeners();
+  }
+
+  void saveTestament(TestamentModel testament) {
+    listTestament.add(testament);
+    notifyListeners();
+  }
+
+  Future<List<TestamentModel>> getAllTestaments () async {
+    return listTestament;
   }
 
 

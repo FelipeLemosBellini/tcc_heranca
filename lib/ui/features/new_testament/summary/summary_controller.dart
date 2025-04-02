@@ -9,4 +9,8 @@ class SummaryController extends BaseController {
   TestamentModel getTestament() {
    return testamentController.testament;
   }
+
+  void saveTestament(TestamentModel testament) {
+    testamentController.saveTestament(testament);
+  }
 }
