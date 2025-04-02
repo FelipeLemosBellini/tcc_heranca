@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
@@ -35,6 +36,7 @@ class _TestatorViewState extends State<TestatorView> {
       ],
       dateCreated: DateTime.now(),
       lastProveOfLife: DateTime.now(),
+      proveOfLiveRecorrence: EnumProveOfLiveRecorrence.TRIMESTRAL,
     ),
   ];
 

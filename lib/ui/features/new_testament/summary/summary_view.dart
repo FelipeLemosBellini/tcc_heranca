@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/ui/features/new_testament/summary/summary_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -15,11 +18,15 @@ class SummaryView extends StatefulWidget {
 }
 
 class _SummaryViewState extends State<SummaryView> {
-  final List<Map<String, String>> heirs = [
-    {'address': '0x234712347123412834', 'percentage': '20'},
-    {'address': '0x823573475734534534', 'percentage': '20'},
-    {'address': '0x841234727934578389', 'percentage': '60'},
-  ];
+  late SummaryController summaryController;
+
+  @override
+  void initState() {
+    super.initState();
+    summaryController = GetIt.I.get<SummaryController>();
+  }
+
+  late TestamentModel testament = summaryController.getTestament();
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +43,14 @@ class _SummaryViewState extends State<SummaryView> {
           ProgressBarWidget(progress: 0.95),
           Text('Resumo do Testamento', style: AppFonts.bodyHeadBold),
           const SizedBox(height: 24),
-          Text('Valor: 5 ETH', style: AppFonts.bodyMediumLight),
+          Text('Valor: ${testament.value} ETH', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 24),
-          Text('Frequência da Prova de Vida: Trimestral', style: AppFonts.bodyMediumLight),
+          Text('Frequência da Prova de Vida: ${testament.proveOfLiveRecorrence}', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 24),
           Text('Herdeiros:', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 18),
           ListView.builder(
-            itemCount: heirs.length,
+            itemCount: testament.listHeir.length,
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
@@ -55,9 +62,9 @@ class _SummaryViewState extends State<SummaryView> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: Icon(Icons.person, color: AppColors.primary5),
-                  title: Text("${heirs[index]['address']}", style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5)),
+                  title: Text(testament.listHeir[index].address, style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5)),
                   subtitle: Text(
-                    "Participação: ${heirs[index]['percentage']}%",
+                    "Participação: ${testament.listHeir[index].percentage}%",
                     style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
                   ),
                 ),

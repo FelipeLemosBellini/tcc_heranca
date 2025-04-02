@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/models/testament_model.dart';
 
@@ -27,6 +28,11 @@ class TestamentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProveOfLiveRecorrence(EnumProveOfLiveRecorrence value) {
+    _testament.proveOfLiveRecorrence = value;
+    notifyListeners();
+  }
+
   void setValue(double value) {
     _testament.value = value;
     notifyListeners();
@@ -36,4 +42,6 @@ class TestamentController extends ChangeNotifier {
     _testament = TestamentModel.createWithDefaultValues();
     notifyListeners();
   }
+
+
 }

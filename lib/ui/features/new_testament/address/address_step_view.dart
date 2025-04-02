@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_controller.dart';
 import 'package:tcc/ui/features/new_testament/widgets/number_enabler_widget.dart';
@@ -169,6 +170,10 @@ class _AddressStepViewState extends State<AddressStepView> {
 
   void _next() {
     if (counterPercentage != 100) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(message: 'A soma das porcentagens deve ser igual a 100%', errorType: ErrorType.warning),
+      );
       return;
     }
     if (addressControllers.any((element) => element.text.isEmpty) ||
@@ -186,12 +191,13 @@ class _AddressStepViewState extends State<AddressStepView> {
       );
       return;
     }
+    List<HeirModel> heirs = [];
     for (int i = 0; i < addressControllers.length; i++) {
       String address = addressControllers[i].text.trim();
       String percentage = percentageControllers[i].text.trim();
-      print('Endereço: $address, Porcentagem: $percentage');
+      heirs.add(HeirModel(address: address, percentage: int.parse(percentage)));
     }
-
+    addressStepController.setListHeir(heirs);
     context.push(RouterApp.proofOfLifeStep);
   }
 }

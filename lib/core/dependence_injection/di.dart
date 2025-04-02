@@ -10,6 +10,8 @@ import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/login/login_controller.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_controller.dart';
 import 'package:tcc/ui/features/new_testament/amount/amount_step_controller.dart';
+import 'package:tcc/ui/features/new_testament/prove_of_life/prove_of_live_step_controller.dart';
+import 'package:tcc/ui/features/new_testament/summary/summary_controller.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
 import 'package:tcc/ui/features/testator/testator_controller.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_controller.dart';
@@ -38,6 +40,8 @@ abstract class DI {
     getIt.registerFactory(() => HomeController(authRepository: FirebaseAuthRepository()));
     getIt.registerFactory(() => AddressStepController());
     getIt.registerFactory(() => AmountStepController());
+    getIt.registerFactory(() => ProveOfLiveStepController());
+    getIt.registerFactory(() => SummaryController());
     getIt.registerFactory(() => TestatorController());
     getIt.registerFactory(() => SeeDetailsController());
 
