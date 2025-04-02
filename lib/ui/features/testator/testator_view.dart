@@ -21,25 +21,33 @@ class _TestatorViewState extends State<TestatorView> {
     TestamentModel(
       title: "Testamento de João",
       value: "3.5 ETH",
-      address: "0x1234...ABCD",
+      address: {
+        "0x1234...ABCD": 1,
+      },
       date: "12/03/2025",
     ),
     TestamentModel(
       title: "Testamento de Maria",
       value: "1.2 ETH",
-      address: "0x5678...EFGH",
+      address: {
+        "0x1234...ABCD": 1,
+      },
       date: "05/06/2024",
     ),
     TestamentModel(
       title: "Testamento de Carlos",
       value: "5.0 ETH",
-      address: "0x9ABC...XYZ1",
+      address: {
+        "0x1234...ABCD": 1,
+      },
       date: "20/09/2023",
     ),
     TestamentModel(
       title: "Testamento de Carlos",
       value: "5.0 ETH",
-      address: "0x9ABC...XYZ1",
+      address: {
+        "0x1234...ABCD": 1,
+      },
       date: "20/09/2023",
     ),
   ];
@@ -85,7 +93,7 @@ class _TestatorViewState extends State<TestatorView> {
                       Text("Endereço do Contrato:", style: AppFonts.labelSmallBold),
                       const SizedBox(height: 8),
                       Text(
-                        testament.address,
+                        testament.address.keys.first,
                         style: AppFonts.bodySmallRegular.copyWith(color: AppColors.primaryLight2),
                       ),
                       const SizedBox(height: 8),

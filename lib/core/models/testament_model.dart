@@ -1,8 +1,8 @@
 class TestamentModel {
-  final String title;
-  final String date;
-  final String address;
-  final String value;
+  String title;
+  String date;
+  Map<String, int> address;
+  String value;
 
   TestamentModel({
     required this.value,
