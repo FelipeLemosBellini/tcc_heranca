@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_view.dart';
+import 'package:tcc/ui/features/new_testament/amount/amount_step_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -19,6 +21,7 @@ class AmountStepView extends StatefulWidget {
 
 class _AmountStepViewState extends State<AmountStepView> {
   final TextEditingController _amountController = TextEditingController();
+  AmountStepController amountStepController = GetIt.I.get<AmountStepController>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,8 @@ class _AmountStepViewState extends State<AmountStepView> {
           String amount = _amountController.text.trim();
 
           //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
-          if (amount.isNotEmpty) {
+          if (amount.isNotEmpty && amount != '0' && amount != '0.0') {
+            amountStepController.setAmount(double.parse(amount));
             context.push(RouterApp.addressStep);
           } else {
             AlertHelper.showAlertSnackBar(
