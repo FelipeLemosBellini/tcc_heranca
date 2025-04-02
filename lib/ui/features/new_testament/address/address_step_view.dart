@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_controller.dart';
-import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/features/new_testament/widgets/number_enabler_widget.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
@@ -25,8 +25,54 @@ class _AddressStepViewState extends State<AddressStepView> {
   AddressStepController addressStepController = GetIt.I.get<AddressStepController>();
 
   // Listas para armazenar os controladores de cada linha de endereço e porcentagem
-  List<TextEditingController> addressControllers = [TextEditingController()];
-  List<TextEditingController> percentageControllers = [TextEditingController()];
+  List<TextEditingController> addressControllers = [];
+  List<TextEditingController> percentageControllers = [];
+  List<FocusNode> focusNodes = [];
+
+  int counterPercentage = 0;
+
+  void _checkAllFieldsUnfocused() {
+    int count = 0;
+
+    for (TextEditingController controller in percentageControllers) {
+      if (controller.text != '') {
+        count += int.parse(controller.text);
+      }
+    }
+    setState(() {
+      counterPercentage = count;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _addNewField();
+  }
+
+  @override
+  void dispose() {
+    for (var node in focusNodes) {
+      node.dispose();
+    }
+    for (var controller in addressControllers) {
+      controller.dispose();
+    }
+    for (var controller in percentageControllers) {
+      controller.removeListener(_checkAllFieldsUnfocused);
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addNewField() {
+    setState(() {
+      addressControllers.add(TextEditingController());
+      percentageControllers.add(TextEditingController());
+      focusNodes.add(FocusNode());
+      percentageControllers.last.addListener(_checkAllFieldsUnfocused);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +109,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                               child: TextFieldWidget(
                                 controller: addressControllers[index],
                                 hintText: 'Endereço',
-                                focusNode: FocusNode(),
+                                focusNode: focusNodes[index],
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -93,6 +139,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                                   } else {
                                     addressControllers.removeAt(index);
                                     percentageControllers.removeAt(index);
+                                    focusNodes.removeAt(index);
                                   }
                                 });
                               },
@@ -106,54 +153,46 @@ class _AddressStepViewState extends State<AddressStepView> {
                     alignment: Alignment.center,
                     child: ButtonIconWidget(
                       actionButtonEnum: ActionButtonEnum.add,
-                      onTap: () {
-                        setState(() {
-                          addressControllers.add(TextEditingController());
-                          percentageControllers.add(TextEditingController());
-                        });
-                      },
+                      onTap: () => _addNewField(),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  NumberEnablerWidget(counter: counterPercentage),
                   SizedBox(height: 100),
                 ],
               ),
-
-              bottomSheet: ElevatedButtonWidget(
-                text: "Next",
-                onTap: () {
-                  // if (addressControllers.any((element) => element.text.isEmpty) ||
-                  //     percentageControllers.any((element) => element.text.isEmpty)) {
-                  //   AlertHelper.showAlertSnackBar(
-                  //     context: context,
-                  //     alertData: AlertData(
-                  //       message: 'Preencha todos os campos!',
-                  //       errorType: ErrorType.warning,
-                  //     ),
-                  //   );
-                  //   return;
-                  // }
-                  // if (isValidEthereumAddress(addressControllers.last.text) == false) {
-                  //   AlertHelper.showAlertSnackBar(
-                  //     context: context,
-                  //     alertData: AlertData(
-                  //       message: 'Endereço Ethereum inválido!',
-                  //       errorType: ErrorType.warning,
-                  //     ),
-                  //   );
-                  //   return;
-                  // }
-                  // for (int i = 0; i < addressControllers.length; i++) {
-                  //   String address = addressControllers[i].text.trim();
-                  //   String percentage = percentageControllers[i].text.trim();
-                  //   print('Endereço: $address, Porcentagem: $percentage');
-                  // }
-
-                  context.push(RouterApp.proofOfLifeStep);
-                },
-              ),
+              bottomSheet: ElevatedButtonWidget(text: "Next", onTap: () => _next()),
             ),
           ),
     );
+  }
+
+  void _next() {
+    if (counterPercentage != 100) {
+      return;
+    }
+    if (addressControllers.any((element) => element.text.isEmpty) ||
+        percentageControllers.any((element) => element.text.isEmpty)) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(message: 'Preencha todos os campos!', errorType: ErrorType.warning),
+      );
+      return;
+    }
+    if (isValidEthereumAddress(addressControllers.last.text) == false) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(message: 'Endereço Ethereum inválido!', errorType: ErrorType.warning),
+      );
+      return;
+    }
+    for (int i = 0; i < addressControllers.length; i++) {
+      String address = addressControllers[i].text.trim();
+      String percentage = percentageControllers[i].text.trim();
+      print('Endereço: $address, Porcentagem: $percentage');
+    }
+
+    context.push(RouterApp.proofOfLifeStep);
   }
 }
 

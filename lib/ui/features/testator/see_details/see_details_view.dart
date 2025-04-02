@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
@@ -59,7 +60,12 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.delete),
-                    ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.edit),
+                    ButtonIconWidget(
+                      onTap: () {
+                        context.go(RouterApp.amountStep);
+                      },
+                      actionButtonEnum: ActionButtonEnum.edit,
+                    ),
                   ],
                 ),
               ],
