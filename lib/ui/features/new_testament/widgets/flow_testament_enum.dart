@@ -1,0 +1,1 @@
+enum FlowTestamentEnum { edit, creation }

@@ -20,6 +20,9 @@ abstract class DI {
   static final GetIt getIt = GetIt.instance;
 
   static void setDependencies() {
+    //Controller Notifier Testament
+    getIt.registerLazySingleton(() => TestamentController());
+
     //Repositories
     getIt.registerLazySingleton<FirestoreRepositoryInterface>(() => FirestoreRepository());
     getIt.registerLazySingleton<FirebaseAuthRepositoryInterface>(() => FirebaseAuthRepository());
@@ -45,7 +48,5 @@ abstract class DI {
     getIt.registerFactory(() => TestatorController());
     getIt.registerFactory(() => SeeDetailsController());
 
-    //Controller Notifier Testament
-    getIt.registerSingleton(() => TestamentController());
   }
 }

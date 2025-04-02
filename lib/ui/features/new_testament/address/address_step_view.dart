@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_controller.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/new_testament/widgets/number_enabler_widget.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -16,7 +17,9 @@ import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class AddressStepView extends StatefulWidget {
-  const AddressStepView({super.key});
+  final FlowTestamentEnum flowTestamentEnum;
+
+  const AddressStepView({super.key, required this.flowTestamentEnum});
 
   @override
   State<AddressStepView> createState() => _AddressStepViewState();
@@ -110,7 +113,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                               child: TextFieldWidget(
                                 controller: addressControllers[index],
                                 hintText: 'Endereço',
-                                focusNode: focusNodes[index],
+                                focusNode: FocusNode(),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -119,7 +122,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                               child: TextFieldWidget(
                                 controller: percentageControllers[index],
                                 hintText: '%',
-                                focusNode: FocusNode(),
+                                focusNode: focusNodes[index],
                                 keyboardType: TextInputType.number,
                                 maxLines: 1,
                               ),
@@ -128,21 +131,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                             IconButton(
                               icon: const Icon(Icons.remove_circle),
                               onPressed: () {
-                                setState(() {
-                                  if (addressControllers.length == 1) {
-                                    AlertHelper.showAlertSnackBar(
-                                      context: context,
-                                      alertData: AlertData(
-                                        message: 'Você deve ter pelo menos um endereço!',
-                                        errorType: ErrorType.warning,
-                                      ),
-                                    );
-                                  } else {
-                                    addressControllers.removeAt(index);
-                                    percentageControllers.removeAt(index);
-                                    focusNodes.removeAt(index);
-                                  }
-                                });
+                                _removeField(index);
                               },
                             ),
                           ],
@@ -199,6 +188,24 @@ class _AddressStepViewState extends State<AddressStepView> {
     }
     addressStepController.setListHeir(heirs);
     context.push(RouterApp.proofOfLifeStep);
+  }
+
+  void _removeField(int index) {
+    if (addressControllers.length == 1) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: 'Você deve ter pelo menos um endereço!',
+          errorType: ErrorType.warning,
+        ),
+      );
+    } else {
+      setState(() {
+        addressControllers.removeAt(index);
+        percentageControllers.removeAt(index);
+        focusNodes.removeAt(index);
+      });
+    }
   }
 }
 

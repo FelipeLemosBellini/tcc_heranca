@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_view.dart';
 import 'package:tcc/ui/features/new_testament/amount/amount_step_controller.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -13,7 +15,9 @@ import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class AmountStepView extends StatefulWidget {
-  const AmountStepView({super.key});
+  final FlowTestamentEnum flowTestamentEnum;
+
+  const AmountStepView({super.key, required this.flowTestamentEnum});
 
   @override
   State<AmountStepView> createState() => _AmountStepViewState();
@@ -27,7 +31,10 @@ class _AmountStepViewState extends State<AmountStepView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSimpleWidget(
-        title: "Novo testamento",
+        title:
+            widget.flowTestamentEnum == FlowTestamentEnum.creation
+                ? "Novo testamento"
+                : "Edite o testamento",
         onTap: () {
           context.pop();
         },
@@ -56,7 +63,7 @@ class _AmountStepViewState extends State<AmountStepView> {
           String amount = _amountController.text.trim();
 
           //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
-          if (amount.isNotEmpty && amount != '0' && amount != '0.0') {
+          if (amount.isNotEmpty && amount != '0' && amount != '' && amount != '0.0') {
             amountStepController.setAmount(double.parse(amount));
             context.push(RouterApp.addressStep);
           } else {

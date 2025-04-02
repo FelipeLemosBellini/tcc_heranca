@@ -9,6 +9,7 @@ import 'package:tcc/ui/features/new_testament/address/address_step_view.dart';
 import 'package:tcc/ui/features/new_testament/amount/amount_step_view.dart';
 import 'package:tcc/ui/features/new_testament/prove_of_life/prove_of_life_step_view.dart';
 import 'package:tcc/ui/features/new_testament/summary/summary_view.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_view.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_view.dart';
 
@@ -23,7 +24,6 @@ abstract class RouterApp {
   static const String addressStep = "/addressStep";
   static const String proofOfLifeStep = "/proofOfLifeStep";
   static const String summary = "/summary";
-
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
@@ -80,25 +80,37 @@ abstract class RouterApp {
           GoRoute(
             path: amountStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(AmountStepView(), state);
+              return customTransitionPage(
+                AmountStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+                state,
+              );
             },
           ),
           GoRoute(
             path: addressStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(AddressStepView(), state);
+              return customTransitionPage(
+                AddressStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+                state,
+              );
             },
           ),
           GoRoute(
             path: proofOfLifeStep,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(ProveOfLifeStepView(), state);
+              return customTransitionPage(
+                ProveOfLifeStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+                state,
+              );
             },
           ),
           GoRoute(
             path: summary,
             pageBuilder: (BuildContext context, GoRouterState state) {
-              return customTransitionPage(SummaryView(), state);
+              return customTransitionPage(
+                SummaryView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+                state,
+              );
             },
           ),
           GoRoute(
@@ -106,7 +118,7 @@ abstract class RouterApp {
             pageBuilder: (BuildContext context, GoRouterState state) {
               return customTransitionPage(
                 SeeDetailsView(testamentModel: state.extra as TestamentModel),
-                state
+                state,
               );
             },
           ),
@@ -127,7 +139,8 @@ CustomTransitionPage<dynamic> customTransitionPage(Widget child, GoRouterState s
       return SlideTransition(
         position: animation.drive(
           Tween<Offset>(
-            begin: isPushing ? const Offset(1, 0) : const Offset(-1, 0), // Direita para esquerda ou esquerda para direita
+            begin: isPushing ? const Offset(1, 0) : const Offset(-1, 0),
+            // Direita para esquerda ou esquerda para direita
             end: Offset.zero, // Vai para o centro
           ).chain(CurveTween(curve: Curves.easeInOut)), // Suaviza a animação
         ),

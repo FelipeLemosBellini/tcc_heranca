@@ -23,6 +23,7 @@ abstract class AppColors {
   //errorColor
   static Color error = const Color(0xffad0423);
   static Color error2 = const Color(0xffffacb9);
+  static Color error3 = const Color(0xfffa546d);
 
   //warningColor
   static Color warning = const Color(0xFFffc400);
