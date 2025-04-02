@@ -77,6 +77,7 @@ class _SummaryViewState extends State<SummaryView> {
       ),
       bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: () {
         summaryController.saveTestament(testament);
+        summaryController.testamentController.clearTestament();
         Navigator.popUntil(context, ModalRoute.withName('/home'));
       }),
     );

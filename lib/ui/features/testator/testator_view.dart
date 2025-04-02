@@ -24,91 +24,116 @@ class _TestatorViewState extends State<TestatorView> {
   TestatorController testatorController = GetIt.I.get<TestatorController>();
   TestamentController testamentController = GetIt.I.get<TestamentController>();
 
+  late Future<List<TestamentModel>> listTestament;
+
+  @override
+  void initState() {
+    super.initState();
+    listTestament = testamentController.getAllTestaments();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: testamentController,
       builder: (context, _) {
-        final listTestament = testamentController.listTestament;
+        return FutureBuilder<List<TestamentModel>>(
+          future: listTestament,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-        return ListView.builder(
-          itemCount: listTestament.length,
-          padding: const EdgeInsets.all(24.0),
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            final testament = listTestament[index];
-            return Padding(
-              padding: EdgeInsets.only(bottom: listTestament.length - 1 == index ? 64 : 16),
-              child: Card(
-                color: AppColors.primary6,
-                shadowColor: AppColors.primaryLight5,
-                elevation: 8,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Text(testament.title, style: AppFonts.bodyLargeBold),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Criado em: ${testament.dateCreated.dateFormatted}",
-                        style: AppFonts.labelSmallLight.copyWith(color: AppColors.primaryLight2),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Prova de vida: ${testament.lastProveOfLife.dateFormatted}",
-                        style: AppFonts.labelSmallBold.copyWith(color: AppColors.error2),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Divider(color: AppColors.white),
-                      ),
-                      Text("Endereço do Contrato:", style: AppFonts.labelSmallBold),
-                      const SizedBox(height: 8),
-                      ListView.builder(
+            if (snapshot.hasError) {
+              return Center(child: Text('Erro ao carregar testamentos.'));
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('Nenhum testamento encontrado.'));
+            }
+
+            final listTestament = snapshot.data!;
+
+            return ListView.builder(
+              itemCount: listTestament.length,
+              padding: const EdgeInsets.all(24.0),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final testament = listTestament[index];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: listTestament.length - 1 == index ? 64 : 16),
+                  child: Card(
+                    color: AppColors.primary6,
+                    shadowColor: AppColors.primaryLight5,
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ListView(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: testament.listHeir.length,
-                        itemBuilder: (context, index) {
-                          final heir = testament.listHeir[index];
-                          return Text(
-                            heir.address,
-                            style: AppFonts.bodySmallRegular.copyWith(
-                              color: AppColors.primaryLight2,
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Valor:", style: AppFonts.labelSmallBold),
-                              const SizedBox(height: 8),
-                              Text(
-                                "${testament.value} ETH",
-                                style: AppFonts.labelMediumBold.copyWith(
+                          Text(testament.title, style: AppFonts.bodyLargeBold),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Criado em: ${testament.dateCreated.dateFormatted}",
+                            style: AppFonts.labelSmallLight.copyWith(color: AppColors.primaryLight2),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Prova de vida: ${testament.lastProveOfLife.dateFormatted}",
+                            style: AppFonts.labelSmallBold.copyWith(color: AppColors.error2),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Divider(color: AppColors.white),
+                          ),
+                          Text("Endereço do Contrato:", style: AppFonts.labelSmallBold),
+                          const SizedBox(height: 8),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: testament.listHeir.length,
+                            itemBuilder: (context, index) {
+                              final heir = testament.listHeir[index];
+                              return Text(
+                                heir.address,
+                                style: AppFonts.bodySmallRegular.copyWith(
                                   color: AppColors.primaryLight2,
                                 ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Valor:", style: AppFonts.labelSmallBold),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "${testament.value} ETH",
+                                    style: AppFonts.labelMediumBold.copyWith(
+                                      color: AppColors.primaryLight2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              PillButtonWidget(
+                                onTap: () {
+                                  context.push(RouterApp.seeDetails, extra: testament);
+                                },
+                                text: "Ver detalhes",
                               ),
                             ],
                           ),
-                          PillButtonWidget(
-                            onTap: () {
-                              context.push(RouterApp.seeDetails, extra: testament);
-                            },
-                            text: "Ver detalhes",
-                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         );
