@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testator/testator_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
+import 'package:tcc/ui/helpers/extensions.dart';
 import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 
 class TestatorView extends StatefulWidget {
@@ -20,35 +22,19 @@ class _TestatorViewState extends State<TestatorView> {
   final List<TestamentModel> listTestament = [
     TestamentModel(
       title: "Testamento de João",
-      value: "3.5 ETH",
-      address: {
-        "0x1234...ABCD": 1,
-      },
-      date: "12/03/2025",
-    ),
-    TestamentModel(
-      title: "Testamento de Maria",
-      value: "1.2 ETH",
-      address: {
-        "0x1234...ABCD": 1,
-      },
-      date: "05/06/2024",
-    ),
-    TestamentModel(
-      title: "Testamento de Carlos",
-      value: "5.0 ETH",
-      address: {
-        "0x1234...ABCD": 1,
-      },
-      date: "20/09/2023",
-    ),
-    TestamentModel(
-      title: "Testamento de Carlos",
-      value: "5.0 ETH",
-      address: {
-        "0x1234...ABCD": 1,
-      },
-      date: "20/09/2023",
+      value: 3,
+      listHeir: [
+        HeirModel(
+          address: "Maria",
+          percentage: 50,
+        ),
+        HeirModel(
+          address: "Carlos",
+          percentage: 50,
+        ),
+      ],
+      dateCreated: DateTime.now(),
+      lastProveOfLife: DateTime.now(),
     ),
   ];
 
@@ -78,12 +64,12 @@ class _TestatorViewState extends State<TestatorView> {
                       Text(testament.title, style: AppFonts.bodyLargeBold),
                       const SizedBox(height: 8),
                       Text(
-                        "Criado em: ${testament.date}",
+                        "Criado em: ${testament.dateCreated}",
                         style: AppFonts.labelSmallLight.copyWith(color: AppColors.primaryLight2),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Prova de vida: ${testament.date}",
+                        "Prova de vida: ${testament.lastProveOfLife}",
                         style: AppFonts.labelSmallBold.copyWith(color: AppColors.error2),
                       ),
                       Padding(
@@ -92,10 +78,13 @@ class _TestatorViewState extends State<TestatorView> {
                       ),
                       Text("Endereço do Contrato:", style: AppFonts.labelSmallBold),
                       const SizedBox(height: 8),
-                      Text(
-                        testament.address.keys.first,
-                        style: AppFonts.bodySmallRegular.copyWith(color: AppColors.primaryLight2),
-                      ),
+                      ListView.builder(itemBuilder: (context, index) {
+                        final heir = testament.listHeir[index];
+                        return Text(
+                          heir.address,
+                          style: AppFonts.bodySmallRegular.copyWith(color: AppColors.primaryLight2),
+                        );
+                      }),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,7 +95,7 @@ class _TestatorViewState extends State<TestatorView> {
                               Text("Valor:", style: AppFonts.labelSmallBold),
                               const SizedBox(height: 8),
                               Text(
-                                testament.value,
+                                "${testament.value} ETH",
                                 style: AppFonts.labelMediumBold.copyWith(
                                   color: AppColors.primaryLight2,
                                 ),
