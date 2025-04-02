@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/new_testament/address/address_step_controller.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/new_testament/widgets/number_enabler_widget.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -15,7 +16,9 @@ import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class AddressStepView extends StatefulWidget {
-  const AddressStepView({super.key});
+  final FlowTestamentEnum flowTestamentEnum;
+
+  const AddressStepView({super.key, required this.flowTestamentEnum});
 
   @override
   State<AddressStepView> createState() => _AddressStepViewState();

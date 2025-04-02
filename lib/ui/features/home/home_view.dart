@@ -5,6 +5,7 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet_view/wallet_view.dart';
 import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
@@ -74,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
               _selectedIndex == 1
                   ? FloatingActionButton(
                     onPressed: () {
-                      context.push(RouterApp.amountStep);
+                      context.push(RouterApp.amountStep, extra: FlowTestamentEnum.creation);
                     },
                     backgroundColor: AppColors.primaryLight2,
                     child: Icon(Icons.add_sharp, color: AppColors.primary),

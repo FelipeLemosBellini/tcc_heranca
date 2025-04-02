@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
-import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 
 class ProveOfLifeStepView extends StatefulWidget {
-  const ProveOfLifeStepView({super.key});
+  final FlowTestamentEnum flowTestamentEnum;
+
+  const ProveOfLifeStepView({super.key, required this.flowTestamentEnum});
 
   @override
   State<ProveOfLifeStepView> createState() => _ProveOfLifeStepViewState();
@@ -22,7 +24,9 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSimpleWidget(
-        title: "Novo testamento",
+        title: widget.flowTestamentEnum == FlowTestamentEnum.creation
+            ? "Novo testamento"
+            : "Edite o testamento",
         onTap: () {
           context.pop();
         },

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
-import 'package:tcc/ui/widgets/buttons/elevated_button_thematic_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 
 class SummaryView extends StatefulWidget {
-  const SummaryView({super.key});
+  final FlowTestamentEnum flowTestamentEnum;
+
+  const SummaryView({super.key, required this.flowTestamentEnum});
 
   @override
   State<SummaryView> createState() => _SummaryViewState();
@@ -25,7 +27,7 @@ class _SummaryViewState extends State<SummaryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSimpleWidget(
-        title: 'Novo Testamento',
+        title: "Resumo",
         onTap: () {
           context.pop();
         },
@@ -55,7 +57,10 @@ class _SummaryViewState extends State<SummaryView> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: Icon(Icons.person, color: AppColors.primary5),
-                  title: Text("${heirs[index]['address']}", style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5)),
+                  title: Text(
+                    "${heirs[index]['address']}",
+                    style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
+                  ),
                   subtitle: Text(
                     "Participação: ${heirs[index]['percentage']}%",
                     style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
