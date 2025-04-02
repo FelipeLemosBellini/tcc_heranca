@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/ui/features/new_testament/summary/summary_controller.dart';
 import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
@@ -8,7 +9,9 @@ import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
+import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class SummaryView extends StatefulWidget {
   final FlowTestamentEnum flowTestamentEnum;
@@ -21,6 +24,7 @@ class SummaryView extends StatefulWidget {
 
 class _SummaryViewState extends State<SummaryView> {
   late SummaryController summaryController;
+  final TextEditingController _titleController = TextEditingController();
 
   @override
   void initState() {
@@ -44,6 +48,8 @@ class _SummaryViewState extends State<SummaryView> {
         children: [
           ProgressBarWidget(progress: 0.95),
           Text('Resumo do Testamento', style: AppFonts.bodyHeadBold),
+          const SizedBox(height: 24),
+          TextFieldWidget(hintText: 'Titulo testamento', controller: _titleController, focusNode: FocusNode()),
           const SizedBox(height: 24),
           Text('Valor: ${testament.value} ETH', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 24),
@@ -76,6 +82,14 @@ class _SummaryViewState extends State<SummaryView> {
         ],
       ),
       bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: () {
+        if(_titleController.text.isEmpty) {
+          AlertHelper.showAlertSnackBar(
+              context: context,
+              alertData: AlertData(message: 'Dê um titulo ao seu novo testamento!', errorType: ErrorType.warning)
+          );
+          return;
+        }
+        summaryController.testamentController.setTitle(_titleController.text);
         summaryController.saveTestament(testament);
         summaryController.testamentController.clearTestament();
         Navigator.popUntil(context, ModalRoute.withName('/home'));
