@@ -1,3 +1,4 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
@@ -21,6 +22,9 @@ abstract class DI {
   static final GetIt getIt = GetIt.instance;
 
   static void setDependencies() {
+
+    getIt.registerLazySingleton<EventBus>(() => EventBus());
+
     //Controllers Notifiers
     getIt.registerLazySingleton(() => TestamentController());
 

@@ -1,7 +1,9 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
+import 'package:tcc/core/events/testament_created_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
@@ -22,12 +24,13 @@ class TestatorView extends StatefulWidget {
 }
 
 class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClientMixin {
-  TestatorController testatorController = GetIt.I.get<TestatorController>();
+  final TestatorController testatorController = GetIt.I.get<TestatorController>();
+  final EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    eventBus.on<TestamentCreatedEvent>().listen((event) {
       testatorController.loadingTestaments();
     });
   }

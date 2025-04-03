@@ -17,5 +17,6 @@ class TestatorController extends BaseController {
     _listTestament = await _testamentController.getAllTestaments();
     await Future.delayed(Duration(seconds: 3));
     _homeController.setLoading(false);
+    notifyListeners();
   }
 }
