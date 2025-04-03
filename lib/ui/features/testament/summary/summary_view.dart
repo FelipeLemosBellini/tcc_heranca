@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/events/testament_created_event.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/summary/summary_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
@@ -95,8 +96,8 @@ class _SummaryViewState extends State<SummaryView> {
         summaryController.testamentController.clearTestament();
         final eventBus = GetIt.I.get<EventBus>();
         eventBus.fire(TestamentCreatedEvent(testament));
-        Navigator.popUntil(context, ModalRoute.withName('/home'));
-      }),
+        context.go(RouterApp.home);
+        }),
     );
   }
 }

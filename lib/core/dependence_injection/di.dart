@@ -10,6 +10,7 @@ import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
 import 'package:tcc/ui/features/heir/heir_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
+import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/testament/address/address_step_controller.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_controller.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
@@ -54,5 +55,6 @@ abstract class DI {
     getIt.registerLazySingleton(() => HomeController(authRepository: FirebaseAuthRepository()));
     getIt.registerLazySingleton(() => TestatorController());
     getIt.registerLazySingleton(() => HeirController());
+    getIt.registerLazySingleton(() => WalletController());
   }
 }

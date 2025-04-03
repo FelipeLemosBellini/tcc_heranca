@@ -86,7 +86,7 @@ class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin 
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               child: Divider(color: AppColors.white),
                             ),
-                            Text("Endereço do Contrato:", style: AppFonts.labelSmallBold),
+                            Text("Endereço dos herdeiros:", style: AppFonts.labelSmallBold),
                             const SizedBox(height: 8),
                             ListView.builder(
                               shrinkWrap: true,

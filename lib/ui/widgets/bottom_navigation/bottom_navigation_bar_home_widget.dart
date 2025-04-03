@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tcc/ui/helpers/app_colors.dart';
 
 class BottomNavigationBarHomeWidget extends StatelessWidget {
   final int selectedIndex;
@@ -19,12 +19,20 @@ class BottomNavigationBarHomeWidget extends StatelessWidget {
       onDestinationSelected: onItemTapped,
       destinations: [
         NavigationDestination(
-          selectedIcon: Icon(Icons.home),
-          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.account_balance_wallet),
+          icon: Icon(Icons.account_balance_wallet_outlined),
           label: 'Carteira',
         ),
-        NavigationDestination(icon: Icon(Icons.assured_workload), label: 'Testador'),
-        NavigationDestination(icon: Icon(Icons.balance), label: 'Herdeiro'),
+        NavigationDestination(
+          icon: Icon(CupertinoIcons.doc_text),
+          selectedIcon: Icon(CupertinoIcons.doc_text_fill), //CupertinoIcons.doc_text_fill
+          label: 'Testador',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.person_outline),
+          selectedIcon: Icon(Icons.person),
+          label: 'Herdeiro',
+        ),
       ],
     );
   }
