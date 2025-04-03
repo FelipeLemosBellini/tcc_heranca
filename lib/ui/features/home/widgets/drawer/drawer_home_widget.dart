@@ -16,6 +16,9 @@ class DrawerHomeWidget extends StatefulWidget {
 class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
   bool isInHome = true;
   bool isInAboutUs = false;
+  bool isHistoryTransactions = false;
+  bool isDocumentation = false;
+  bool isRoadmap = false;
   bool isInSettings = false;
 
   void disableAll() {
@@ -51,11 +54,32 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
                 isIn: isInHome,
               ),
               ItemDrawerWidget(
+                title: "Transações",
+                onTap: () {},
+                iconEnable: Icons.history,
+                iconDisable: Icons.history_outlined,
+                isIn: isInAboutUs,
+              ),
+              ItemDrawerWidget(
                 title: "Sobre nós",
                 onTap: () {},
                 iconEnable: Icons.people,
                 iconDisable: Icons.people_alt_outlined,
-                isIn: isInAboutUs,
+                isIn: isHistoryTransactions,
+              ),
+              ItemDrawerWidget(
+                title: "Documentação",
+                onTap: () {},
+                iconEnable: Icons.menu_book,
+                iconDisable: Icons.menu_book_outlined,
+                isIn: isDocumentation,
+              ),
+              ItemDrawerWidget(
+                title: "Roadmap",
+                onTap: () {},
+                iconEnable: Icons.rocket_launch,
+                iconDisable: Icons.rocket_launch_outlined,
+                isIn: isRoadmap,
               ),
               const Spacer(),
               ItemDrawerWidget(
