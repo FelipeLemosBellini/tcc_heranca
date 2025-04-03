@@ -15,7 +15,7 @@ class HeirController extends BaseController {
   void testamentImInserted() async {
     _homeController.setLoading(true);
     _listTestament = await _testamentController.getAllTestaments();
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 1));
     _homeController.setLoading(false);
   }
 }
