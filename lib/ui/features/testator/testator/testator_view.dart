@@ -30,6 +30,7 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
   @override
   void initState() {
     super.initState();
+    testatorController.loadingTestaments();
     eventBus.on<TestamentCreatedEvent>().listen((event) {
       testatorController.loadingTestaments();
     });
