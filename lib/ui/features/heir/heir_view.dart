@@ -1,67 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
-import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
-import 'package:tcc/core/models/heir_model.dart';
-import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
-import 'package:tcc/ui/features/testator/testator_controller.dart';
+import 'package:tcc/ui/features/heir/heir_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
-import 'package:tcc/ui/helpers/extensions.dart';
 import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
+import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 
-class TestatorView extends StatefulWidget {
-  const TestatorView({super.key});
+class HeirView extends StatefulWidget {
+  const HeirView({super.key});
 
   @override
-  State<TestatorView> createState() => _TestatorViewState();
+  State<HeirView> createState() => _HeirViewState();
 }
 
-class _TestatorViewState extends State<TestatorView> {
-  TestatorController testatorController = GetIt.I.get<TestatorController>();
-  TestamentController testamentController = GetIt.I.get<TestamentController>();
-
-  late Future<List<TestamentModel>> listTestament;
+class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin {
+  HeirController heirController = GetIt.I.get<HeirController>();
 
   @override
   void initState() {
     super.initState();
-    listTestament = testamentController.getAllTestaments();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      heirController.testamentImInserted();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListenableBuilder(
-      listenable: testamentController,
+      listenable: heirController,
       builder: (context, _) {
-        return FutureBuilder<List<TestamentModel>>(
-          future: listTestament,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Erro ao carregar testamentos.'));
-            }
-
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('Nenhum testamento encontrado.'));
-            }
-
-            final listTestament = snapshot.data!;
-
-            return ListView.builder(
-              itemCount: listTestament.length,
+        return LoadingAndAlertOverlayWidget(
+          isLoading: heirController.isLoading,
+          alertData: heirController.alertData,
+          child: Visibility(
+            visible: heirController.listTestament.isNotEmpty,
+            replacement: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.description_outlined, size: 40, color: AppColors.primaryLight3),
+                SizedBox(height: 8),
+                Text('Você não está em nenhum testamento.', style: AppFonts.labelLargeMedium),
+              ],
+            ),
+            child: ListView.builder(
               padding: const EdgeInsets.all(24.0),
               shrinkWrap: true,
+              itemCount: heirController.listTestament.length,
               itemBuilder: (context, index) {
-                final testament = listTestament[index];
+                final testament = heirController.listTestament[index];
                 return Padding(
-                  padding: EdgeInsets.only(bottom: listTestament.length - 1 == index ? 64 : 16),
+                  padding: EdgeInsets.only(
+                    bottom: heirController.listTestament.length - 1 == index ? 64 : 16,
+                  ),
                   child: Card(
                     color: AppColors.primary6,
                     shadowColor: AppColors.primaryLight5,
@@ -122,7 +117,7 @@ class _TestatorViewState extends State<TestatorView> {
                               ),
                               PillButtonWidget(
                                 onTap: () {
-                                  context.push(RouterApp.seeDetails, extra: testament);
+                                  // context.push(RouterApp.seeDetails, extra: testament);
                                 },
                                 text: "Ver detalhes",
                               ),
@@ -134,10 +129,13 @@ class _TestatorViewState extends State<TestatorView> {
                   ),
                 );
               },
-            );
-          },
+            ),
+          ),
         );
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

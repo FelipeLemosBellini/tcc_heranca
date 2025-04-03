@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
-import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
+import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';

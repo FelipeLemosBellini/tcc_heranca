@@ -17,6 +17,7 @@ class BaseController extends ChangeNotifier {
 
   void setMessage(AlertData alertData) {
     _alertData = alertData;
+
     notifyListeners();
     Future.delayed(const Duration(milliseconds: 100), () => _cleanError());
   }

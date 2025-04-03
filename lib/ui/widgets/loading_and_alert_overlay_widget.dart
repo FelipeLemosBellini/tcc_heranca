@@ -25,7 +25,7 @@ class LoadingAndAlertOverlayWidget extends StatelessWidget {
 
     return Stack(
       children: [
-        child,
+        Align(alignment: Alignment.center, child: child),
         Visibility(
           visible: isLoading,
           child: Container(

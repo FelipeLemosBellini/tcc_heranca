@@ -11,7 +11,7 @@ class WalletView extends StatefulWidget {
   State<WalletView> createState() => _WalletViewState();
 }
 
-class _WalletViewState extends State<WalletView> {
+class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMixin {
   final String addressUser = "0x1234...ABCD";
 
   final double balanceETH = 2.345;
@@ -37,6 +37,7 @@ class _WalletViewState extends State<WalletView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView(
       shrinkWrap: true,
       children: [
@@ -71,4 +72,7 @@ class _WalletViewState extends State<WalletView> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

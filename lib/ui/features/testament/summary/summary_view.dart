@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
-import 'package:tcc/ui/features/new_testament/summary/summary_controller.dart';
-import 'package:tcc/ui/features/new_testament/widgets/flow_testament_enum.dart';
+import 'package:tcc/ui/features/testament/summary/summary_controller.dart';
+import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
