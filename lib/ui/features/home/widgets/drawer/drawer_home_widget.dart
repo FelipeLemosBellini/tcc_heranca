@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 
 import 'item_drawer_widget.dart' show ItemDrawerWidget;
 
 class DrawerHomeWidget extends StatefulWidget {
-  final Function() signOut;
+  final Function()? signOut;
+  final Function()? openHome;
+  final Function()? openAboutUs;
+  final bool isHome;
+  final bool isAboutUs;
 
-  const DrawerHomeWidget({super.key, required this.signOut});
+  const DrawerHomeWidget({
+    super.key,
+    required this.signOut,
+    this.openHome,
+    this.openAboutUs,
+    this.isHome = false,
+    this.isAboutUs = false,
+  });
 
   @override
   State<DrawerHomeWidget> createState() => _DrawerHomeWidgetState();
 }
 
 class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
-  bool isInHome = true;
-  bool isInAboutUs = false;
   bool isHistoryTransactions = false;
   bool isDocumentation = false;
   bool isRoadmap = false;
   bool isInSettings = false;
-
-  void disableAll() {
-    setState(() {
-      isInHome = false;
-      isInAboutUs = false;
-      isInSettings = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +50,25 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
               SizedBox(height: 16),
               ItemDrawerWidget(
                 title: "Home",
-                onTap: () {},
+                onTap: () {
+                  if (!widget.isHome) widget.openHome?.call();
+                },
                 iconEnable: Icons.home,
                 iconDisable: Icons.home_outlined,
-                isIn: isInHome,
+                isIn: widget.isHome,
               ),
               ItemDrawerWidget(
                 title: "Transações",
                 onTap: () {},
                 iconEnable: Icons.history,
                 iconDisable: Icons.history_outlined,
-                isIn: isInAboutUs,
+                isIn: isHistoryTransactions,
               ),
               ItemDrawerWidget(
                 title: "Sobre nós",
-                onTap: () {},
+                onTap: () {
+                  if (!widget.isAboutUs) widget.openAboutUs?.call();
+                },
                 iconEnable: Icons.people,
                 iconDisable: Icons.people_alt_outlined,
                 isIn: isHistoryTransactions,
@@ -90,7 +96,7 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
                 isIn: isInSettings,
               ),
               GestureDetector(
-                onTap: () => widget.signOut.call(),
+                onTap: () => widget.signOut?.call(),
                 child: Container(
                   padding: EdgeInsets.all(16),
                   margin: EdgeInsets.only(bottom: 8),

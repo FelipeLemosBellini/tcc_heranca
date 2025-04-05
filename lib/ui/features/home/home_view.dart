@@ -9,7 +9,7 @@ import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
-import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
+import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
 import 'package:tcc/ui/widgets/bottom_navigation/bottom_navigation_bar_home_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 
@@ -64,14 +64,15 @@ class _HomeViewState extends State<HomeView> {
       alertData: homeController.alertData,
       child: Scaffold(
         key: scaffoldKey,
-        appBar: AppBarHomeWidget(
+        appBar: AppBarDrawerWidget(
           title: _titles[_selectedIndex],
-          onTap: () {},
           openDrawer: () {
             scaffoldKey.currentState?.openDrawer();
           },
         ),
         drawer: DrawerHomeWidget(
+          openAboutUs: () => context.go(RouterApp.aboutUs),
+          isHome: true,
           signOut: () {
             homeController.signOut();
             context.go(RouterApp.login);

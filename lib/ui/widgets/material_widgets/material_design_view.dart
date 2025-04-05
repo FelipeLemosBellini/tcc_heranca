@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/ui/widgets/app_bars/app_bar_home_widget.dart';
+import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/bottom_navigation/bottom_navigation_bar_home_widget.dart';
 import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
@@ -39,13 +39,11 @@ class _MaterialDesignViewState extends State<MaterialDesignView> {
             ),
             body: ListView(
               shrinkWrap: true,
-
               children: [
                 SizedBox(
                   height: 64,
-                  child: AppBarHomeWidget(
+                  child: AppBarDrawerWidget(
                     title: "title",
-                    onTap: () => context.pop(),
                     openDrawer: () => Scaffold.of(context).openDrawer(),
                   ),
                 ),

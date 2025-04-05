@@ -24,6 +24,7 @@ abstract class RouterApp {
   static const String seeDetails = "/seeDetails";
 
   static const String home = "/home";
+  static const String aboutUs = "/aboutUs";
 
   static final GoRouter router = GoRouter(
     // redirect: (BuildContext context, GoRouterState state) async {
