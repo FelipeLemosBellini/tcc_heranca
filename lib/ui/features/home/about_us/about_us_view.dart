@@ -19,6 +19,7 @@ class _AboutUsViewState extends State<AboutUsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBarDrawerWidget(
         title: "Sobre",
         openDrawer: () {
@@ -26,7 +27,6 @@ class _AboutUsViewState extends State<AboutUsView> {
         },
       ),
       drawer: DrawerHomeWidget(
-        openAboutUs: () => context.go(RouterApp.aboutUs),
         isAboutUs: true,
         openHome: () {
           context.go(RouterApp.home);

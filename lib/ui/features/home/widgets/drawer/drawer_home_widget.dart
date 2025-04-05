@@ -71,7 +71,7 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
                 },
                 iconEnable: Icons.people,
                 iconDisable: Icons.people_alt_outlined,
-                isIn: isHistoryTransactions,
+                isIn: widget.isAboutUs,
               ),
               ItemDrawerWidget(
                 title: "Documentação",
