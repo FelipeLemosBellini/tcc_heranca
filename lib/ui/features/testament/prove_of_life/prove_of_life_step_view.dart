@@ -22,16 +22,23 @@ class ProveOfLifeStepView extends StatefulWidget {
 
 class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
   ProveOfLiveStepController proveOfLiveStepController = GetIt.I.get<ProveOfLiveStepController>();
-  String? selectedOption;
+
   final List<String> options = ['Trimestral', 'Semestral', 'Anual'];
+
+  @override
+  void initState() {
+    proveOfLiveStepController.initController(widget.flowTestamentEnum);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSimpleWidget(
-        title: widget.flowTestamentEnum == FlowTestamentEnum.creation
-            ? "Novo testamento"
-            : "Edite o testamento",
+        title:
+            widget.flowTestamentEnum == FlowTestamentEnum.creation
+                ? "Novo testamento"
+                : "Edite o testamento",
         onTap: () {
           context.pop();
         },
@@ -45,7 +52,7 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
             Text('Prova de Vida', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
             DropdownButton<String>(
-              value: selectedOption,
+              value: proveOfLiveStepController.selectedOption,
               hint: const Text('Selecione a frequência'),
               style: AppFonts.bodyMediumMedium,
               isExpanded: true,
@@ -56,7 +63,7 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
                   }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  selectedOption = newValue;
+                  proveOfLiveStepController.selectedOption = newValue;
                 });
               },
             ),
@@ -66,11 +73,16 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
       bottomSheet: ElevatedButtonWidget(
         text: "Next",
         onTap: () {
-          if(selectedOption == null) {
-            AlertHelper.showAlertSnackBar(context: context, alertData: AlertData(message: 'Selecione uma opção!', errorType: ErrorType.warning),);
+          if (proveOfLiveStepController.selectedOption == null) {
+            AlertHelper.showAlertSnackBar(
+              context: context,
+              alertData: AlertData(message: 'Selecione uma opção!', errorType: ErrorType.warning),
+            );
             return;
           }
-          EnumProveOfLiveRecorrence? proveOfLiveEnum = mapStringToEnum(selectedOption!);
+          EnumProveOfLiveRecorrence? proveOfLiveEnum = mapStringToEnum(
+            proveOfLiveStepController.selectedOption!,
+          );
           proveOfLiveStepController.setProveOfLiveRecorrence(proveOfLiveEnum!);
           context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
         },

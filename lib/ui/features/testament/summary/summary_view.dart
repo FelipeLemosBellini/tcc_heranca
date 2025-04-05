@@ -25,16 +25,13 @@ class SummaryView extends StatefulWidget {
 }
 
 class _SummaryViewState extends State<SummaryView> {
-  late SummaryController summaryController;
-  final TextEditingController _titleController = TextEditingController();
+  SummaryController summaryController = GetIt.I.get<SummaryController>();
 
   @override
   void initState() {
+    summaryController.initController(widget.flowTestamentEnum);
     super.initState();
-    summaryController = GetIt.I.get<SummaryController>();
   }
-
-  late TestamentModel testament = summaryController.getTestament();
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +48,26 @@ class _SummaryViewState extends State<SummaryView> {
           ProgressBarWidget(progress: 0.95),
           Text('Resumo do Testamento', style: AppFonts.bodyHeadBold),
           const SizedBox(height: 24),
-          TextFieldWidget(hintText: 'Titulo testamento', controller: _titleController, focusNode: FocusNode()),
+          TextFieldWidget(
+            hintText: 'Titulo testamento',
+            controller: summaryController.titleController,
+            focusNode: FocusNode(),
+          ),
           const SizedBox(height: 24),
-          Text('Valor: ${testament.value} ETH', style: AppFonts.bodyMediumLight),
+          Text(
+            'Valor: ${summaryController.testamentModel.value} ETH',
+            style: AppFonts.bodyMediumLight,
+          ),
           const SizedBox(height: 24),
-          Text('Frequência da Prova de Vida: ${testament.proveOfLiveRecorrence.name}', style: AppFonts.bodyMediumLight),
+          Text(
+            'Frequência da Prova de Vida: ${summaryController.testamentModel.proveOfLiveRecorrence.name}',
+            style: AppFonts.bodyMediumLight,
+          ),
           const SizedBox(height: 24),
           Text('Herdeiros:', style: AppFonts.bodyMediumLight),
           const SizedBox(height: 18),
           ListView.builder(
-            itemCount: testament.listHeir.length,
+            itemCount: summaryController.testamentModel.listHeir.length,
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
@@ -72,9 +79,12 @@ class _SummaryViewState extends State<SummaryView> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   leading: Icon(Icons.person, color: AppColors.primary5),
-                  title: Text(testament.listHeir[index].address, style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5)),
+                  title: Text(
+                    summaryController.testamentModel.listHeir[index].address,
+                    style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
+                  ),
                   subtitle: Text(
-                    "Participação: ${testament.listHeir[index].percentage}%",
+                    "Participação: ${summaryController.testamentModel.listHeir[index].percentage}%",
                     style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
                   ),
                 ),
@@ -83,21 +93,25 @@ class _SummaryViewState extends State<SummaryView> {
           ),
         ],
       ),
-      bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: () {
-        if(_titleController.text.isEmpty) {
-          AlertHelper.showAlertSnackBar(
-              context: context,
-              alertData: AlertData(message: 'Dê um titulo ao seu novo testamento!', errorType: ErrorType.warning)
-          );
-          return;
-        }
-        summaryController.testamentController.setTitle(_titleController.text);
-        summaryController.saveTestament(testament);
-        summaryController.testamentController.clearTestament();
-        final eventBus = GetIt.I.get<EventBus>();
-        eventBus.fire(TestamentCreatedEvent(testament));
-        context.go(RouterApp.home);
-        }),
+      bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: finishTestament),
     );
+  }
+
+  void finishTestament() {
+    if (summaryController.titleController.text.isEmpty) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: 'Dê um titulo ao seu novo testamento!',
+          errorType: ErrorType.warning,
+        ),
+      );
+      return;
+    }
+    summaryController.saveTestament(widget.flowTestamentEnum);
+    summaryController.clearTestament();
+    EventBus eventBus = GetIt.I.get<EventBus>();
+    eventBus.fire(TestamentCreatedEvent(summaryController.testamentModel));
+    context.go(RouterApp.home);
   }
 }

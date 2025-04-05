@@ -63,6 +63,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                     ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.delete),
                     ButtonIconWidget(
                       onTap: () {
+                        seeDetailsController.setCurrentTestament(widget.testamentModel);
                         context.go(RouterApp.amountStep, extra: FlowTestamentEnum.edit);
                       },
                       actionButtonEnum: ActionButtonEnum.edit,

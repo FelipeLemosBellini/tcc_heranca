@@ -28,54 +28,25 @@ class AddressStepView extends StatefulWidget {
 class _AddressStepViewState extends State<AddressStepView> {
   AddressStepController addressStepController = GetIt.I.get<AddressStepController>();
 
-  // Listas para armazenar os controladores de cada linha de endereço e porcentagem
-  List<TextEditingController> addressControllers = [];
-  List<TextEditingController> percentageControllers = [];
-  List<FocusNode> focusNodes = [];
-
-  int counterPercentage = 0;
-
-  void _checkAllFieldsUnfocused() {
-    int count = 0;
-
-    for (TextEditingController controller in percentageControllers) {
-      if (controller.text != '') {
-        count += int.parse(controller.text);
-      }
-    }
-    setState(() {
-      counterPercentage = count;
-    });
-  }
-
   @override
   void initState() {
+    addressStepController.initController(widget.flowTestamentEnum);
     super.initState();
-    _addNewField();
   }
 
   @override
   void dispose() {
-    for (var node in focusNodes) {
+    for (var node in addressStepController.focusNodes) {
       node.dispose();
     }
-    for (var controller in addressControllers) {
+    for (var controller in addressStepController.addressControllers) {
       controller.dispose();
     }
-    for (var controller in percentageControllers) {
-      controller.removeListener(_checkAllFieldsUnfocused);
+    for (var controller in addressStepController.percentageControllers) {
+      controller.removeListener(addressStepController.checkAllFieldsUnfocused);
       controller.dispose();
     }
     super.dispose();
-  }
-
-  void _addNewField() {
-    setState(() {
-      addressControllers.add(TextEditingController());
-      percentageControllers.add(TextEditingController());
-      focusNodes.add(FocusNode());
-      percentageControllers.last.addListener(_checkAllFieldsUnfocused);
-    });
   }
 
   @override
@@ -88,7 +59,10 @@ class _AddressStepViewState extends State<AddressStepView> {
             alertData: addressStepController.alertData,
             child: Scaffold(
               appBar: AppBarSimpleWidget(
-                title: "Novo testamento",
+                title:
+                    widget.flowTestamentEnum == FlowTestamentEnum.creation
+                        ? "Novo testamento"
+                        : "Edite o testamento",
                 onTap: () {
                   context.pop();
                 },
@@ -102,7 +76,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: addressControllers.length,
+                    itemCount: addressStepController.addressControllers.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
@@ -111,7 +85,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                             Expanded(
                               flex: 3,
                               child: TextFieldWidget(
-                                controller: addressControllers[index],
+                                controller: addressStepController.addressControllers[index],
                                 hintText: 'Endereço',
                                 focusNode: FocusNode(),
                               ),
@@ -120,9 +94,9 @@ class _AddressStepViewState extends State<AddressStepView> {
                             Expanded(
                               flex: 2,
                               child: TextFieldWidget(
-                                controller: percentageControllers[index],
+                                controller: addressStepController.percentageControllers[index],
                                 hintText: '%',
-                                focusNode: focusNodes[index],
+                                focusNode: addressStepController.focusNodes[index],
                                 keyboardType: TextInputType.number,
                                 maxLines: 1,
                               ),
@@ -143,11 +117,11 @@ class _AddressStepViewState extends State<AddressStepView> {
                     alignment: Alignment.center,
                     child: ButtonIconWidget(
                       actionButtonEnum: ActionButtonEnum.add,
-                      onTap: () => _addNewField(),
+                      onTap: () => addressStepController.addNewField(),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  NumberEnablerWidget(counter: counterPercentage),
+                  NumberEnablerWidget(counter: addressStepController.counterPercentage),
                   SizedBox(height: 100),
                 ],
               ),
@@ -157,41 +131,8 @@ class _AddressStepViewState extends State<AddressStepView> {
     );
   }
 
-  void _next() {
-    if (counterPercentage != 100) {
-      AlertHelper.showAlertSnackBar(
-        context: context,
-        alertData: AlertData(message: 'A soma das porcentagens deve ser igual a 100%', errorType: ErrorType.warning),
-      );
-      return;
-    }
-    if (addressControllers.any((element) => element.text.isEmpty) ||
-        percentageControllers.any((element) => element.text.isEmpty)) {
-      AlertHelper.showAlertSnackBar(
-        context: context,
-        alertData: AlertData(message: 'Preencha todos os campos!', errorType: ErrorType.warning),
-      );
-      return;
-    }
-    if (isValidEthereumAddress(addressControllers.last.text) == false) {
-      AlertHelper.showAlertSnackBar(
-        context: context,
-        alertData: AlertData(message: 'Endereço Ethereum inválido!', errorType: ErrorType.warning),
-      );
-      return;
-    }
-    List<HeirModel> heirs = [];
-    for (int i = 0; i < addressControllers.length; i++) {
-      String address = addressControllers[i].text.trim();
-      String percentage = percentageControllers[i].text.trim();
-      heirs.add(HeirModel(address: address, percentage: int.parse(percentage)));
-    }
-    addressStepController.setListHeir(heirs);
-    context.push(RouterApp.proofOfLifeStep, extra: widget.flowTestamentEnum);
-  }
-
   void _removeField(int index) {
-    if (addressControllers.length == 1) {
+    if (addressStepController.addressControllers.length == 1) {
       AlertHelper.showAlertSnackBar(
         context: context,
         alertData: AlertData(
@@ -200,12 +141,44 @@ class _AddressStepViewState extends State<AddressStepView> {
         ),
       );
     } else {
-      setState(() {
-        addressControllers.removeAt(index);
-        percentageControllers.removeAt(index);
-        focusNodes.removeAt(index);
-      });
+      addressStepController.removeField(index);
     }
+  }
+
+  void _next() {
+    if (addressStepController.counterPercentage != 100) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: 'A soma das porcentagens deve ser igual a 100%',
+          errorType: ErrorType.warning,
+        ),
+      );
+      return;
+    }
+    if (addressStepController.addressControllers.any((element) => element.text.isEmpty) ||
+        addressStepController.percentageControllers.any((element) => element.text.isEmpty)) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(message: 'Preencha todos os campos!', errorType: ErrorType.warning),
+      );
+      return;
+    }
+    if (isValidEthereumAddress(addressStepController.addressControllers.last.text) == false) {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(message: 'Endereço Ethereum inválido!', errorType: ErrorType.warning),
+      );
+      return;
+    }
+    List<HeirModel> heirs = [];
+    for (int i = 0; i < addressStepController.addressControllers.length; i++) {
+      String address = addressStepController.addressControllers[i].text.trim();
+      String percentage = addressStepController.percentageControllers[i].text.trim();
+      heirs.add(HeirModel(address: address, percentage: int.parse(percentage)));
+    }
+    addressStepController.setListHeir(heirs);
+    context.push(RouterApp.proofOfLifeStep, extra: widget.flowTestamentEnum);
   }
 }
 

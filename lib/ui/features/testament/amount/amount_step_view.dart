@@ -21,8 +21,13 @@ class AmountStepView extends StatefulWidget {
 }
 
 class _AmountStepViewState extends State<AmountStepView> {
-  final TextEditingController _amountController = TextEditingController();
   AmountStepController amountStepController = GetIt.I.get<AmountStepController>();
+
+  @override
+  void initState() {
+    super.initState();
+    amountStepController.initController(widget.flowTestamentEnum);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +38,7 @@ class _AmountStepViewState extends State<AmountStepView> {
                 ? "Novo testamento"
                 : "Edite o testamento",
         onTap: () {
+          amountStepController.clearTestament();
           context.pop();
         },
       ),
@@ -45,7 +51,7 @@ class _AmountStepViewState extends State<AmountStepView> {
             Text('Insira um valor', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
             TextFieldWidget(
-              controller: _amountController,
+              controller: amountStepController.amountController,
               keyboardType: TextInputType.number,
               focusNode: FocusNode(),
               hintText: 'Valor em ETH',
@@ -57,7 +63,7 @@ class _AmountStepViewState extends State<AmountStepView> {
       bottomSheet: ElevatedButtonWidget(
         text: "Next",
         onTap: () {
-          String amount = _amountController.text.trim();
+          String amount = amountStepController.amountController.text.trim();
 
           //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
           if (amount.isNotEmpty && amount != '0' && amount != '' && amount != '0.0') {

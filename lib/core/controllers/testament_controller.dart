@@ -10,6 +10,11 @@ class TestamentController extends ChangeNotifier {
 
   TestamentModel get testament => _testament;
 
+  void setId() {
+    _testament.id = DateTime.now().microsecondsSinceEpoch;
+    notifyListeners();
+  }
+
   void setTitle(String title) {
     _testament.title = title;
     notifyListeners();
@@ -45,14 +50,24 @@ class TestamentController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveTestament(TestamentModel testament) {
+  void saveTestament() {
+    setId();
     listTestament.add(testament);
     notifyListeners();
   }
 
-  Future<List<TestamentModel>> getAllTestaments () async {
+  Future<List<TestamentModel>> getAllTestaments() async {
     return listTestament;
   }
 
+  void setTestamentToEdit(TestamentModel oldTestament) {
+    _testament = oldTestament;
+  }
 
+  void updateTestament() {
+    int index = listTestament.indexWhere((index) {
+      return index.id == _testament.id;
+    });
+    listTestament[index] = _testament;
+  }
 }
