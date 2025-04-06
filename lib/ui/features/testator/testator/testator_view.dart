@@ -29,13 +29,12 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
 
   @override
   void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      testatorController.loadingTestaments();
-    });
+    testatorController.loadingTestaments();
+
     eventBus.on<TestamentCreatedEvent>().listen((event) {
       testatorController.loadingTestaments();
     });
+    super.initState();
   }
 
   @override

@@ -40,21 +40,13 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    super.initState();
-    homeController.addListener(_onLoadingChanged);
     _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
+    super.initState();
   }
 
   @override
   void dispose() {
-    homeController.removeListener(_onLoadingChanged);
     super.dispose();
-  }
-
-  void _onLoadingChanged() {
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   @override

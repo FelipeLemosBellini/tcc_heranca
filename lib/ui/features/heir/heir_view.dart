@@ -1,8 +1,8 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/testament_created_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
-import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/heir/heir_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
@@ -19,20 +19,22 @@ class HeirView extends StatefulWidget {
 
 class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin {
   HeirController heirController = GetIt.I.get<HeirController>();
+  final EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      heirController.testamentImInserted();
+    heirController.loadingTestaments();
+    eventBus.on<TestamentCreatedEvent>().listen((event) {
+      heirController.loadingTestaments();
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicatorWidget(
-      onRefresh: () async => heirController.testamentImInserted(),
+      onRefresh: () async => heirController.loadingTestaments(),
       child: ListenableBuilder(
         listenable: heirController,
         builder: (context, _) {

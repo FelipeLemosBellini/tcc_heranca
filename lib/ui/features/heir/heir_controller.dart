@@ -12,7 +12,7 @@ class HeirController extends BaseController {
 
   List<TestamentModel> get listTestament => _listTestament;
 
-  void testamentImInserted() async {
+  void loadingTestaments() async {
     _homeController.setLoading(true);
     _listTestament = await _testamentController.getAllTestaments();
     await Future.delayed(Duration(seconds: 1));
