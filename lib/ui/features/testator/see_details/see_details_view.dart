@@ -6,6 +6,7 @@ import 'package:tcc/core/events/testament_created_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
+import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
@@ -13,11 +14,13 @@ import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_thematic_widget.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class SeeDetailsView extends StatefulWidget {
+  final EnumTypeUser enumTypeUser;
   final TestamentModel testamentModel;
 
-  const SeeDetailsView({super.key, required this.testamentModel});
+  const SeeDetailsView({super.key, required this.testamentModel, required this.enumTypeUser});
 
   @override
   State<SeeDetailsView> createState() => _SeeDetailsViewState();
@@ -70,36 +73,59 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   isImportant: true,
                 ),
                 SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ButtonIconWidget(
-                      onTap: () => deleteTestament(),
-                      actionButtonEnum: ActionButtonEnum.delete,
-                    ),
-                    ButtonIconWidget(
-                      onTap: () {
-                        seeDetailsController.setCurrentTestament(widget.testamentModel);
-                        context.go(RouterApp.amountStep, extra: FlowTestamentEnum.edit);
-                      },
-                      actionButtonEnum: ActionButtonEnum.edit,
-                    ),
-                  ],
+                Visibility(
+                  visible: widget.enumTypeUser == EnumTypeUser.testator,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ButtonIconWidget(
+                        onTap: () => deleteTestament(),
+                        actionButtonEnum: ActionButtonEnum.delete,
+                      ),
+                      ButtonIconWidget(
+                        onTap: () {
+                          seeDetailsController.setCurrentTestament(widget.testamentModel);
+                          context.go(RouterApp.amountStep, extra: FlowTestamentEnum.edit);
+                        },
+                        actionButtonEnum: ActionButtonEnum.edit,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
             bottomNavigationBar: ElevatedButtonThematicWidget(
-              text: "Prova de vida",
-              onTap: () {},
+              text:
+                  widget.enumTypeUser == EnumTypeUser.testator
+                      ? "Prova de vida"
+                      : "Resgatar herança",
+              onTap: _mainAction,
               thematicEnum: ThematicButtonEnum.green,
             ),
           ),
     );
   }
 
+  void _mainAction() {
+    AlertHelper.showAlertSnackBar(
+      context: context,
+      alertData: AlertData(
+        message:
+            widget.enumTypeUser == EnumTypeUser.testator
+                ? 'Prova de vida realizada.'
+                : 'Resgate realizado.',
+        errorType: ErrorType.success,
+      ),
+    );
+    context.pop();
+  }
+
   void deleteTestament() {
     seeDetailsController.deleteTestament(widget.testamentModel);
-
+    AlertHelper.showAlertSnackBar(
+      context: context,
+      alertData: AlertData(message: 'Testamento excluído.', errorType: ErrorType.success),
+    );
     EventBus eventBus = GetIt.I.get<EventBus>();
     eventBus.fire(TestamentCreatedEvent());
     context.pop();

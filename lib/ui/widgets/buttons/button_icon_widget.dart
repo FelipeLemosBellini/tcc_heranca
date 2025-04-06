@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 
-enum ActionButtonEnum { edit, delete, send, add }
+enum ActionButtonEnum { edit, delete, send, add, reload }
 
 class ButtonIconWidget extends StatelessWidget {
   final Function() onTap;
@@ -41,6 +41,8 @@ class ButtonIconWidget extends StatelessWidget {
         return AppColors.success2;
       case ActionButtonEnum.add:
         return AppColors.primaryLight2;
+      case ActionButtonEnum.reload:
+        return AppColors.primaryLight2;
     }
   }
 
@@ -53,6 +55,8 @@ class ButtonIconWidget extends StatelessWidget {
       case ActionButtonEnum.send:
         return AppColors.success;
       case ActionButtonEnum.add:
+        return AppColors.primary;
+      case ActionButtonEnum.reload:
         return AppColors.primary;
     }
   }
@@ -67,6 +71,8 @@ class ButtonIconWidget extends StatelessWidget {
         return Icons.send_outlined;
       case ActionButtonEnum.add:
         return Icons.add;
+      case ActionButtonEnum.reload:
+        return Icons.refresh;
     }
   }
 }

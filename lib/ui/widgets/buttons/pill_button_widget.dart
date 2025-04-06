@@ -31,8 +31,11 @@ class PillButtonWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(text, style: AppFonts.labelMediumMedium),
-                SizedBox(width: 12),
-                Icon(Icons.arrow_forward, color: Colors.white),
+                Visibility(visible: showArrow, child: SizedBox(width: 12)),
+                Visibility(
+                  visible: showArrow,
+                  child: Icon(Icons.arrow_forward, color: Colors.white),
+                ),
               ],
             ),
           ),

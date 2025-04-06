@@ -17,5 +17,6 @@ class HeirController extends BaseController {
     _listTestament = await _testamentController.getAllTestaments();
     await Future.delayed(Duration(seconds: 1));
     _homeController.setLoading(false);
+    notifyListeners();
   }
 }

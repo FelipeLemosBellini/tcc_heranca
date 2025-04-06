@@ -108,6 +108,16 @@ class _SummaryViewState extends State<SummaryView> {
       );
       return;
     }
+    AlertHelper.showAlertSnackBar(
+      context: context,
+      alertData: AlertData(
+        message:
+            widget.flowTestamentEnum == FlowTestamentEnum.edit
+                ? "Testamento editado com sucesso!"
+                : "Testamento criado com sucesso!",
+        errorType: ErrorType.success,
+      ),
+    );
     summaryController.saveTestament(widget.flowTestamentEnum);
     summaryController.clearTestament();
     EventBus eventBus = GetIt.I.get<EventBus>();
