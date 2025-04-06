@@ -32,7 +32,7 @@ class _AboutUsViewState extends State<AboutUsView> {
           context.go(RouterApp.home);
         },
         signOut: () {
-          context.go(RouterApp.home);
+          context.go(RouterApp.login);
         },
       ),
       body: ListView(

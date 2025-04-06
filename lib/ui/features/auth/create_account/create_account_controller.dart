@@ -5,6 +5,8 @@ import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dar
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
+import '../../../../core/exceptions/exception_message.dart';
+
 class CreateAccountController extends BaseController {
   final FirebaseAuthRepository firebaseAuthRepository;
   final FirestoreRepository firestoreRepository;
@@ -23,42 +25,29 @@ class CreateAccountController extends BaseController {
     String? uid;
     bool successCreateAccount = false;
 
-    Either<Exception, String> response = await firebaseAuthRepository
+    Either<ExceptionMessage, String> response = await firebaseAuthRepository
         .createAccount(email: email, password: password);
+
     response.fold(
-      (error) {
+          (ExceptionMessage error) {
         setMessage(
           AlertData(
-            message: "Erro ao criar a conta",
+            message: error.errorMessage,
             errorType: ErrorType.error,
           ),
         );
       },
-      (String success) {
+          (String success) {
         uid = success;
         successCreateAccount = true;
+        setMessage(
+          AlertData(
+            message: "Conta criada com sucesso",
+            errorType: ErrorType.success,
+          ),
+        );
       },
     );
-
-    if (uid != null && uid!.isNotEmpty) {
-      Either<Exception, void> responseCreateProfile = await firestoreRepository
-          .createProfile(uid!, UserModel(name: name, email: email).toMap());
-
-      responseCreateProfile.fold(
-        (error) {
-          setMessage(
-            AlertData(
-              message: "Erro ao criar o perfil",
-              errorType: ErrorType.error,
-            ),
-          );
-          successCreateAccount = false;
-        },
-        (_) {
-          successCreateAccount = true;
-        },
-      );
-    }
 
     await Future.delayed(Duration(seconds: 2));
     setLoading(false);
