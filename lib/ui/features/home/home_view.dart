@@ -34,7 +34,11 @@ class _HomeViewState extends State<HomeView> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _pageController.jumpToPage(index);
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
     });
   }
 

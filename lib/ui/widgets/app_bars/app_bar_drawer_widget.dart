@@ -22,7 +22,19 @@ class AppBarDrawerWidget extends PreferredSize {
                     child: IconButton(onPressed: openDrawer, icon: Icon(Icons.menu)),
                   ),
                 ),
-                Center(child: Text(title, style: AppFonts.labelHeadBold)),
+                Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    child: Text(
+                      title,
+                      key: ValueKey(title), // Essencial para detectar mudança
+                      style: AppFonts.labelHeadBold,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
