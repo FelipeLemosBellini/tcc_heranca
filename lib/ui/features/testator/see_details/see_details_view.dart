@@ -1,6 +1,9 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/testament_created_event.dart';
+import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
@@ -37,9 +40,12 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: 3,
+                  itemCount: widget.testamentModel.listHeir.length,
                   itemBuilder: (context, index) {
-                    return _lineData("0xABC...EF12", "30%");
+                    return _lineData(
+                      widget.testamentModel.listHeir[index].address,
+                      "${widget.testamentModel.listHeir[index].percentage.toString()}%",
+                    );
                   },
                 ),
                 Padding(
@@ -47,20 +53,30 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   child: Divider(color: AppColors.gray7),
                 ),
                 Text("Ativos", style: AppFonts.labelLargeBold),
-                _lineData("ETH", "1.53"),
+                _lineData("ETH", widget.testamentModel.value.toString()),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(color: AppColors.gray7),
                 ),
                 Text("Datas", style: AppFonts.labelLargeBold),
-                _lineData("Data de criação", "01/01/0001"),
-                _lineData("Última prova de vida", "01/01/0001"),
-                _lineData("Vencimento prova de vida", "01/01/0001", isImportant: true),
+                _lineData("Data de criação", widget.testamentModel.dateCreated.dateFormatted),
+                _lineData(
+                  "Última prova de vida",
+                  widget.testamentModel.lastProveOfLife.dateFormatted,
+                ),
+                _lineData(
+                  "Vencimento prova de vida",
+                  widget.testamentModel.proofLifeExpiration().dateFormatted,
+                  isImportant: true,
+                ),
                 SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ButtonIconWidget(onTap: () {}, actionButtonEnum: ActionButtonEnum.delete),
+                    ButtonIconWidget(
+                      onTap: () => deleteTestament(),
+                      actionButtonEnum: ActionButtonEnum.delete,
+                    ),
                     ButtonIconWidget(
                       onTap: () {
                         seeDetailsController.setCurrentTestament(widget.testamentModel);
@@ -79,6 +95,14 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
             ),
           ),
     );
+  }
+
+  void deleteTestament() {
+    seeDetailsController.deleteTestament(widget.testamentModel);
+
+    EventBus eventBus = GetIt.I.get<EventBus>();
+    eventBus.fire(TestamentCreatedEvent());
+    context.pop();
   }
 
   Widget _lineData(String title, String value, {bool? isImportant}) {

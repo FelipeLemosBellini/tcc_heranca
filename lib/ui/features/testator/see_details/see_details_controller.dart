@@ -9,4 +9,8 @@ class SeeDetailsController extends BaseController {
   void setCurrentTestament(TestamentModel testament) {
     _testamentController.setTestamentToEdit(testament);
   }
+
+  void deleteTestament(TestamentModel testament) {
+    _testamentController.deleteTestament(testament);
+  }
 }

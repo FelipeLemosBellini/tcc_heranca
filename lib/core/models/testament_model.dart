@@ -7,7 +7,7 @@ class TestamentModel {
   DateTime dateCreated;
   DateTime lastProveOfLife;
   List<HeirModel> listHeir;
-  EnumProveOfLiveRecorrence proveOfLiveRecorrence;
+  EnumProveOfLiveRecurring proveOfLiveRecurring;
   double value;
 
   TestamentModel({
@@ -15,7 +15,7 @@ class TestamentModel {
     required this.value,
     required this.dateCreated,
     required this.lastProveOfLife,
-    required this.proveOfLiveRecorrence,
+    required this.proveOfLiveRecurring,
     required this.title,
     required this.listHeir,
   });
@@ -26,9 +26,22 @@ class TestamentModel {
       title: '',
       dateCreated: DateTime.now(),
       lastProveOfLife: DateTime.now(),
-      proveOfLiveRecorrence: EnumProveOfLiveRecorrence.TRIMESTRAL,
+      proveOfLiveRecurring: EnumProveOfLiveRecurring.TRIMESTRAL,
       listHeir: [],
       value: 0,
     );
+  }
+
+  DateTime proofLifeExpiration() {
+    late DateTime expiration;
+    switch (proveOfLiveRecurring) {
+      case EnumProveOfLiveRecurring.TRIMESTRAL:
+        expiration = lastProveOfLife.add(Duration(days: 90));
+      case EnumProveOfLiveRecurring.SEMESTRAL:
+        expiration = lastProveOfLife.add(Duration(days: 180));
+      case EnumProveOfLiveRecurring.ANUAL:
+        expiration = lastProveOfLife.add(Duration(days: 360));
+    }
+    return expiration;
   }
 }

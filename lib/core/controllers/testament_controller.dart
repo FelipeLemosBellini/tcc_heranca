@@ -35,8 +35,8 @@ class TestamentController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setProveOfLiveRecorrence(EnumProveOfLiveRecorrence value) {
-    _testament.proveOfLiveRecorrence = value;
+  void setProveOfLiveRecurring(EnumProveOfLiveRecurring value) {
+    _testament.proveOfLiveRecurring = value;
     notifyListeners();
   }
 
@@ -65,9 +65,13 @@ class TestamentController extends ChangeNotifier {
   }
 
   void updateTestament() {
-    int index = listTestament.indexWhere((index) {
-      return index.id == _testament.id;
-    });
+    int index = listTestament.indexWhere((index) => index.id == _testament.id);
     listTestament[index] = _testament;
+  }
+
+  void deleteTestament(TestamentModel oldTestament) {
+    int index = listTestament.indexWhere((index) => index.id == oldTestament.id);
+
+    listTestament.removeAt(index);
   }
 }

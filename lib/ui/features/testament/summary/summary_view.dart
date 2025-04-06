@@ -60,7 +60,7 @@ class _SummaryViewState extends State<SummaryView> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Frequência da Prova de Vida: ${summaryController.testamentModel.proveOfLiveRecorrence.name}',
+            'Frequência da Prova de Vida: ${summaryController.testamentModel.proveOfLiveRecurring.name}',
             style: AppFonts.bodyMediumLight,
           ),
           const SizedBox(height: 24),
@@ -111,7 +111,7 @@ class _SummaryViewState extends State<SummaryView> {
     summaryController.saveTestament(widget.flowTestamentEnum);
     summaryController.clearTestament();
     EventBus eventBus = GetIt.I.get<EventBus>();
-    eventBus.fire(TestamentCreatedEvent(summaryController.testamentModel));
+    eventBus.fire(TestamentCreatedEvent());
     context.go(RouterApp.home);
   }
 }

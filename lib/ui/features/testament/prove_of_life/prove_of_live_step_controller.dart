@@ -11,12 +11,12 @@ class ProveOfLiveStepController extends BaseController {
 
   void initController(FlowTestamentEnum flow) {
     if (flow == FlowTestamentEnum.edit) {
-      switch (testamentController.testament.proveOfLiveRecorrence) {
-        case EnumProveOfLiveRecorrence.TRIMESTRAL:
+      switch (testamentController.testament.proveOfLiveRecurring) {
+        case EnumProveOfLiveRecurring.TRIMESTRAL:
           selectedOption = 'Trimestral';
-        case EnumProveOfLiveRecorrence.SEMESTRAL:
+        case EnumProveOfLiveRecurring.SEMESTRAL:
           selectedOption = 'Semestral';
-        case EnumProveOfLiveRecorrence.ANUAL:
+        case EnumProveOfLiveRecurring.ANUAL:
           selectedOption = 'Anual';
 
         // 'Trimestral', 'Semestral', 'Anual'
@@ -26,7 +26,7 @@ class ProveOfLiveStepController extends BaseController {
     }
   }
 
-  void setProveOfLiveRecorrence(EnumProveOfLiveRecorrence value) {
-    testamentController.setProveOfLiveRecorrence(value);
+  void setProveOfLiveRecorrence(EnumProveOfLiveRecurring value) {
+    testamentController.setProveOfLiveRecurring(value);
   }
 }

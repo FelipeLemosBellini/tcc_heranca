@@ -80,7 +80,7 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
             );
             return;
           }
-          EnumProveOfLiveRecorrence? proveOfLiveEnum = mapStringToEnum(
+          EnumProveOfLiveRecurring? proveOfLiveEnum = mapStringToEnum(
             proveOfLiveStepController.selectedOption!,
           );
           proveOfLiveStepController.setProveOfLiveRecorrence(proveOfLiveEnum!);
@@ -90,14 +90,14 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
     );
   }
 
-  EnumProveOfLiveRecorrence? mapStringToEnum(String option) {
+  EnumProveOfLiveRecurring? mapStringToEnum(String option) {
     switch (option) {
       case 'Trimestral':
-        return EnumProveOfLiveRecorrence.TRIMESTRAL;
+        return EnumProveOfLiveRecurring.TRIMESTRAL;
       case 'Semestral':
-        return EnumProveOfLiveRecorrence.SEMESTRAL;
+        return EnumProveOfLiveRecurring.SEMESTRAL;
       case 'Anual':
-        return EnumProveOfLiveRecorrence.ANUAL;
+        return EnumProveOfLiveRecurring.ANUAL;
       default:
         return null;
     }
