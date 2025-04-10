@@ -6,280 +6,280 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class AppFonts {
   static final Color _defaultColor = Colors.white;
-  static TextStyle get labelSmallLight => GoogleFonts.tektur(
+  static TextStyle get labelSmallLight => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1,
   );
 
-  static TextStyle get labelSmallRegular => GoogleFonts.tektur(
+  static TextStyle get labelSmallRegular => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1,
   );
 
-  static TextStyle get labelSmallMedium => GoogleFonts.tektur(
+  static TextStyle get labelSmallMedium => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
-  static TextStyle get labelSmallBold => GoogleFonts.tektur(
+  static TextStyle get labelSmallBold => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
-  static TextStyle get labelMediumLight => GoogleFonts.tektur(
+  static TextStyle get labelMediumLight => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1,
   );
 
-  static TextStyle get labelMediumRegular => GoogleFonts.tektur(
+  static TextStyle get labelMediumRegular => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1,
   );
 
-  static TextStyle get labelMediumMedium => GoogleFonts.tektur(
+  static TextStyle get labelMediumMedium => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
-  static TextStyle get labelMediumBold => GoogleFonts.tektur(
+  static TextStyle get labelMediumBold => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
-  static TextStyle get labelLargeLight => GoogleFonts.tektur(
+  static TextStyle get labelLargeLight => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1,
   );
 
-  static TextStyle get labelLargeRegular => GoogleFonts.tektur(
+  static TextStyle get labelLargeRegular => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1,
   );
 
-  static TextStyle get labelLargeMedium => GoogleFonts.tektur(
+  static TextStyle get labelLargeMedium => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
-  static TextStyle get labelLargeBold => GoogleFonts.tektur(
+  static TextStyle get labelLargeBold => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
-  static TextStyle get labelTitleLight => GoogleFonts.tektur(
+  static TextStyle get labelTitleLight => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1,
   );
 
-  static TextStyle get labelTitleRegular => GoogleFonts.tektur(
+  static TextStyle get labelTitleRegular => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1,
   );
 
-  static TextStyle get labelTitleMedium => GoogleFonts.tektur(
+  static TextStyle get labelTitleMedium => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
-  static TextStyle get labelTitleBold => GoogleFonts.tektur(
+  static TextStyle get labelTitleBold => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
-  static TextStyle get labelHeadLight => GoogleFonts.tektur(
+  static TextStyle get labelHeadLight => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1,
   );
 
-  static TextStyle get labelHeadRegular => GoogleFonts.tektur(
+  static TextStyle get labelHeadRegular => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1,
   );
 
-  static TextStyle get labelHeadMedium => GoogleFonts.tektur(
+  static TextStyle get labelHeadMedium => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
-  static TextStyle get labelHeadBold => GoogleFonts.tektur(
+  static TextStyle get labelHeadBold => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
-  static TextStyle get bodySmallLight => GoogleFonts.tektur(
+  static TextStyle get bodySmallLight => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1.2,
   );
 
-  static TextStyle get bodySmallRegular => GoogleFonts.tektur(
+  static TextStyle get bodySmallRegular => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1.2,
   );
 
-  static TextStyle get bodySmallMedium => GoogleFonts.tektur(
+  static TextStyle get bodySmallMedium => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get bodySmallBold => GoogleFonts.tektur(
+  static TextStyle get bodySmallBold => GoogleFonts.tomorrow(
     fontSize: 14,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
 
-  static TextStyle get bodyMediumLight => GoogleFonts.tektur(
+  static TextStyle get bodyMediumLight => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1.2,
   );
 
-  static TextStyle get bodyMediumRegular => GoogleFonts.tektur(
+  static TextStyle get bodyMediumRegular => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1.2,
   );
 
-  static TextStyle get bodyMediumMedium => GoogleFonts.tektur(
+  static TextStyle get bodyMediumMedium => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get bodyMediumBold => GoogleFonts.tektur(
+  static TextStyle get bodyMediumBold => GoogleFonts.tomorrow(
     fontSize: 16,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
 
-  static TextStyle get bodyLargeLight => GoogleFonts.tektur(
+  static TextStyle get bodyLargeLight => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1.2,
   );
 
-  static TextStyle get bodyLargeRegular => GoogleFonts.tektur(
+  static TextStyle get bodyLargeRegular => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1.2,
   );
 
-  static TextStyle get bodyLargeMedium => GoogleFonts.tektur(
+  static TextStyle get bodyLargeMedium => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get bodyLargeBold => GoogleFonts.tektur(
+  static TextStyle get bodyLargeBold => GoogleFonts.tomorrow(
     fontSize: 18,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
 
-  static TextStyle get bodyTitleLight => GoogleFonts.tektur(
+  static TextStyle get bodyTitleLight => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1.2,
   );
 
-  static TextStyle get bodyTitleRegular => GoogleFonts.tektur(
+  static TextStyle get bodyTitleRegular => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1.2,
   );
 
-  static TextStyle get bodyTitleMedium => GoogleFonts.tektur(
+  static TextStyle get bodyTitleMedium => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get bodyTitleBold => GoogleFonts.tektur(
+  static TextStyle get bodyTitleBold => GoogleFonts.tomorrow(
     fontSize: 20,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
 
-  static TextStyle get bodyHeadLight => GoogleFonts.tektur(
+  static TextStyle get bodyHeadLight => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w300,
     height: 1.2,
   );
 
-  static TextStyle get bodyHeadRegular => GoogleFonts.tektur(
+  static TextStyle get bodyHeadRegular => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w400,
     height: 1.2,
   );
 
-  static TextStyle get bodyHeadMedium => GoogleFonts.tektur(
+  static TextStyle get bodyHeadMedium => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get bodyHeadBold => GoogleFonts.tektur(
+  static TextStyle get bodyHeadBold => GoogleFonts.tomorrow(
     fontSize: 24,
     color: _defaultColor,
     fontWeight: FontWeight.w700,
@@ -337,7 +337,7 @@ abstract class AppFonts {
 //         print(
 //
 //             '      static TextStyle get '
-//                 '${lineHeightTitle[i]}${fontSizeTitle[j]}${fontWeightTitle[k]} => GoogleFonts.tektur('
+//                 '${lineHeightTitle[i]}${fontSizeTitle[j]}${fontWeightTitle[k]} => GoogleFonts.tomorrow('
 //                 'fontSize: ${fontSize[j]},'
 //                 'color: _defaultColor,'
 //                 'fontWeight: ${fontWeight[k]},'

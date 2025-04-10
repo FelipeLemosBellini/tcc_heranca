@@ -42,7 +42,7 @@ class _AboutUsViewState extends State<AboutUsView> {
           SizedBox(height: 16),
           Text(
             "Felipe Lemos Bellini - 838207\nRafael Camillo Jorge - 838625",
-            style: AppFonts.bodyMediumMedium,
+            style: AppFonts.bodyMediumMedium.copyWith(height: 1.5),
           ),
           SizedBox(height: 16),Text(
             "Sobre o App",
@@ -54,7 +54,7 @@ class _AboutUsViewState extends State<AboutUsView> {
               A aplicação permite que o usuário (testador) registre um contrato inteligente de herança, definindo um ou mais beneficiários e os ativos que serão herdados. 
               O contrato exige uma prova periódica de vida, baseada em uma assinatura digital do testador. Caso essa assinatura não seja renovada dentro de um período determinado, o sistema entra automaticamente em estado de verificação e permite que os herdeiros iniciem o processo de solicitação da herança.""",
             textAlign: TextAlign.start,
-            style: AppFonts.bodyMediumMedium,
+            style: AppFonts.bodyMediumMedium.copyWith(height: 1.5),
 
           ),
         ],
