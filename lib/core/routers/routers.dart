@@ -7,10 +7,12 @@ import 'package:tcc/core/routers/testament_routes.dart';
 import 'package:tcc/core/routers/testator_routes.dart';
 import 'package:tcc/core/routers/transitions.dart';
 import 'package:tcc/ui/features/auth/login/login_view.dart';
+import 'package:tcc/ui/features/auth/login_wallet/login_wallet_view.dart';
 import 'package:tcc/ui/widgets/material_widgets/material_design_view.dart';
 
 abstract class RouterApp {
   static const String login = "/";
+  static const String loginWallet = "/loginWallet";
   static const String materialDesign = "/materialDesign";
 
   static const String createAccount = "/createAccount";
@@ -59,6 +61,11 @@ abstract class RouterApp {
           ...TestamentRoutes.testamentRoutes,
           ...TestatorRoutes.testatorRoutes,
           GoRoute(
+            path: loginWallet,
+            pageBuilder: (context, state) {
+              return Transitions.customTransitionPage(LoginWalletView(), state);
+            },
+          ),GoRoute(
             path: materialDesign,
             pageBuilder: (context, state) {
               return Transitions.customTransitionPage(MaterialDesignView(), state);

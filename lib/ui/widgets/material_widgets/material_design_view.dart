@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/bottom_navigation/bottom_navigation_bar_home_widget.dart';
@@ -63,7 +64,9 @@ class _MaterialDesignViewState extends State<MaterialDesignView> {
                   padding: EdgeInsets.symmetric(horizontal: 24),
                 ),
                 SizedBox(height: 24),
-                PillButtonWidget(onTap: () {}, text: "Pill button"),
+                PillButtonWidget(onTap: () {
+                  context.go(RouterApp.loginWallet);
+                }, text: "Pill button"),
                 SizedBox(height: 8),
                 PillButtonWidget(onTap: controller.loading, text: "Loading"),
                 SizedBox(height: 8),

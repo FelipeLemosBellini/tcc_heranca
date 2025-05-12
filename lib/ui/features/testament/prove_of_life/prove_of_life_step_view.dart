@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
+import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';

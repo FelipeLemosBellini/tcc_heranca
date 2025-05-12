@@ -1,4 +1,4 @@
-import 'package:tcc/Enum/enum_prove_of_live_recorrence.dart';
+import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 
 class TestamentModel {

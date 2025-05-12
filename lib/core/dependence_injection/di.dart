@@ -8,6 +8,7 @@ import 'package:tcc/core/repositories/firestore/firestore_repository_interface.d
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
 import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.dart';
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
+import 'package:tcc/ui/features/auth/login_wallet/login_wallet_controller.dart';
 import 'package:tcc/ui/features/heir/heir_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
@@ -45,6 +46,7 @@ abstract class DI {
       ),
     );
     getIt.registerFactory(() => LoginController(firebaseAuthRepository: FirebaseAuthRepository()));
+    getIt.registerFactory(() => LoginWalletController());
     getIt.registerFactory(() => AddressStepController());
     getIt.registerFactory(() => AmountStepController());
     getIt.registerFactory(() => ProveOfLiveStepController());
