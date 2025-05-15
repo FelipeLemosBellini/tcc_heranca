@@ -4,6 +4,7 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/core/routers/transitions.dart';
 import 'package:tcc/ui/features/testament/address/address_step_view.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_view.dart';
+import 'package:tcc/ui/features/testament/plan/plan_step_view.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_life_step_view.dart';
 import 'package:tcc/ui/features/testament/summary/summary_view.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
@@ -42,6 +43,15 @@ abstract class TestamentRoutes {
       pageBuilder: (BuildContext context, GoRouterState state) {
         return Transitions.customTransitionPage(
           SummaryView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+          state,
+        );
+      },
+    ),
+    GoRoute(
+      path: RouterApp.planStep,
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return Transitions.customTransitionPage(
+          PlanStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
           state,
         );
       },

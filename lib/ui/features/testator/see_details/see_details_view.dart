@@ -72,6 +72,11 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   widget.testamentModel.proofLifeExpiration().dateFormatted,
                   isImportant: true,
                 ),
+                _lineData(
+                  "Plano",
+                  widget.testamentModel.plan.name,
+                  isImportant: true,
+                ),
                 SizedBox(height: 8),
                 Visibility(
                   visible: widget.enumTypeUser == EnumTypeUser.testator,

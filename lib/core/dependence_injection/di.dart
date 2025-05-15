@@ -14,6 +14,7 @@ import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/testament/address/address_step_controller.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_controller.dart';
+import 'package:tcc/ui/features/testament/plan/plan_step_controller.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
 import 'package:tcc/ui/features/testament/summary/summary_controller.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
@@ -52,6 +53,7 @@ abstract class DI {
     getIt.registerFactory(() => ProveOfLiveStepController());
     getIt.registerFactory(() => SummaryController());
     getIt.registerFactory(() => SeeDetailsController());
+    getIt.registerFactory(() => PlanStepController());
 
     //Controllers LazySingletons
     getIt.registerLazySingleton(() => HomeController(authRepository: FirebaseAuthRepository()));

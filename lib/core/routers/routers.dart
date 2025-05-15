@@ -21,6 +21,7 @@ abstract class RouterApp {
   static const String amountStep = "/amountStep";
   static const String addressStep = "/addressStep";
   static const String proofOfLifeStep = "/proofOfLifeStep";
+  static const String planStep = "/planStep";
   static const String summary = "/summary";
 
   static const String seeDetails = "/seeDetails";

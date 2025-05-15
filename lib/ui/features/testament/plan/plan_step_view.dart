@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/routers/routers.dart';
+import 'package:tcc/ui/features/testament/plan/plan_step_controller.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
@@ -11,23 +13,23 @@ import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 
-class ProveOfLifeStepView extends StatefulWidget {
+class PlanStepView extends StatefulWidget {
   final FlowTestamentEnum flowTestamentEnum;
 
-  const ProveOfLifeStepView({super.key, required this.flowTestamentEnum});
+  const PlanStepView({super.key, required this.flowTestamentEnum});
 
   @override
-  State<ProveOfLifeStepView> createState() => _ProveOfLifeStepViewState();
+  State<PlanStepView> createState() => _PlanViewState();
 }
 
-class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
-  ProveOfLiveStepController proveOfLiveStepController = GetIt.I.get<ProveOfLiveStepController>();
+class _PlanViewState extends State<PlanStepView> {
+  PlanStepController planStepController = GetIt.I.get<PlanStepController>();
 
-  final List<String> options = ['Trimestral', 'Semestral', 'Anual'];
+  final List<String> options = ['Teste', 'Basico', 'Pro'];
 
   @override
   void initState() {
-    proveOfLiveStepController.initController(widget.flowTestamentEnum);
+    planStepController.initController(widget.flowTestamentEnum);
     super.initState();
   }
 
@@ -36,9 +38,9 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
     return Scaffold(
       appBar: AppBarSimpleWidget(
         title:
-            widget.flowTestamentEnum == FlowTestamentEnum.creation
-                ? "Novo testamento"
-                : "Edite o testamento",
+        widget.flowTestamentEnum == FlowTestamentEnum.creation
+            ? "Novo testamento"
+            : "Edite o testamento",
         onTap: () {
           context.pop();
         },
@@ -48,22 +50,22 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProgressBarWidget(progress: .75),
-            Text('Prova de Vida', style: AppFonts.bodyLargeBold),
+            ProgressBarWidget(progress: .80),
+            Text('Planos', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
             DropdownButton<String>(
-              value: proveOfLiveStepController.selectedOption,
-              hint: const Text('Selecione a frequência'),
+              value: planStepController.selectedOption,
+              hint: const Text('Selecione o seu plano'),
               style: AppFonts.bodyMediumMedium,
               isExpanded: true,
               borderRadius: BorderRadius.all(Radius.circular(36)),
               items:
-                  options.map((String item) {
-                    return DropdownMenuItem<String>(value: item, child: Text(item));
-                  }).toList(),
+              options.map((String item) {
+                return DropdownMenuItem<String>(value: item, child: Text(item));
+              }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  proveOfLiveStepController.selectedOption = newValue;
+                  planStepController.selectedOption = newValue;
                 });
               },
             ),
@@ -73,31 +75,31 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
       bottomSheet: ElevatedButtonWidget(
         text: "Next",
         onTap: () {
-          if (proveOfLiveStepController.selectedOption == null) {
+          if (planStepController.selectedOption == null) {
             AlertHelper.showAlertSnackBar(
               context: context,
               alertData: AlertData(message: 'Selecione uma opção!', errorType: ErrorType.warning),
             );
             return;
           }
-          EnumProveOfLiveRecurring? proveOfLiveEnum = mapStringToEnum(
-            proveOfLiveStepController.selectedOption!,
+          EnumPlan? planEnum = mapStringToEnum(
+            planStepController.selectedOption!,
           );
-          proveOfLiveStepController.setProveOfLiveRecorrence(proveOfLiveEnum!);
-          context.push(RouterApp.planStep, extra: widget.flowTestamentEnum);
+          planStepController.setPlan(planEnum!);
+          context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
         },
       ),
     );
   }
 
-  EnumProveOfLiveRecurring? mapStringToEnum(String option) {
+  EnumPlan? mapStringToEnum(String option) {
     switch (option) {
-      case 'Trimestral':
-        return EnumProveOfLiveRecurring.TRIMESTRAL;
-      case 'Semestral':
-        return EnumProveOfLiveRecurring.SEMESTRAL;
-      case 'Anual':
-        return EnumProveOfLiveRecurring.ANUAL;
+      case 'Teste':
+        return EnumPlan.TESTE;
+      case 'Basico':
+        return EnumPlan.BASICO;
+      case 'Pro':
+        return EnumPlan.PRO;
       default:
         return null;
     }

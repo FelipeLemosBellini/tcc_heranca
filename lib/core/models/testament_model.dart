@@ -1,3 +1,4 @@
+import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 
@@ -7,6 +8,7 @@ class TestamentModel {
   DateTime dateCreated;
   DateTime lastProveOfLife;
   List<HeirModel> listHeir;
+  EnumPlan plan;
   EnumProveOfLiveRecurring proveOfLiveRecurring;
   double value;
 
@@ -18,6 +20,7 @@ class TestamentModel {
     required this.proveOfLiveRecurring,
     required this.title,
     required this.listHeir,
+    required this.plan,
   });
 
   factory TestamentModel.createWithDefaultValues() {
@@ -29,6 +32,7 @@ class TestamentModel {
       proveOfLiveRecurring: EnumProveOfLiveRecurring.TRIMESTRAL,
       listHeir: [],
       value: 0,
+      plan: EnumPlan.TESTE
     );
   }
 

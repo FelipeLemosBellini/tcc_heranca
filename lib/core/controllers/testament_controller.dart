@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/models/testament_model.dart';
@@ -73,5 +74,10 @@ class TestamentController extends ChangeNotifier {
     int index = listTestament.indexWhere((index) => index.id == oldTestament.id);
 
     listTestament.removeAt(index);
+  }
+
+  void setPlan(EnumPlan value) {
+    _testament.plan = value;
+    notifyListeners();
   }
 }
