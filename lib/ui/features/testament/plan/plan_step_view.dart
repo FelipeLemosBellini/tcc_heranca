@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/routers/routers.dart';
+import 'package:tcc/ui/features/home/widgets/PlanSelectionCard.dart';
 import 'package:tcc/ui/features/testament/plan/plan_step_controller.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
@@ -25,7 +26,38 @@ class PlanStepView extends StatefulWidget {
 class _PlanViewState extends State<PlanStepView> {
   PlanStepController planStepController = GetIt.I.get<PlanStepController>();
 
-  final List<String> options = ['Teste', 'Basico', 'Pro'];
+  final List<Map<String, dynamic>> plans = [
+    {
+      'name': 'Teste',
+      'price': 'Somente taxa da rede',
+      'features': [
+        '1 endereço cadastrado como herdeiro',
+        '1 ativo no testamento',
+        'Prova de vida a cada 14 dias',
+        'Taxas: somente custos da rede usada',
+      ]
+    },
+    {
+      'name': 'Basico',
+      'price': '22,90 USDT',
+      'features': [
+        '2 endereços cadastrados como herdeiro',
+        '3 ativos no testamento',
+        'Prova de vida trimestral, semestral ou anual',
+        'Criação do testamento: 22,90 USDT',
+      ]
+    },
+    {
+      'name': 'Pro',
+      'price': '29,90 USDT',
+      'features': [
+        'Número ilimitado de endereços como herdeiros',
+        'Número ilimitado de ativos no testamento',
+        'Prova de vida trimestral, semestral ou anual',
+        'Criação do testamento: 29,90 USDT',
+      ]
+    },
+  ];
 
   @override
   void initState() {
@@ -53,21 +85,21 @@ class _PlanViewState extends State<PlanStepView> {
             ProgressBarWidget(progress: .80),
             Text('Planos', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
-            DropdownButton<String>(
-              value: planStepController.selectedOption,
-              hint: const Text('Selecione o seu plano'),
-              style: AppFonts.bodyMediumMedium,
-              isExpanded: true,
-              borderRadius: BorderRadius.all(Radius.circular(36)),
-              items:
-              options.map((String item) {
-                return DropdownMenuItem<String>(value: item, child: Text(item));
+            Column(
+              children: plans.map((plan) {
+                return PlanSelectionCard(
+                  title: plan['name'],
+                  price: plan['price'],
+                  features: List<String>.from(plan['features']),
+                  value: plan['name'],
+                  selected: planStepController.selectedOption ?? '',
+                  onSelect: () {
+                    setState(() {
+                      planStepController.selectedOption = plan['name'];
+                    });
+                  },
+                );
               }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  planStepController.selectedOption = newValue;
-                });
-              },
             ),
           ],
         ),

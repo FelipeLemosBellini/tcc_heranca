@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
@@ -21,7 +23,8 @@ class AmountStepView extends StatefulWidget {
 }
 
 class _AmountStepViewState extends State<AmountStepView> {
-  AmountStepController amountStepController = GetIt.I.get<AmountStepController>();
+  final AmountStepController amountStepController = GetIt.I.get<AmountStepController>();
+  final FocusNode _amountFocus = FocusNode();
 
   @override
   void initState() {
@@ -30,13 +33,18 @@ class _AmountStepViewState extends State<AmountStepView> {
   }
 
   @override
+  void dispose() {
+    _amountFocus.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSimpleWidget(
-        title:
-            widget.flowTestamentEnum == FlowTestamentEnum.creation
-                ? "Novo testamento"
-                : "Edite o testamento",
+        title: widget.flowTestamentEnum == FlowTestamentEnum.creation
+            ? "Novo testamento"
+            : "Edite o testamento",
         onTap: () {
           amountStepController.clearTestament();
           context.pop();
@@ -48,14 +56,48 @@ class _AmountStepViewState extends State<AmountStepView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProgressBarWidget(progress: 0.25),
+            const SizedBox(height: 24),
             Text('Insira um valor', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
-            TextFieldWidget(
-              controller: amountStepController.amountController,
-              keyboardType: TextInputType.number,
-              focusNode: FocusNode(),
-              hintText: 'Valor em ETH',
-              onlyNumber: true,
+            Row(
+              children: [
+                Expanded(
+                  child: TextFieldWidget(
+                    controller: amountStepController.amountController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    focusNode: _amountFocus,
+                    hintText: 'Quantidade',
+                    onlyNumber: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary6,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      SvgPicture.network(
+                        "https://worldvectorlogo.com/download/ethereum-eth.svg",
+                        placeholderBuilder: (_) {
+                          return Icon(
+                            Icons.monetization_on,
+                            color: AppColors.primaryLight2,
+                            size: 32,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.keyboard_arrow_down_outlined,
+                        color: AppColors.primaryLight2,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -63,11 +105,10 @@ class _AmountStepViewState extends State<AmountStepView> {
       bottomSheet: ElevatedButtonWidget(
         text: "Next",
         onTap: () {
-          String amount = amountStepController.amountController.text.trim();
+          String amountText = amountStepController.amountController.text.trim();
 
-          //VALIDACAO DE CAMPO VAZIO PARA IR PARA O PROX PASSO
-          if (amount.isNotEmpty && int.parse(amount) > 0) {
-            amountStepController.setAmount(double.parse(amount));
+          if (amountText.isNotEmpty && double.tryParse(amountText) != null && double.parse(amountText) > 0) {
+            amountStepController.setAmount(double.parse(amountText));
             context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
           } else {
             AlertHelper.showAlertSnackBar(
