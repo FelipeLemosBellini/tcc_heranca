@@ -27,5 +27,4 @@ class PlanStepController extends BaseController {
   void setPlan(EnumPlan value) {
     testamentController.setPlan(value);
   }
-
 }

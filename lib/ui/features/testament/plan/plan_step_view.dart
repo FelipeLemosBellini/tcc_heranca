@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/enum/EnumPlan.dart';
-import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/home/widgets/PlanSelectionCard.dart';
 import 'package:tcc/ui/features/testament/plan/plan_step_controller.dart';
-import 'package:tcc/ui/features/testament/prove_of_life/prove_of_live_step_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -114,17 +112,18 @@ class _PlanViewState extends State<PlanStepView> {
             );
             return;
           }
-          EnumPlan? planEnum = mapStringToEnum(
-            planStepController.selectedOption!,
-          );
-          planStepController.setPlan(planEnum!);
+          if (planStepController.selectedOption != null) {
+            planStepController.setPlan(
+              mapStringToEnum(planStepController.selectedOption!),
+            );
+          }
           context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
         },
       ),
     );
   }
 
-  EnumPlan? mapStringToEnum(String option) {
+  EnumPlan mapStringToEnum(String option) {
     switch (option) {
       case 'Teste':
         return EnumPlan.TESTE;
@@ -133,7 +132,7 @@ class _PlanViewState extends State<PlanStepView> {
       case 'Pro':
         return EnumPlan.PRO;
       default:
-        return null;
+        return EnumPlan.TESTE;
     }
   }
 }
