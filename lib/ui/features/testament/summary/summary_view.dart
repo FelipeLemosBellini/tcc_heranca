@@ -54,10 +54,23 @@ class _SummaryViewState extends State<SummaryView> {
             focusNode: FocusNode(),
           ),
           const SizedBox(height: 24),
-          Text(
-            'Valor: ${summaryController.testamentModel.value} ETH',
-            style: AppFonts.bodyMediumLight,
+          Text('Ativos:', style: AppFonts.bodyMediumLight),
+          const SizedBox(height: 18),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${summaryController.testamentModel.value} ETH',
+                style: AppFonts.bodyMediumLight,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${summaryController.testamentModel.value} Polkadot',
+                style: AppFonts.bodyMediumLight,
+              ),
+            ],
           ),
+
           const SizedBox(height: 24),
           Text(
             'Frequência da Prova de Vida: ${summaryController.testamentModel.proveOfLiveRecurring.name}',
@@ -81,16 +94,22 @@ class _SummaryViewState extends State<SummaryView> {
                 color: AppColors.primaryLight2,
                 shadowColor: AppColors.primaryLight2,
                 elevation: 16,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ListTile(
                   leading: Icon(Icons.person, color: AppColors.primary5),
                   title: Text(
                     summaryController.testamentModel.listHeir[index].address,
-                    style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
+                    style: AppFonts.bodyMediumRegular.copyWith(
+                      color: AppColors.primary5,
+                    ),
                   ),
                   subtitle: Text(
                     "Participação: ${summaryController.testamentModel.listHeir[index].percentage}%",
-                    style: AppFonts.bodyMediumRegular.copyWith(color: AppColors.primary5),
+                    style: AppFonts.bodyMediumRegular.copyWith(
+                      color: AppColors.primary5,
+                    ),
                   ),
                 ),
               );
@@ -98,7 +117,10 @@ class _SummaryViewState extends State<SummaryView> {
           ),
         ],
       ),
-      bottomSheet: ElevatedButtonWidget(text: "Finalizar", onTap: finishTestament),
+      bottomSheet: ElevatedButtonWidget(
+        text: "Finalizar",
+        onTap: finishTestament,
+      ),
     );
   }
 
