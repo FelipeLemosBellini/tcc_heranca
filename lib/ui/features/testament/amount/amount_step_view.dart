@@ -8,6 +8,7 @@ import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
+import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
@@ -98,6 +99,14 @@ class _AmountStepViewState extends State<AmountStepView> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.center,
+              child: ButtonIconWidget(
+                actionButtonEnum: ActionButtonEnum.add,
+                onTap: () {},
+              ),
             ),
           ],
         ),
