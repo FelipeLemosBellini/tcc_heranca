@@ -57,6 +57,8 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                 ),
                 Text("Ativos", style: AppFonts.labelLargeBold),
                 _lineData("ETH", widget.testamentModel.value.toString()),
+                _lineData("POL", 1.23.toString()),
+                _lineData("LDO", 4.56.toString()),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(color: AppColors.gray7),
