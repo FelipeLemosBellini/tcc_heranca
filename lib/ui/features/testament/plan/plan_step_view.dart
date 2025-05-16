@@ -80,8 +80,8 @@ class _PlanViewState extends State<PlanStepView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProgressBarWidget(progress: .80),
-            Text('Planos', style: AppFonts.bodyLargeBold),
+            ProgressBarWidget(progress: .05),
+            Text('Escolha seu plano', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),
             Column(
               children: plans.map((plan) {
@@ -117,7 +117,7 @@ class _PlanViewState extends State<PlanStepView> {
               mapStringToEnum(planStepController.selectedOption!),
             );
           }
-          context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
+          context.push(RouterApp.amountStep, extra: widget.flowTestamentEnum);
         },
       ),
     );

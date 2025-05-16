@@ -84,7 +84,7 @@ class _ProveOfLifeStepViewState extends State<ProveOfLifeStepView> {
             proveOfLiveStepController.selectedOption!,
           );
           proveOfLiveStepController.setProveOfLiveRecorrence(proveOfLiveEnum!);
-          context.push(RouterApp.planStep, extra: widget.flowTestamentEnum);
+          context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
         },
       ),
     );

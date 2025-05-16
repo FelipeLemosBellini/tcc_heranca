@@ -95,7 +95,7 @@ class _HomeViewState extends State<HomeView> {
             _selectedIndex == 1
                 ? FloatingActionButton(
                   onPressed: () {
-                    context.push(RouterApp.amountStep, extra: FlowTestamentEnum.creation);
+                    context.push(RouterApp.planStep, extra: FlowTestamentEnum.creation);
                   },
                   backgroundColor: AppColors.primaryLight2,
                   child: Icon(Icons.add_sharp, color: AppColors.primary),

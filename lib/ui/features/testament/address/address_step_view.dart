@@ -70,7 +70,7 @@ class _AddressStepViewState extends State<AddressStepView> {
               body: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 children: [
-                  ProgressBarWidget(progress: 0.5),
+                  ProgressBarWidget(progress: 0.50),
                   Text('Insira o endereço dos herdeiros', style: AppFonts.bodyLargeBold),
                   const SizedBox(height: 16),
                   ListView.builder(
