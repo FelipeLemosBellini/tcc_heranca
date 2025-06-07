@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
@@ -8,6 +9,8 @@ class TestamentController extends ChangeNotifier {
   TestamentModel _testament = TestamentModel.createWithDefaultValues();
 
   List<TestamentModel> listTestament = [];
+
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   TestamentModel get testament => _testament;
 
@@ -46,38 +49,60 @@ class TestamentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setPlan(EnumPlan value) {
+    _testament.plan = value;
+    notifyListeners();
+  }
+
   void clearTestament() {
     _testament = TestamentModel.createWithDefaultValues();
     notifyListeners();
   }
 
-  void saveTestament() {
+  Future<void> saveTestament() async {
     setId();
-    listTestament.add(testament);
+    await firestore
+        .collection('testamentos')
+        .doc(_testament.id.toString())
+        .set(_testament.toMap());
+    listTestament.add(_testament);
     notifyListeners();
   }
 
   Future<List<TestamentModel>> getAllTestaments() async {
+    final snapshot = await firestore.collection('testamentos').get();
+    listTestament = snapshot.docs
+        .map((doc) => TestamentModel.fromMap(doc.data()))
+        .toList();
+    notifyListeners();
     return listTestament;
+  }
+
+  Future<void> updateTestament() async {
+    await firestore
+        .collection('testamentos')
+        .doc(_testament.id.toString())
+        .update(_testament.toMap());
+
+    int index = listTestament.indexWhere((t) => t.id == _testament.id);
+    if (index != -1) {
+      listTestament[index] = _testament;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteTestament(TestamentModel oldTestament) async {
+    await firestore
+        .collection('testamentos')
+        .doc(oldTestament.id.toString())
+        .delete();
+
+    listTestament.removeWhere((t) => t.id == oldTestament.id);
+    notifyListeners();
   }
 
   void setTestamentToEdit(TestamentModel oldTestament) {
     _testament = oldTestament;
-  }
-
-  void updateTestament() {
-    int index = listTestament.indexWhere((index) => index.id == _testament.id);
-    listTestament[index] = _testament;
-  }
-
-  void deleteTestament(TestamentModel oldTestament) {
-    int index = listTestament.indexWhere((index) => index.id == oldTestament.id);
-
-    listTestament.removeAt(index);
-  }
-
-  void setPlan(EnumPlan value) {
-    _testament.plan = value;
     notifyListeners();
   }
 }

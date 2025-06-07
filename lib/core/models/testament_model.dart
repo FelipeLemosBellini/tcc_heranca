@@ -32,7 +32,36 @@ class TestamentModel {
       proveOfLiveRecurring: EnumProveOfLiveRecurring.TRIMESTRAL,
       listHeir: [],
       value: 0,
-      plan: EnumPlan.TESTE
+      plan: EnumPlan.TESTE,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'dateCreated': dateCreated.toIso8601String(),
+      'lastProveOfLife': lastProveOfLife.toIso8601String(),
+      'listHeir': listHeir.map((heir) => heir.toMap()).toList(),
+      'plan': plan.name, // ou plan.toString(), dependendo do enum
+      'proveOfLiveRecurring': proveOfLiveRecurring.name,
+      'value': value,
+    };
+  }
+
+  factory TestamentModel.fromMap(Map<String, dynamic> map) {
+    return TestamentModel(
+      id: map['id'],
+      title: map['title'],
+      dateCreated: DateTime.parse(map['dateCreated']),
+      lastProveOfLife: DateTime.parse(map['lastProveOfLife']),
+      listHeir: (map['listHeir'] as List)
+          .map((heirMap) => HeirModel.fromMap(heirMap))
+          .toList(),
+      plan: EnumPlan.values.firstWhere((e) => e.name == map['plan']),
+      proveOfLiveRecurring: EnumProveOfLiveRecurring.values
+          .firstWhere((e) => e.name == map['proveOfLiveRecurring']),
+      value: (map['value'] as num).toDouble(),
     );
   }
 
@@ -41,10 +70,13 @@ class TestamentModel {
     switch (proveOfLiveRecurring) {
       case EnumProveOfLiveRecurring.TRIMESTRAL:
         expiration = lastProveOfLife.add(Duration(days: 90));
+        break;
       case EnumProveOfLiveRecurring.SEMESTRAL:
         expiration = lastProveOfLife.add(Duration(days: 180));
+        break;
       case EnumProveOfLiveRecurring.ANUAL:
         expiration = lastProveOfLife.add(Duration(days: 360));
+        break;
     }
     return expiration;
   }
