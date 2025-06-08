@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
+import 'package:tcc/ui/helpers/extensions.dart';
 
 class CardWalletWidget extends StatelessWidget {
   final String addressUser;
   final String balanceETH;
 
-  const CardWalletWidget({super.key, required this.addressUser, required this.balanceETH});
+  const CardWalletWidget({
+    super.key,
+    required this.addressUser,
+    required this.balanceETH,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,28 +28,39 @@ class CardWalletWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
-                      Row(
+                      Text(
+                        "Endereço da Carteira",
+                        style: AppFonts.labelMediumMedium,
+                      ),
+                      Row(mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            addressUser,
-
-                            style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
+                            addressUser.addressAbbreviated(),
+                            overflow: TextOverflow.fade,
+                            style: AppFonts.labelSmallMedium.copyWith(
+                              color: AppColors.gray3,
+                            ),
                           ),
                           IconButton(
                             padding: EdgeInsets.zero,
                             onPressed: () {
                               print("copy address");
                             },
-                            icon: Icon(Icons.copy, color: AppColors.white, size: 16),
+                            icon: Icon(
+                              Icons.copy,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
                           ),
                         ],
                       ),
@@ -72,7 +88,10 @@ class CardWalletWidget extends StatelessWidget {
                           },
                         ),
                         SizedBox(width: 8),
-                        Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.primaryLight2),
+                        Icon(
+                          Icons.keyboard_arrow_down_outlined,
+                          color: AppColors.primaryLight2,
+                        ),
                       ],
                     ),
                   ),
@@ -91,7 +110,9 @@ class CardWalletWidget extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         "$balanceETH ETH",
-                        style: AppFonts.labelHeadBold.copyWith(color: AppColors.white),
+                        style: AppFonts.labelHeadBold.copyWith(
+                          color: AppColors.white,
+                        ),
                       ),
                     ],
                   ),

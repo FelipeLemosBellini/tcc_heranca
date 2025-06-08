@@ -14,9 +14,9 @@ class WalletView extends StatefulWidget {
   State<WalletView> createState() => _WalletViewState();
 }
 
-class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMixin {
+class _WalletViewState extends State<WalletView>
+    with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
-
 
   final double balanceETH = 2.345;
   String? userAddress;
@@ -33,7 +33,6 @@ class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMi
       });
     });
   }
-
 
   final List<AssetModel> myAssets = [
     AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
@@ -65,7 +64,10 @@ class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMi
             (context, _) => ListView(
               shrinkWrap: true,
               children: [
-                CardWalletWidget(addressUser: userAddress ?? "Carregando...", balanceETH: balanceETH.toString()),
+                CardWalletWidget(
+                  addressUser: userAddress ?? "Carregando...",
+                  balanceETH: balanceETH.toString(),
+                ),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -73,17 +75,33 @@ class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMi
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   itemBuilder: (context, index) {
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
                       child: Row(
                         children: [
-                          Icon(Icons.monetization_on, color: AppColors.gray2, size: 24),
+                          Icon(
+                            Icons.monetization_on,
+                            color: AppColors.gray2,
+                            size: 24,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(myAssets[index].name, style: AppFonts.labelMediumMedium),
+                            child: Text(
+                              myAssets[index].name,
+                              style: AppFonts.labelMediumMedium,
+                            ),
                           ),
                           const Spacer(),
-                          Text("${myAssets[index].amount} ", style: AppFonts.labelMediumLight),
-                          Text(myAssets[index].ticker, style: AppFonts.labelMediumLight),
+                          Text(
+                            "${myAssets[index].amount} ",
+                            style: AppFonts.labelMediumLight,
+                          ),
+                          Text(
+                            myAssets[index].ticker,
+                            style: AppFonts.labelMediumLight,
+                          ),
                         ],
                       ),
                     );
