@@ -34,10 +34,14 @@ class CardWalletWidget extends StatelessWidget {
                       Text("Endereço da Carteira", style: AppFonts.labelMediumMedium),
                       Row(
                         children: [
-                          Text(
-                            addressUser,
-
-                            style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              addressUser,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
+                            ),
                           ),
                           IconButton(
                             padding: EdgeInsets.zero,
