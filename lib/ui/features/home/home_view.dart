@@ -45,6 +45,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     homeController.addListener(_onLoadingChanged);
+    homeController.loadUserData();
     _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
     super.initState();
   }

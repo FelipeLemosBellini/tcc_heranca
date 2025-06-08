@@ -36,6 +36,7 @@ class CardWalletWidget extends StatelessWidget {
                         children: [
                           Text(
                             addressUser,
+
                             style: AppFonts.labelSmallMedium.copyWith(color: AppColors.gray3),
                           ),
                           IconButton(

@@ -17,9 +17,23 @@ class WalletView extends StatefulWidget {
 class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
 
-  final String addressUser = "0x1234...ABCD";
 
   final double balanceETH = 2.345;
+  String? userAddress;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Carregar endereço async e depois chamar setState
+    walletController.loadAssets().then((_) async {
+      final address = await walletController.getUserAddress();
+      setState(() {
+        userAddress = address;
+      });
+    });
+  }
+
 
   final List<AssetModel> myAssets = [
     AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
@@ -51,7 +65,7 @@ class _WalletViewState extends State<WalletView> with AutomaticKeepAliveClientMi
             (context, _) => ListView(
               shrinkWrap: true,
               children: [
-                CardWalletWidget(addressUser: addressUser, balanceETH: balanceETH.toString()),
+                CardWalletWidget(addressUser: userAddress ?? "Carregando...", balanceETH: balanceETH.toString()),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

@@ -56,7 +56,7 @@ abstract class DI {
     getIt.registerFactory(() => PlanStepController());
 
     //Controllers LazySingletons
-    getIt.registerLazySingleton(() => HomeController(authRepository: FirebaseAuthRepository()));
+    getIt.registerLazySingleton(() => HomeController(authRepository: FirebaseAuthRepository(), firestoreRepository: FirestoreRepository()));
     getIt.registerLazySingleton(() => TestatorController());
     getIt.registerLazySingleton(() => HeirController());
     getIt.registerLazySingleton(() => WalletController());

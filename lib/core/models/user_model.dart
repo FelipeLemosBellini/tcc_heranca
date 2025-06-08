@@ -2,11 +2,13 @@ class UserModel {
   final String uid;
   final String name;
   final String email;
+  final String address;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.email,
+    required this.address,
   });
 
   Map<String, dynamic> toMap() {
@@ -14,6 +16,7 @@ class UserModel {
       "uid": uid,
       "name": name,
       "email": email,
+      "address": address,
     };
   }
 
@@ -22,6 +25,7 @@ class UserModel {
       uid: map['uid'] ?? "",
       email: map['email'] ?? "",
       name: map['name'] ?? "",
+      address: map['address'] ?? "",
     );
   }
 }

@@ -62,12 +62,7 @@ class _SummaryViewState extends State<SummaryView> {
               Text(
                 '${summaryController.testamentModel.value} ETH',
                 style: AppFonts.bodyMediumLight,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${summaryController.testamentModel.value} Polkadot',
-                style: AppFonts.bodyMediumLight,
-              ),
+              )
             ],
           ),
 
