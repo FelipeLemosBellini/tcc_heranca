@@ -4,6 +4,7 @@ import 'package:tcc/core/models/heir_model.dart';
 
 class TestamentModel {
   int id;
+  String userId;
   String title;
   DateTime dateCreated;
   DateTime lastProveOfLife;
@@ -13,6 +14,7 @@ class TestamentModel {
   double value;
 
   TestamentModel({
+    required this.userId,
     required this.id,
     required this.value,
     required this.dateCreated,
@@ -25,6 +27,7 @@ class TestamentModel {
 
   factory TestamentModel.createWithDefaultValues() {
     return TestamentModel(
+      userId: '',
       id: 0,
       title: '',
       dateCreated: DateTime.now(),
@@ -38,6 +41,7 @@ class TestamentModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'userId': userId,
       'id': id,
       'title': title,
       'dateCreated': dateCreated.toIso8601String(),
@@ -51,6 +55,7 @@ class TestamentModel {
 
   factory TestamentModel.fromMap(Map<String, dynamic> map) {
     return TestamentModel(
+      userId: map['userId'],
       id: map['id'],
       title: map['title'],
       dateCreated: DateTime.parse(map['dateCreated']),

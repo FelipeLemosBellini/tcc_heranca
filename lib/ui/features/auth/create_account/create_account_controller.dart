@@ -25,26 +25,47 @@ class CreateAccountController extends BaseController {
     String? uid;
     bool successCreateAccount = false;
 
+    // 1. Criação da conta no Firebase Auth
     Either<ExceptionMessage, String> response = await firebaseAuthRepository
         .createAccount(email: email, password: password);
 
-    response.fold(
-          (ExceptionMessage error) {
+    await response.fold(
+      (ExceptionMessage error) {
         setMessage(
-          AlertData(
-            message: error.errorMessage,
-            errorType: ErrorType.error,
-          ),
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-          (String success) {
-        uid = success;
-        successCreateAccount = true;
-        setMessage(
-          AlertData(
-            message: "Conta criada com sucesso",
-            errorType: ErrorType.success,
-          ),
+      (String userId) async {
+        uid = userId;
+
+        // 2. Cria o UserModel
+        final newUser = UserModel(uid: uid!, name: name, email: email);
+
+        // 3. Salva o perfil no Firestore
+        final profileResponse = await firestoreRepository.createProfile(
+          uid!,
+          newUser.toMap(),
+        );
+
+        profileResponse.fold(
+          (error) {
+            successCreateAccount = false;
+            setMessage(
+              AlertData(
+                message: "Erro ao salvar perfil: ${error.errorMessage}",
+                errorType: ErrorType.error,
+              ),
+            );
+          },
+          (_) {
+            successCreateAccount = true;
+            setMessage(
+              AlertData(
+                message: "Conta criada com sucesso!",
+                errorType: ErrorType.success,
+              ),
+            );
+          },
         );
       },
     );

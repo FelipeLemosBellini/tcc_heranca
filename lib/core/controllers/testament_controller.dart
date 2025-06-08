@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tcc/core/enum/EnumPlan.dart';
@@ -11,6 +12,7 @@ class TestamentController extends ChangeNotifier {
   List<TestamentModel> listTestament = [];
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   TestamentModel get testament => _testament;
 
@@ -59,8 +61,14 @@ class TestamentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setUserId() {
+    _testament.userId = auth.currentUser!.uid;
+    notifyListeners();
+  }
+
   Future<void> saveTestament() async {
     setId();
+    setUserId();
     await firestore
         .collection('testamentos')
         .doc(_testament.id.toString())
@@ -73,6 +81,7 @@ class TestamentController extends ChangeNotifier {
     final snapshot = await firestore.collection('testamentos').get();
     listTestament = snapshot.docs
         .map((doc) => TestamentModel.fromMap(doc.data()))
+        .where((testament) => testament.userId == auth.currentUser!.uid)
         .toList();
     notifyListeners();
     return listTestament;
