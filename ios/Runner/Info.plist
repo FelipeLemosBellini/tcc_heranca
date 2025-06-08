@@ -18,6 +18,8 @@
 	<string>tcc</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSLocalNetworkUsageDescription</key>
+    <string>Este app precisa acessar a rede local para depuração.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
