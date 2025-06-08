@@ -73,7 +73,6 @@ class TestamentController extends ChangeNotifier {
         .collection('testamentos')
         .doc(_testament.id.toString())
         .set(_testament.toMap());
-    listTestament.add(_testament);
     notifyListeners();
   }
 
