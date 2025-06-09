@@ -21,16 +21,32 @@ class TestatorController extends BaseController {
 
   void loadingTestaments() async {
     _homeController.setLoading(true);
-    var response = await firestoreRepository.getAllTestaments();
-
+    var response = await firestoreRepository.getUser();
+    String address = "";
     response.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: "Erro ao buscar o testamento",
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (user) {
+        address = user.address;
+      },
+    );
+
+    var response2 = await firestoreRepository.getTestamentByAddress(address);
+
+    response2.fold(
       (error) {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
       (success) {
-        _listTestament = success;
+        _listTestament.addAll([success]);
       },
     );
 

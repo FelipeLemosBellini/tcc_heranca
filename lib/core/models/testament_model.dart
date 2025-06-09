@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tcc/core/enum/EnumPlan.dart';
 import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 
 class TestamentModel {
-  String id;
-  String userId;
+  String testamentAddress;
   String title;
   DateTime dateCreated;
   DateTime lastProveOfLife;
@@ -14,8 +14,7 @@ class TestamentModel {
   double value;
 
   TestamentModel({
-    required this.userId,
-    required this.id,
+    required this.testamentAddress,
     required this.value,
     required this.dateCreated,
     required this.lastProveOfLife,
@@ -27,8 +26,7 @@ class TestamentModel {
 
   factory TestamentModel.createWithDefaultValues() {
     return TestamentModel(
-      userId: '',
-      id: '',
+      testamentAddress: '',
       title: '',
       dateCreated: DateTime.now(),
       lastProveOfLife: DateTime.now(),
@@ -41,8 +39,6 @@ class TestamentModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': userId,
-      'id': id,
       'title': title,
       'dateCreated': dateCreated.toIso8601String(),
       'lastProveOfLife': lastProveOfLife.toIso8601String(),
@@ -53,19 +49,35 @@ class TestamentModel {
     };
   }
 
+  factory TestamentModel.fromDocument(
+    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    return TestamentModel(
+      testamentAddress: doc["testamentAddress"],
+      value: doc["value"],
+      dateCreated: doc["dateCreated"],
+      lastProveOfLife: doc["lastProveOfLife"],
+      proveOfLiveRecurring: doc["proveOfLiveRecurring"],
+      title: doc["title"],
+      listHeir: doc["listHeir"],
+      plan: doc["plan"],
+    );
+  }
+
   factory TestamentModel.fromMap(Map<String, dynamic> map) {
     return TestamentModel(
-      userId: map['userId'],
-      id: map['id'],
+      testamentAddress: map['testament'],
       title: map['title'],
       dateCreated: DateTime.parse(map['dateCreated']),
       lastProveOfLife: DateTime.parse(map['lastProveOfLife']),
-      listHeir: (map['listHeir'] as List)
-          .map((heirMap) => HeirModel.fromMap(heirMap))
-          .toList(),
+      listHeir:
+          (map['listHeir'] as List)
+              .map((heirMap) => HeirModel.fromMap(heirMap))
+              .toList(),
       plan: EnumPlan.values.firstWhere((e) => e.name == map['plan']),
-      proveOfLiveRecurring: EnumProveOfLiveRecurring.values
-          .firstWhere((e) => e.name == map['proveOfLiveRecurring']),
+      proveOfLiveRecurring: EnumProveOfLiveRecurring.values.firstWhere(
+        (e) => e.name == map['proveOfLiveRecurring'],
+      ),
       value: (map['value'] as num).toDouble(),
     );
   }

@@ -48,31 +48,27 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
     required String addressTestator,
     required TestamentModel testament,
   }) async {
-    try{
+    try {
       await firestore
           .collection('testamentos')
           .doc(addressTestator)
           .set(testament.toMap());
       return Right(null);
-    }catch(e){
+    } catch (e) {
       return Left(ExceptionMessage("Erro ao criar o testamento"));
     }
   }
 
-  Future<Either<ExceptionMessage, List<TestamentModel>>>
-  getAllTestaments() async {
+  Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
+    myAddress,
+  ) async {
     try {
       final snapshot = await firestore.collection('testamentos').get();
-      List<TestamentModel> list = [];
-      list =
-          snapshot.docs
-              .map((doc) => TestamentModel.fromMap(doc.data()))
-              .where(
-                (testament) =>
-                    testament.userId == firebaseAuth.currentUser!.uid,
-              )
-              .toList();
-      return Right(list);
+      QueryDocumentSnapshot<Map<String, dynamic>> response = snapshot.docs
+          .firstWhere(
+            (testament) => myAddress == testament["testamentAddress"].toString(),
+          );
+      return Right(TestamentModel.fromDocument(response));
     } catch (e) {
       return Left(ExceptionMessage("Erro ao buscar os testamentos"));
     }
@@ -93,14 +89,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
     }
   }
 
-  Future<Either<ExceptionMessage, void>> deleteTestament(
-    TestamentModel oldTestament,
-  ) async {
+  Future<Either<ExceptionMessage, void>> deleteTestament({
+    required String address,
+  }) async {
     try {
-      await firestore
-          .collection('testamentos')
-          .doc(oldTestament.id.toString())
-          .delete();
+      await firestore.collection('testamentos').doc(address).delete();
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao excluir testamento"));

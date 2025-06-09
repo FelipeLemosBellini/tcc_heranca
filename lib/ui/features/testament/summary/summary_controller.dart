@@ -44,12 +44,12 @@ class SummaryController extends BaseController {
         if (flow == FlowTestamentEnum.edit) {
           firestoreRepository.updateTestament(
             addressTestator: user.address,
-            testament: testamentModel,
+            testament: testamentController.testament,
           );
         } else {
           firestoreRepository.createTestament(
             addressTestator: user.address,
-            testament: testamentModel,
+            testament: testamentController.testament,
           );
         }
       },

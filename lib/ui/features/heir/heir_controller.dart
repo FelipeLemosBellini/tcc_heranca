@@ -17,18 +17,18 @@ class HeirController extends BaseController {
 
   void loadingTestaments() async {
     _homeController.setLoading(true);
-    var response = await firestoreRepository.getAllTestaments();
-
-    response.fold(
-      (error) {
-        setMessage(
-          AlertData(message: error.errorMessage, errorType: ErrorType.error),
-        );
-      },
-      (success) {
-        _listTestament = success;
-      },
-    );
+    // var response = await firestoreRepository.getTestamentByAddress(address);
+    //
+    // response.fold(
+    //   (error) {
+    //     setMessage(
+    //       AlertData(message: error.errorMessage, errorType: ErrorType.error),
+    //     );
+    //   },
+    //   (success) {
+    //     _listTestament = success;
+    //   },
+    // );
     await Future.delayed(Duration(seconds: 1));
     _homeController.setLoading(false);
     notifyListeners();

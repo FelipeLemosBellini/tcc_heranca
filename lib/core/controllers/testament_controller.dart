@@ -9,11 +9,6 @@ class TestamentController extends ChangeNotifier {
 
   TestamentModel get testament => _testament;
 
-  void setId(String addressTestator) {
-    _testament.id = addressTestator;
-    notifyListeners();
-  }
-
   void setTitle(String title) {
     _testament.title = title;
     notifyListeners();
@@ -51,11 +46,6 @@ class TestamentController extends ChangeNotifier {
 
   void clearTestament() {
     _testament = TestamentModel.createWithDefaultValues();
-    notifyListeners();
-  }
-
-  void setUserId({required String addressTestator}) {
-    _testament.userId = addressTestator;
     notifyListeners();
   }
 

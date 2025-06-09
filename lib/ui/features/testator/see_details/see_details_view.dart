@@ -128,7 +128,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
   }
 
   void deleteTestament() {
-    seeDetailsController.deleteTestament(widget.testamentModel);
+    seeDetailsController.deleteTestament();
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(message: 'Testamento excluído.', errorType: ErrorType.success),

@@ -3,6 +3,7 @@ import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class SeeDetailsController extends BaseController {
   final TestamentController _testamentController =
@@ -15,7 +16,21 @@ class SeeDetailsController extends BaseController {
     _testamentController.setTestamentToEdit(testament);
   }
 
-  void deleteTestament(TestamentModel testament) {
-    firestoreRepository.deleteTestament(testament);
+  void deleteTestament() async {
+    var response = await firestoreRepository.getUser();
+
+    response.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: "Erro ao excluir o testamento",
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (user) {
+        firestoreRepository.deleteTestament(address: user.address);
+      },
+    );
   }
 }
