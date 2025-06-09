@@ -65,7 +65,7 @@ class _WalletViewState extends State<WalletView>
               shrinkWrap: true,
               children: [
                 CardWalletWidget(
-                  addressUser: userAddress ?? "Carregando...",
+                  addressUser: userAddress ?? "",
                   balanceETH: balanceETH.toString(),
                 ),
                 ListView.separated(

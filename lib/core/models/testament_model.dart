@@ -3,7 +3,7 @@ import 'package:tcc/core/enum/enum_prove_of_live_recorrence.dart';
 import 'package:tcc/core/models/heir_model.dart';
 
 class TestamentModel {
-  int id;
+  String id;
   String userId;
   String title;
   DateTime dateCreated;
@@ -28,7 +28,7 @@ class TestamentModel {
   factory TestamentModel.createWithDefaultValues() {
     return TestamentModel(
       userId: '',
-      id: 0,
+      id: '',
       title: '',
       dateCreated: DateTime.now(),
       lastProveOfLife: DateTime.now(),
