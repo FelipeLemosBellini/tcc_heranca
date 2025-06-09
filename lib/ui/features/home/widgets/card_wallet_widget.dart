@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/helpers/extensions.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class CardWalletWidget extends StatelessWidget {
   final String addressUser;
@@ -58,6 +59,13 @@ class CardWalletWidget extends StatelessWidget {
                             onPressed: () {
                               Clipboard.setData(
                                 ClipboardData(text: addressUser),
+                              );
+                              AlertHelper.showAlertSnackBar(
+                                context: context,
+                                alertData: AlertData(
+                                  message: "Endereço copiado com sucesso",
+                                  errorType: ErrorType.success,
+                                ),
                               );
                             },
                             icon: Icon(
