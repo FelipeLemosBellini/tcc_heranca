@@ -2,8 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/events/TestamentUpdatedEvent.dart';
-import 'package:tcc/core/events/testament_created_event.dart';
+import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/routers.dart';
@@ -138,27 +137,27 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
     );
   }
 
-  void _mainAction() {
+  Future<void> _mainAction() async {
     if (widget.enumTypeUser == EnumTypeUser.testator) {
-      updateDateProveOfLife();
+      await updateDateProveOfLife();
     }
 
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(
-        message:
-            widget.enumTypeUser == EnumTypeUser.testator
-                ? 'Prova de vida realizada.'
-                : 'Resgate realizado.',
+        message: widget.enumTypeUser == EnumTypeUser.testator
+            ? 'Prova de vida realizada.'
+            : 'Resgate realizado.',
         errorType: ErrorType.success,
       ),
     );
+
     context.pop();
   }
 
-  void updateDateProveOfLife() async {
-    seeDetailsController.updateDateProveOfLife();
-    seeDetailsController.updateDateProveOfLifeTestament();
+  Future<void> updateDateProveOfLife() async {
+    await seeDetailsController.updateDateProveOfLife();
+    await seeDetailsController.updateDateProveOfLifeTestament();
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(
@@ -166,7 +165,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
         errorType: ErrorType.success,
       ),
     );
-    eventBus.fire(TestamentUpdatedEvent());
+    eventBus.fire(TestamentEvent());
   }
 
   void deleteTestament() async {
@@ -178,7 +177,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
         errorType: ErrorType.success,
       ),
     );
-    eventBus.fire(TestamentCreatedEvent());
+    eventBus.fire(TestamentEvent());
     context.pop();
   }
 

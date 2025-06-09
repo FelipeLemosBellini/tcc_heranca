@@ -1,3 +1,0 @@
-class TestamentUpdatedEvent{
-  TestamentUpdatedEvent();
-}

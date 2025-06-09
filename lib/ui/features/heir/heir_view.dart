@@ -2,7 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/events/testament_created_event.dart';
+import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/heir/heir_controller.dart';
@@ -30,7 +30,7 @@ class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin 
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       heirController.loadingTestaments();
-      eventBus.on<TestamentCreatedEvent>().listen((event) {
+      eventBus.on<TestamentEvent>().listen((event) {
         heirController.loadingTestaments();
       });
     });

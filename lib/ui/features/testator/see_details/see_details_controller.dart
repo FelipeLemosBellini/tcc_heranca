@@ -17,15 +17,15 @@ class SeeDetailsController extends BaseController {
     _testamentController.setTestamentToEdit(testament);
   }
 
-  void updateDateProveOfLife() {
+  Future<void> updateDateProveOfLife() async {
     _testamentController.setDateLastProveOfLife(DateTime.now());
   }
 
-  void updateDateProveOfLifeTestament() async {
-    var response = await firestoreRepository.getUser();
+  Future<void> updateDateProveOfLifeTestament() async {
+    final response = await firestoreRepository.getUser();
 
-    response.fold(
-          (error) {
+    await response.fold(
+          (error) async {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
@@ -33,8 +33,8 @@ class SeeDetailsController extends BaseController {
           (UserModel user) async {
         final testamentResult = await firestoreRepository.getTestamentByAddress(user.address);
 
-        testamentResult.fold(
-              (error) {
+        await testamentResult.fold(
+              (error) async {
             setMessage(
               AlertData(message: error.errorMessage, errorType: ErrorType.error),
             );
@@ -60,17 +60,17 @@ class SeeDetailsController extends BaseController {
 
 
 
-  void deleteTestament(TestamentModel testament) async {
-    var response = await firestoreRepository.getUser();
+  Future<void> deleteTestament(TestamentModel testament) async {
+    final response = await firestoreRepository.getUser();
 
-    response.fold(
-      (error) {
+    await response.fold(
+          (error) async {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-      (UserModel user) {
-        firestoreRepository.deleteTestament(
+          (UserModel user) async {
+        await firestoreRepository.deleteTestament(
           address: user.address,
           testament: testament,
         );
