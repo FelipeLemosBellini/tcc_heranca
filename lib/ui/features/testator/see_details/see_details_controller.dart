@@ -17,24 +17,22 @@ class SeeDetailsController extends BaseController {
     _testamentController.setTestamentToEdit(testament);
   }
 
-  void deleteTestament() async {
+  void deleteTestament(TestamentModel testament) async {
     var response = await firestoreRepository.getUser();
 
     response.fold(
       (error) {
         setMessage(
-          AlertData(
-            message: error.errorMessage,
-            errorType: ErrorType.error,
-          ),
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
       (UserModel user) {
-        firestoreRepository.deleteTestament(address: user.address);
+        firestoreRepository.deleteTestament(
+          address: user.address,
+          testament: testament,
+        );
         notifyListeners();
       },
     );
-
-
   }
 }

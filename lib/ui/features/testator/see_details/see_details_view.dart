@@ -152,7 +152,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
   }
 
   void deleteTestament() async {
-    seeDetailsController.deleteTestament();
+    seeDetailsController.deleteTestament(widget.testamentModel);
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(

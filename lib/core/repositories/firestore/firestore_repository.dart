@@ -121,9 +121,28 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
 
   Future<Either<ExceptionMessage, void>> deleteTestament({
     required String address,
+    required TestamentModel testament,
   }) async {
     try {
       await firestore.collection('testamentos').doc(address).delete();
+
+      for (HeirModel heir in testament.listHeir) {
+        DocumentReference<Map<String, dynamic>> docRef =
+        firestore.collection('listTestamentToHeir').doc(heir.address);
+
+        DocumentSnapshot<Map<String, dynamic>> listTestamentToHeir =
+        await docRef.get();
+
+        if (listTestamentToHeir.exists) {
+          List<dynamic> listTestament =
+              listTestamentToHeir.data()?['listTestament'] ?? [];
+
+          listTestament.remove(address);
+
+          await docRef.update({'listTestament': listTestament});
+        }
+      }
+
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao excluir testamento"));
