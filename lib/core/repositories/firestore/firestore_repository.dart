@@ -60,19 +60,26 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
   }
 
   Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
-    myAddress,
-  ) async {
+      String myAddress,
+      ) async {
     try {
-      final snapshot = await firestore.collection('testamentos').get();
-      QueryDocumentSnapshot<Map<String, dynamic>> response = snapshot.docs
-          .firstWhere(
-            (testament) => myAddress == testament["testamentAddress"].toString(),
-          );
-      return Right(TestamentModel.fromDocument(response));
+      final doc = await firestore.collection('testamentos').doc(myAddress).get();
+
+      if (!doc.exists) {
+        return Left(ExceptionMessage("Nenhum testamento encontrado"));
+      }
+
+      if (doc.data() == null) {
+        return Left(ExceptionMessage("Dados do testamento estão vazios"));
+      }
+
+      final testament = TestamentModel.fromSnapshot(doc);
+      return Right(testament);
     } catch (e) {
-      return Left(ExceptionMessage("Erro ao buscar os testamentos"));
+      return Left(ExceptionMessage("Erro ao buscar o testamento: ${e.toString()}"));
     }
   }
+
 
   Future<Either<ExceptionMessage, void>> updateTestament({
     required String addressTestator,

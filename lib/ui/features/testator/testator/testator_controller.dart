@@ -21,32 +21,39 @@ class TestatorController extends BaseController {
 
   void loadingTestaments() async {
     _homeController.setLoading(true);
+
+    _listTestament.clear();
+    notifyListeners();
+
     var response = await firestoreRepository.getUser();
     String address = "";
     response.fold(
-      (error) {
+          (error) {
         setMessage(
           AlertData(
             message: "Erro ao buscar o testamento",
             errorType: ErrorType.error,
           ),
         );
+        _homeController.setLoading(false);
+        notifyListeners();
+        return;
       },
-      (user) {
+          (user) {
         address = user.address;
       },
     );
 
     var response2 = await firestoreRepository.getTestamentByAddress(address);
-
     response2.fold(
-      (error) {
+          (error) {
+        _listTestament.clear();
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-      (success) {
-        _listTestament.addAll([success]);
+          (success) {
+        _listTestament.add(success);
       },
     );
 
@@ -54,4 +61,5 @@ class TestatorController extends BaseController {
     _homeController.setLoading(false);
     notifyListeners();
   }
+
 }

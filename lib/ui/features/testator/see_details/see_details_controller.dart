@@ -30,6 +30,7 @@ class SeeDetailsController extends BaseController {
       },
       (user) {
         firestoreRepository.deleteTestament(address: user.address);
+        notifyListeners();
       },
     );
   }

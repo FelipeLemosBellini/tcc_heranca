@@ -82,6 +82,17 @@ class TestamentModel {
     );
   }
 
+  factory TestamentModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc,
+      ) {
+    final data = doc.data()!;
+    return TestamentModel.fromMap({
+      ...data,
+      'testament': doc.id,
+    });
+  }
+
+
   DateTime proofLifeExpiration() {
     late DateTime expiration;
     switch (proveOfLiveRecurring) {
