@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
+import 'package:tcc/core/models/heir_model.dart';
+import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
-
-import '../../models/user_model.dart';
 
 class FirestoreRepository implements FirestoreRepositoryInterface {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -13,7 +14,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, UserModel>> getUser() async {
     try {
-      final doc = await firestore.collection("users").doc(firebaseAuth.currentUser?.uid).get();
+      final doc =
+          await firestore
+              .collection("users")
+              .doc(firebaseAuth.currentUser?.uid)
+              .get();
 
       if (doc.exists && doc.data() != null) {
         final user = UserModel.fromMap(doc.data()!);
@@ -27,12 +32,120 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> createProfile(String uid, Map<String, dynamic> data) async {
+  Future<Either<ExceptionMessage, void>> createProfile(
+    String uid,
+    UserModel data,
+  ) async {
     try {
-      await firestore.collection("users").doc(uid).set(data);
+      await firestore.collection("users").doc(uid).set(data.toMap());
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao criar perfil: ${e.toString()}"));
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> createTestament({
+    required String addressTestator,
+    required TestamentModel testament,
+  }) async {
+    try {
+      await firestore
+          .collection('testamentos')
+          .doc(addressTestator)
+          .set(testament.toMap());
+      for (HeirModel heirModel in testament.listHeir) {
+        DocumentSnapshot<Map<String, dynamic>> data =
+            await firestore
+                .collection('listTestamentToHeir')
+                .doc(heirModel.address)
+                .get();
+
+        List<dynamic> listTestament = [];
+        if (data.exists) {
+          listTestament = data["listTestament"] as List<dynamic>;
+        }
+
+        if (!listTestament.contains(addressTestator)) {
+          listTestament.add(addressTestator);
+        }
+
+        await firestore
+            .collection('listTestamentToHeir')
+            .doc(heirModel.address)
+            .set({"listTestament": listTestament});
+      }
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao criar o testamento"));
+    }
+  }
+
+  Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
+    String myAddress,
+  ) async {
+    try {
+      final doc =
+          await firestore.collection('testamentos').doc(myAddress).get();
+
+      if (!doc.exists) {
+        return Left(ExceptionMessage("Nenhum testamento encontrado"));
+      }
+
+      if (doc.data() == null) {
+        return Left(ExceptionMessage("Dados do testamento estão vazios"));
+      }
+
+      final testament = TestamentModel.fromSnapshot(doc);
+      return Right(testament);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro ao buscar o testamento: ${e.toString()}"),
+      );
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> updateTestament({
+    required String addressTestator,
+    required TestamentModel testament,
+  }) async {
+    try {
+      await firestore
+          .collection('testamentos')
+          .doc(addressTestator)
+          .update(testament.toMap());
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao atualizar o testamento"));
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> deleteTestament({
+    required String address,
+    required TestamentModel testament,
+  }) async {
+    try {
+      await firestore.collection('testamentos').doc(address).delete();
+
+      for (HeirModel heir in testament.listHeir) {
+        DocumentReference<Map<String, dynamic>> docRef =
+        firestore.collection('listTestamentToHeir').doc(heir.address);
+
+        DocumentSnapshot<Map<String, dynamic>> listTestamentToHeir =
+        await docRef.get();
+
+        if (listTestamentToHeir.exists) {
+          List<dynamic> listTestament =
+              listTestamentToHeir.data()?['listTestament'] ?? [];
+
+          listTestament.remove(address);
+
+          await docRef.update({'listTestament': listTestament});
+        }
+      }
+
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao excluir testamento"));
     }
   }
 }

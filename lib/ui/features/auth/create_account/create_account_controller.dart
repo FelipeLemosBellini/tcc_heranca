@@ -38,13 +38,16 @@ class CreateAccountController extends BaseController {
         );
       },
       (String userId) async {
-        uid = userId;
-
-        final newUser = UserModel(uid: uid!, name: name, email: email, address: await generateWalletAddress());
+        final newUser = UserModel(
+          uid: userId,
+          name: name,
+          email: email,
+          address: await generateWalletAddress(),
+        );
 
         final profileResponse = await firestoreRepository.createProfile(
-          uid!,
-          newUser.toMap(),
+          userId,
+          newUser,
         );
 
         profileResponse.fold(

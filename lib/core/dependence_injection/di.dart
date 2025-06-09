@@ -25,20 +25,27 @@ abstract class DI {
   static final GetIt getIt = GetIt.instance;
 
   static void setDependencies() {
-
     getIt.registerLazySingleton<EventBus>(() => EventBus());
 
     //Controllers Notifiers
     getIt.registerLazySingleton(() => TestamentController());
 
     //Repositories
-    getIt.registerLazySingleton<FirestoreRepositoryInterface>(() => FirestoreRepository());
-    getIt.registerLazySingleton<FirebaseAuthRepositoryInterface>(() => FirebaseAuthRepository());
+    getIt.registerLazySingleton<FirestoreRepositoryInterface>(
+      () => FirestoreRepository(),
+    );
+    getIt.registerLazySingleton<FirebaseAuthRepositoryInterface>(
+      () => FirebaseAuthRepository(),
+    );
 
     //Controllers
-    getIt.registerFactory<MaterialDesignController>(() => MaterialDesignController());
+    getIt.registerFactory<MaterialDesignController>(
+      () => MaterialDesignController(),
+    );
     getIt.registerFactory<ForgotPasswordController>(
-      () => ForgotPasswordController(firebaseAuthRepository: FirebaseAuthRepository()),
+      () => ForgotPasswordController(
+        firebaseAuthRepository: FirebaseAuthRepository(),
+      ),
     );
     getIt.registerFactory<CreateAccountController>(
       () => CreateAccountController(
@@ -46,19 +53,34 @@ abstract class DI {
         firebaseAuthRepository: FirebaseAuthRepository(),
       ),
     );
-    getIt.registerFactory(() => LoginController(firebaseAuthRepository: FirebaseAuthRepository()));
+    getIt.registerFactory(
+      () => LoginController(firebaseAuthRepository: FirebaseAuthRepository()),
+    );
     getIt.registerFactory(() => LoginWalletController());
     getIt.registerFactory(() => AddressStepController());
     getIt.registerFactory(() => AmountStepController());
     getIt.registerFactory(() => ProveOfLiveStepController());
-    getIt.registerFactory(() => SummaryController());
-    getIt.registerFactory(() => SeeDetailsController());
+    getIt.registerFactory(
+      () => SummaryController(firestoreRepository: FirestoreRepository()),
+    );
+    getIt.registerFactory(
+      () => SeeDetailsController(firestoreRepository: FirestoreRepository()),
+    );
     getIt.registerFactory(() => PlanStepController());
 
     //Controllers LazySingletons
-    getIt.registerLazySingleton(() => HomeController(authRepository: FirebaseAuthRepository(), firestoreRepository: FirestoreRepository()));
-    getIt.registerLazySingleton(() => TestatorController());
-    getIt.registerLazySingleton(() => HeirController());
+    getIt.registerLazySingleton(
+      () => HomeController(
+        authRepository: FirebaseAuthRepository(),
+        firestoreRepository: FirestoreRepository(),
+      ),
+    );
+    getIt.registerLazySingleton(
+      () => TestatorController(firestoreRepository: FirestoreRepository()),
+    );
+    getIt.registerLazySingleton(
+      () => HeirController(firestoreRepository: FirestoreRepository()),
+    );
     getIt.registerLazySingleton(() => WalletController());
   }
 }

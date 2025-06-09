@@ -2,7 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/events/testament_created_event.dart';
+import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
@@ -27,7 +27,7 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
     WidgetsBinding.instance.addPostFrameCallback((_) {
       testatorController.loadingTestaments();
 
-      eventBus.on<TestamentCreatedEvent>().listen((event) {
+      eventBus.on<TestamentEvent>().listen((event) {
         testatorController.loadingTestaments();
       });
     });

@@ -12,7 +12,6 @@ import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
-import 'package:flutter/services.dart';
 import 'package:tcc/ui/widgets/progress_bar_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
