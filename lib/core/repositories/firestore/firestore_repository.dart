@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
+import 'package:tcc/core/models/heir_model.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
-
-import '../../models/user_model.dart';
 
 class FirestoreRepository implements FirestoreRepositoryInterface {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -53,6 +53,27 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
           .collection('testamentos')
           .doc(addressTestator)
           .set(testament.toMap());
+      for (HeirModel heirModel in testament.listHeir) {
+        DocumentSnapshot<Map<String, dynamic>> data =
+            await firestore
+                .collection('listTestamentToHeir')
+                .doc(heirModel.address)
+                .get();
+
+        List<dynamic> listTestament = [];
+        if (data.exists) {
+          listTestament = data["listTestament"] as List<dynamic>;
+        }
+
+        if (!listTestament.contains(addressTestator)) {
+          listTestament.add(addressTestator);
+        }
+
+        await firestore
+            .collection('listTestamentToHeir')
+            .doc(heirModel.address)
+            .set({"listTestament": listTestament});
+      }
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao criar o testamento"));
@@ -60,10 +81,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
   }
 
   Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
-      String myAddress,
-      ) async {
+    String myAddress,
+  ) async {
     try {
-      final doc = await firestore.collection('testamentos').doc(myAddress).get();
+      final doc =
+          await firestore.collection('testamentos').doc(myAddress).get();
 
       if (!doc.exists) {
         return Left(ExceptionMessage("Nenhum testamento encontrado"));
@@ -76,10 +98,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
       final testament = TestamentModel.fromSnapshot(doc);
       return Right(testament);
     } catch (e) {
-      return Left(ExceptionMessage("Erro ao buscar o testamento: ${e.toString()}"));
+      return Left(
+        ExceptionMessage("Erro ao buscar o testamento: ${e.toString()}"),
+      );
     }
   }
-
 
   Future<Either<ExceptionMessage, void>> updateTestament({
     required String addressTestator,

@@ -1,14 +1,12 @@
 import 'package:get_it/get_it.dart';
-import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class TestatorController extends BaseController {
-  final TestamentController _testamentController =
-      GetIt.I.get<TestamentController>();
   final HomeController _homeController = GetIt.I.get<HomeController>();
 
   final FirestoreRepository firestoreRepository;
@@ -28,7 +26,7 @@ class TestatorController extends BaseController {
     var response = await firestoreRepository.getUser();
     String address = "";
     response.fold(
-          (error) {
+      (error) {
         setMessage(
           AlertData(
             message: "Erro ao buscar o testamento",
@@ -39,20 +37,20 @@ class TestatorController extends BaseController {
         notifyListeners();
         return;
       },
-          (user) {
+      (UserModel user) {
         address = user.address;
       },
     );
 
     var response2 = await firestoreRepository.getTestamentByAddress(address);
     response2.fold(
-          (error) {
+      (error) {
         _listTestament.clear();
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-          (success) {
+      (success) {
         _listTestament.add(success);
       },
     );
@@ -61,5 +59,4 @@ class TestatorController extends BaseController {
     _homeController.setLoading(false);
     notifyListeners();
   }
-
 }
