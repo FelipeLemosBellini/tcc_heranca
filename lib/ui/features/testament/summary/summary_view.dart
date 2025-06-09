@@ -155,7 +155,6 @@ class _SummaryViewState extends State<SummaryView> {
       ),
     );
     summaryController.saveTestament(widget.flowTestamentEnum);
-    summaryController.clearTestament();
     EventBus eventBus = GetIt.I.get<EventBus>();
     eventBus.fire(TestamentCreatedEvent());
     context.go(RouterApp.home);

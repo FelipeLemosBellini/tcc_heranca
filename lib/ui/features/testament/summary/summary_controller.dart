@@ -4,8 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
-import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
@@ -30,6 +30,7 @@ class SummaryController extends BaseController {
   void saveTestament(FlowTestamentEnum flow) async {
     var response = await firestoreRepository.getUser();
 
+    late UserModel userModel;
     response.fold(
       (error) {
         setMessage(
@@ -38,22 +39,25 @@ class SummaryController extends BaseController {
             errorType: ErrorType.error,
           ),
         );
+        return;
       },
-      (user) {
-        testamentController.setTitle(titleController.text);
-        if (flow == FlowTestamentEnum.edit) {
-          firestoreRepository.updateTestament(
-            addressTestator: user.address,
-            testament: testamentController.testament,
-          );
-        } else {
-          firestoreRepository.createTestament(
-            addressTestator: user.address,
-            testament: testamentController.testament,
-          );
-        }
+      (UserModel user) {
+        userModel = user;
       },
     );
+    testamentController.setTitle(titleController.text);
+    if (flow == FlowTestamentEnum.edit) {
+      await firestoreRepository.updateTestament(
+        addressTestator: userModel.address,
+        testament: testamentController.testament,
+      );
+    } else {
+      await firestoreRepository.createTestament(
+        addressTestator: userModel.address,
+        testament: testamentController.testament,
+      );
+    }
+    clearTestament();
   }
 
   void clearTestament() {
