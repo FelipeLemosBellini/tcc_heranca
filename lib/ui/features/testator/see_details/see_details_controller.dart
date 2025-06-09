@@ -17,6 +17,49 @@ class SeeDetailsController extends BaseController {
     _testamentController.setTestamentToEdit(testament);
   }
 
+  void updateDateProveOfLife() {
+    _testamentController.setDateLastProveOfLife(DateTime.now());
+  }
+
+  void updateDateProveOfLifeTestament() async {
+    var response = await firestoreRepository.getUser();
+
+    response.fold(
+          (error) {
+        setMessage(
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
+        );
+      },
+          (UserModel user) async {
+        final testamentResult = await firestoreRepository.getTestamentByAddress(user.address);
+
+        testamentResult.fold(
+              (error) {
+            setMessage(
+              AlertData(message: error.errorMessage, errorType: ErrorType.error),
+            );
+          },
+              (TestamentModel testament) async {
+            final updatedTestament = testament.copyWith(
+              lastProveOfLife: DateTime.now(),
+            );
+
+            _testamentController.setTestamentToEdit(updatedTestament);
+
+            await firestoreRepository.updateTestament(
+              addressTestator: user.address,
+              testament: updatedTestament,
+            );
+
+            notifyListeners();
+          },
+        );
+      },
+    );
+  }
+
+
+
   void deleteTestament(TestamentModel testament) async {
     var response = await firestoreRepository.getUser();
 

@@ -108,4 +108,27 @@ class TestamentModel {
     }
     return expiration;
   }
+
+  TestamentModel copyWith({
+    String? testamentAddress,
+    String? title,
+    DateTime? dateCreated,
+    DateTime? lastProveOfLife,
+    List<HeirModel>? listHeir,
+    EnumPlan? plan,
+    EnumProveOfLiveRecurring? proveOfLiveRecurring,
+    double? value,
+  }) {
+    return TestamentModel(
+      testamentAddress: testamentAddress ?? this.testamentAddress,
+      title: title ?? this.title,
+      dateCreated: dateCreated ?? this.dateCreated,
+      lastProveOfLife: lastProveOfLife ?? this.lastProveOfLife,
+      listHeir: listHeir ?? this.listHeir,
+      plan: plan ?? this.plan,
+      proveOfLiveRecurring: proveOfLiveRecurring ?? this.proveOfLiveRecurring,
+      value: value ?? this.value,
+    );
+  }
+
 }

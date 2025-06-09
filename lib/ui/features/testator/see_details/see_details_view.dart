@@ -2,6 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/TestamentUpdatedEvent.dart';
 import 'package:tcc/core/events/testament_created_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
@@ -34,6 +35,8 @@ class SeeDetailsView extends StatefulWidget {
 class _SeeDetailsViewState extends State<SeeDetailsView> {
   SeeDetailsController seeDetailsController =
       GetIt.instance.get<SeeDetailsController>();
+
+  EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +75,6 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   title: "ETH",
                   value: widget.testamentModel.value.toString(),
                 ),
-                _lineData(title: "POL", value: 1.23.toString()),
-                _lineData(title: "LDO", value: 4.56.toString()),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(color: AppColors.gray7),
@@ -138,6 +139,10 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
   }
 
   void _mainAction() {
+    if (widget.enumTypeUser == EnumTypeUser.testator) {
+      updateDateProveOfLife();
+    }
+
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(
@@ -151,6 +156,19 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
     context.pop();
   }
 
+  void updateDateProveOfLife() async {
+    seeDetailsController.updateDateProveOfLife();
+    seeDetailsController.updateDateProveOfLifeTestament();
+    AlertHelper.showAlertSnackBar(
+      context: context,
+      alertData: AlertData(
+        message: 'Data de prova de vida atualizada.',
+        errorType: ErrorType.success,
+      ),
+    );
+    eventBus.fire(TestamentUpdatedEvent());
+  }
+
   void deleteTestament() async {
     seeDetailsController.deleteTestament(widget.testamentModel);
     AlertHelper.showAlertSnackBar(
@@ -160,7 +178,6 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
         errorType: ErrorType.success,
       ),
     );
-    EventBus eventBus = GetIt.I.get<EventBus>();
     eventBus.fire(TestamentCreatedEvent());
     context.pop();
   }
