@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/helpers/extensions.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class CardWalletWidget extends StatelessWidget {
   final String addressUser;
@@ -42,7 +44,8 @@ class CardWalletWidget extends StatelessWidget {
                         "Endereço da Carteira",
                         style: AppFonts.labelMediumMedium,
                       ),
-                      Row(mainAxisSize: MainAxisSize.min,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             addressUser.addressAbbreviated(),
@@ -54,7 +57,16 @@ class CardWalletWidget extends StatelessWidget {
                           IconButton(
                             padding: EdgeInsets.zero,
                             onPressed: () {
-                              print("copy address");
+                              Clipboard.setData(
+                                ClipboardData(text: addressUser),
+                              );
+                              AlertHelper.showAlertSnackBar(
+                                context: context,
+                                alertData: AlertData(
+                                  message: "Endereço copiado com sucesso",
+                                  errorType: ErrorType.success,
+                                ),
+                              );
                             },
                             icon: Icon(
                               Icons.copy,
