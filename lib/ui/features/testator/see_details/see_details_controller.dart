@@ -24,7 +24,7 @@ class SeeDetailsController extends BaseController {
       (error) {
         setMessage(
           AlertData(
-            message: "Erro ao excluir o testamento",
+            message: error.errorMessage,
             errorType: ErrorType.error,
           ),
         );
@@ -34,5 +34,7 @@ class SeeDetailsController extends BaseController {
         notifyListeners();
       },
     );
+
+
   }
 }

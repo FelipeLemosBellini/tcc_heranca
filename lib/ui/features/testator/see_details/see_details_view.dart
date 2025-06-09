@@ -11,6 +11,7 @@ import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/see_details/see_details_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
+import 'package:tcc/ui/helpers/extensions.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/button_icon_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_thematic_widget.dart';
@@ -20,14 +21,19 @@ class SeeDetailsView extends StatefulWidget {
   final EnumTypeUser enumTypeUser;
   final TestamentModel testamentModel;
 
-  const SeeDetailsView({super.key, required this.testamentModel, required this.enumTypeUser});
+  const SeeDetailsView({
+    super.key,
+    required this.testamentModel,
+    required this.enumTypeUser,
+  });
 
   @override
   State<SeeDetailsView> createState() => _SeeDetailsViewState();
 }
 
 class _SeeDetailsViewState extends State<SeeDetailsView> {
-  SeeDetailsController seeDetailsController = GetIt.instance.get<SeeDetailsController>();
+  SeeDetailsController seeDetailsController =
+      GetIt.instance.get<SeeDetailsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,10 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
       listenable: seeDetailsController,
       builder:
           (context, _) => Scaffold(
-            appBar: AppBarSimpleWidget(title: 'Detalhes', onTap: () => context.pop()),
+            appBar: AppBarSimpleWidget(
+              title: 'Detalhes',
+              onTap: () => context.pop(),
+            ),
             body: ListView(
               padding: EdgeInsets.all(24),
               children: [
@@ -46,8 +55,11 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   itemCount: widget.testamentModel.listHeir.length,
                   itemBuilder: (context, index) {
                     return _lineData(
-                      widget.testamentModel.listHeir[index].address,
-                      "${widget.testamentModel.listHeir[index].percentage.toString()}%",
+                      title:
+                          widget.testamentModel.listHeir[index].address
+                              .addressAbbreviated(),
+                      value:
+                          "${widget.testamentModel.listHeir[index].percentage.toString()}%",
                     );
                   },
                 ),
@@ -56,27 +68,34 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                   child: Divider(color: AppColors.gray7),
                 ),
                 Text("Ativos", style: AppFonts.labelLargeBold),
-                _lineData("ETH", widget.testamentModel.value.toString()),
-                _lineData("POL", 1.23.toString()),
-                _lineData("LDO", 4.56.toString()),
+                _lineData(
+                  title: "ETH",
+                  value: widget.testamentModel.value.toString(),
+                ),
+                _lineData(title: "POL", value: 1.23.toString()),
+                _lineData(title: "LDO", value: 4.56.toString()),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(color: AppColors.gray7),
                 ),
                 Text("Datas", style: AppFonts.labelLargeBold),
-                _lineData("Data de criação", widget.testamentModel.dateCreated.dateFormatted),
                 _lineData(
-                  "Última prova de vida",
-                  widget.testamentModel.lastProveOfLife.dateFormatted,
+                  title: "Data de criação",
+                  value: widget.testamentModel.dateCreated.dateFormatted,
                 ),
                 _lineData(
-                  "Vencimento prova de vida",
-                  widget.testamentModel.proofLifeExpiration().dateFormatted,
+                  title: "Última prova de vida",
+                  value: widget.testamentModel.lastProveOfLife.dateFormatted,
+                ),
+                _lineData(
+                  title: "Vencimento prova de vida",
+                  value:
+                      widget.testamentModel.proofLifeExpiration().dateFormatted,
                   isImportant: true,
                 ),
                 _lineData(
-                  "Plano",
-                  widget.testamentModel.plan.name,
+                  title: "Plano",
+                  value: widget.testamentModel.plan.name,
                   isImportant: true,
                 ),
                 SizedBox(height: 8),
@@ -91,8 +110,13 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                       ),
                       ButtonIconWidget(
                         onTap: () {
-                          seeDetailsController.setCurrentTestament(widget.testamentModel);
-                          context.go(RouterApp.amountStep, extra: FlowTestamentEnum.edit);
+                          seeDetailsController.setCurrentTestament(
+                            widget.testamentModel,
+                          );
+                          context.go(
+                            RouterApp.amountStep,
+                            extra: FlowTestamentEnum.edit,
+                          );
                         },
                         actionButtonEnum: ActionButtonEnum.edit,
                       ),
@@ -127,18 +151,25 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
     context.pop();
   }
 
-  void deleteTestament() {
+  void deleteTestament() async {
     seeDetailsController.deleteTestament();
     AlertHelper.showAlertSnackBar(
       context: context,
-      alertData: AlertData(message: 'Testamento excluído.', errorType: ErrorType.success),
+      alertData: AlertData(
+        message: 'Testamento excluído.',
+        errorType: ErrorType.success,
+      ),
     );
     EventBus eventBus = GetIt.I.get<EventBus>();
     eventBus.fire(TestamentCreatedEvent());
     context.pop();
   }
 
-  Widget _lineData(String title, String value, {bool? isImportant}) {
+  Widget _lineData({
+    required String title,
+    required String value,
+    bool? isImportant,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
       child: Row(
@@ -146,14 +177,19 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
         children: [
           Text(
             title,
-            style: isImportant ?? false ? AppFonts.bodySmallMedium : AppFonts.bodySmallRegular,
+            style:
+                isImportant ?? false
+                    ? AppFonts.bodySmallMedium
+                    : AppFonts.bodySmallRegular,
           ),
           Text(
             value,
             style:
                 isImportant ?? false
                     ? AppFonts.bodySmallMedium
-                    : AppFonts.bodySmallRegular.copyWith(color: AppColors.gray3),
+                    : AppFonts.bodySmallRegular.copyWith(
+                      color: AppColors.gray3,
+                    ),
           ),
         ],
       ),
