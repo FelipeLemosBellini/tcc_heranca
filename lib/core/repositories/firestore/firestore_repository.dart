@@ -104,6 +104,55 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
     }
   }
 
+  Future<Either<ExceptionMessage, List<TestamentModel>>> getHeirTestament(
+    String myAddress,
+  ) async {
+    try {
+      final list =
+          await firestore
+              .collection("listTestamentToHeir")
+              .doc(myAddress)
+              .get();
+      if (!list.exists) {
+        return Left(ExceptionMessage("Nenhum testamento encontrado"));
+      }
+      if (list.data() == null) {
+        return Left(ExceptionMessage("Dados do testamento estão vazios"));
+      }
+
+      List<dynamic> listTestament = [];
+      var response = list.data();
+      listTestament = response?["listTestament"];
+
+      List<TestamentModel> listTestamentModel = [];
+      for (var testamentAddress in listTestament) {
+        final doc =
+            await firestore
+                .collection('testamentos')
+                .doc(testamentAddress)
+                .get();
+
+        if (!doc.exists) {
+          return Left(ExceptionMessage("Nenhum testamento encontrado"));
+        }
+
+        if (doc.data() == null) {
+          return Left(ExceptionMessage("Dados do testamento estão vazios"));
+        }
+
+        final testament = TestamentModel.fromSnapshot(doc);
+
+        listTestamentModel.add(testament);
+      }
+
+      return Right(listTestamentModel);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro ao buscar o testamento: ${e.toString()}"),
+      );
+    }
+  }
+
   Future<Either<ExceptionMessage, void>> updateTestament({
     required String addressTestator,
     required TestamentModel testament,
@@ -127,11 +176,12 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
       await firestore.collection('testamentos').doc(address).delete();
 
       for (HeirModel heir in testament.listHeir) {
-        DocumentReference<Map<String, dynamic>> docRef =
-        firestore.collection('listTestamentToHeir').doc(heir.address);
+        DocumentReference<Map<String, dynamic>> docRef = firestore
+            .collection('listTestamentToHeir')
+            .doc(heir.address);
 
         DocumentSnapshot<Map<String, dynamic>> listTestamentToHeir =
-        await docRef.get();
+            await docRef.get();
 
         if (listTestamentToHeir.exists) {
           List<dynamic> listTestament =
