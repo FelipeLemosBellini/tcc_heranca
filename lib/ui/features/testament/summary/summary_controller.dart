@@ -56,8 +56,13 @@ class SummaryController extends BaseController {
         addressTestator: userModel.address,
         testament: testamentController.testament,
       );
+      await firestoreRepository.updateBalance(
+          userId: userModel.uid,
+          balance: userModel.balance - testamentController.testament.value
+      );
     }
     clearTestament();
+    notifyListeners();
   }
 
   void clearTestament() {
