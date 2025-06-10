@@ -115,4 +115,23 @@ class SeeDetailsController extends BaseController {
 
     return exceptionMessage == null ? Right(null) : Left(exceptionMessage!);
   }
+
+  Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
+      String address,
+      ) async {
+    final responseUser = await firestoreRepository.getUser();
+
+    return await responseUser.fold(
+          (error) async => Left(error),
+          (user) async {
+        final responseTestament = await firestoreRepository.getTestamentByAddress(user.address);
+
+        return responseTestament.fold(
+              (error) => Left(error),
+              (testament) => Right(testament),
+        );
+      },
+    );
+  }
+
 }

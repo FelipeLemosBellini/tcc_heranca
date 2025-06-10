@@ -37,6 +37,26 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
 
   EventBus eventBus = GetIt.I.get<EventBus>();
 
+  late TestamentModel _currentTestament;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTestament = widget.testamentModel;
+    eventBus.on<TestamentEvent>().listen((event) async {
+      final updated = await seeDetailsController.getTestamentByAddress(widget.testamentModel.testamentAddress);
+      updated.fold(
+              (error) {
+          },
+              (testament) {
+                setState(() {
+                  _currentTestament = testament;
+                });
+            seeDetailsController.setCurrentTestament(testament);
+          }
+      );
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -54,14 +74,14 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: widget.testamentModel.listHeir.length,
+                  itemCount: _currentTestament.listHeir.length,
                   itemBuilder: (context, index) {
                     return _lineData(
                       title:
-                          widget.testamentModel.listHeir[index].address
+                          _currentTestament.listHeir[index].address
                               .addressAbbreviated(),
                       value:
-                          "${widget.testamentModel.listHeir[index].percentage.toString()}%",
+                          "${_currentTestament.listHeir[index].percentage.toString()}%",
                     );
                   },
                 ),
@@ -72,7 +92,7 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                 Text("Ativos", style: AppFonts.labelLargeBold),
                 _lineData(
                   title: "ETH",
-                  value: widget.testamentModel.value.toString(),
+                  value: _currentTestament.value.toString(),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
@@ -81,21 +101,20 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
                 Text("Datas", style: AppFonts.labelLargeBold),
                 _lineData(
                   title: "Data de criação",
-                  value: widget.testamentModel.dateCreated.dateFormatted,
+                  value: _currentTestament.dateCreated.dateFormatted,
                 ),
                 _lineData(
                   title: "Última prova de vida",
-                  value: widget.testamentModel.lastProveOfLife.dateFormatted,
+                  value: _currentTestament.lastProveOfLife.dateFormatted,
                 ),
                 _lineData(
                   title: "Vencimento prova de vida",
-                  value:
-                      widget.testamentModel.proofLifeExpiration().dateFormatted,
+                  value: _currentTestament.proofLifeExpiration().dateFormatted,
                   isImportant: true,
                 ),
                 _lineData(
                   title: "Plano",
-                  value: widget.testamentModel.plan.name,
+                  value: _currentTestament.plan.name,
                   isImportant: true,
                 ),
                 SizedBox(height: 8),
