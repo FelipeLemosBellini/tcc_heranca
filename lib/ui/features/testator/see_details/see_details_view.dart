@@ -140,31 +140,61 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
   Future<void> _mainAction() async {
     if (widget.enumTypeUser == EnumTypeUser.testator) {
       await updateDateProveOfLife();
+    } else {
+      var response = await seeDetailsController.rescueInheritance(
+        widget.testamentModel,
+      );
+      response.fold((error) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: error.errorMessage,
+            errorType: ErrorType.error,
+          ),
+        );
+      }, (_) => _success());
     }
+  }
 
+  Future<void> updateDateProveOfLife() async {
+    await seeDetailsController.updateDateProveOfLife();
+    var response = await seeDetailsController.updateDateProveOfLifeTestament();
+    await response.fold(
+      (error) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: error.errorMessage,
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (_) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: 'Data de prova de vida atualizada.',
+            errorType: ErrorType.success,
+          ),
+        );
+        eventBus.fire(TestamentEvent());
+      },
+    );
+  }
+
+  void _success() {
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(
-        message: widget.enumTypeUser == EnumTypeUser.testator
-            ? 'Prova de vida realizada.'
-            : 'Resgate realizado.',
+        message:
+            widget.enumTypeUser == EnumTypeUser.testator
+                ? 'Prova de vida realizada.'
+                : 'Resgate realizado.',
         errorType: ErrorType.success,
       ),
     );
 
     context.pop();
-  }
-
-  Future<void> updateDateProveOfLife() async {
-    await seeDetailsController.updateDateProveOfLife();
-    await seeDetailsController.updateDateProveOfLifeTestament();
-    AlertHelper.showAlertSnackBar(
-      context: context,
-      alertData: AlertData(
-        message: 'Data de prova de vida atualizada.',
-        errorType: ErrorType.success,
-      ),
-    );
     eventBus.fire(TestamentEvent());
   }
 

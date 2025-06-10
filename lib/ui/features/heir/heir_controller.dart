@@ -49,6 +49,7 @@ class HeirController extends BaseController {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
+        _listTestament = [];
       },
       (success) {
         _listTestament = success;
