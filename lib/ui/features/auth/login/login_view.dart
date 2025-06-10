@@ -106,10 +106,10 @@ class _LoginViewState extends State<LoginView> {
               bottomSheet: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ElevatedButtonWidget(
+                  /*ElevatedButtonWidget(
                     onTap: () => context.push(RouterApp.materialDesign),
                     text: "material design",
-                  ),
+                  ),*/
                   ElevatedButtonWidget(onTap: () => login(context), text: "Entrar"),
                 ],
               ),
