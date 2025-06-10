@@ -3,7 +3,7 @@ class UserModel {
   final String name;
   final String email;
   final String address;
-  double balance;
+  final double balance;
 
   UserModel({
     required this.uid,

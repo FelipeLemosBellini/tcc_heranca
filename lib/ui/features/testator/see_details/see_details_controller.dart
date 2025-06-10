@@ -25,26 +25,21 @@ class SeeDetailsController extends BaseController {
     final response = await firestoreRepository.getUser();
 
     await response.fold(
-      (error) async {
+          (error) async {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-      (UserModel user) async {
-        final testamentResult = await firestoreRepository.getTestamentByAddress(
-          user.address,
-        );
+          (UserModel user) async {
+        final testamentResult = await firestoreRepository.getTestamentByAddress(user.address);
 
         await testamentResult.fold(
-          (error) async {
+              (error) async {
             setMessage(
-              AlertData(
-                message: error.errorMessage,
-                errorType: ErrorType.error,
-              ),
+              AlertData(message: error.errorMessage, errorType: ErrorType.error),
             );
           },
-          (TestamentModel testament) async {
+              (TestamentModel testament) async {
             final updatedTestament = testament.copyWith(
               lastProveOfLife: DateTime.now(),
             );
@@ -63,52 +58,23 @@ class SeeDetailsController extends BaseController {
     );
   }
 
-  Future<void> rescueInheritance(TestamentModel testament) async {
-    late UserModel currentUser;
-
-    final result = await firestoreRepository.getUser();
-
-    await result.fold(
-      (error) {
-        setMessage(
-          AlertData(
-            message: "Erro ao carregar dados do usuário",
-            errorType: ErrorType.error,
-          ),
-        );
-        setLoading(false);
-        notifyListeners();
-        return;
-      },
-      (user) {
-        currentUser = user;
-      },
-    );
-    final response = await firestoreRepository.rescueInheritance(
-      testament,
-      currentUser.address,
-    );
-    response.fold((error) async {
-      setMessage(
-        AlertData(message: error.errorMessage, errorType: ErrorType.error),
-      );
-    }, (_) async {});
-  }
-
   Future<void> deleteTestament(TestamentModel testament) async {
     final response = await firestoreRepository.getUser();
 
     await response.fold(
-      (error) async {
+          (error) async {
         setMessage(
           AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-      (UserModel user) async {
+          (UserModel user) async {
         await firestoreRepository.deleteTestament(
           address: user.address,
           testament: testament,
         );
+        await firestoreRepository.updateBalance(
+            userId: user.uid,
+            balance: user.balance + testament.value );
         notifyListeners();
       },
     );

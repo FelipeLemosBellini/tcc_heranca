@@ -212,44 +212,4 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
       return Left(ExceptionMessage("Erro ao atualizar saldo"));
     }
   }
-
-  Future<Either<ExceptionMessage, void>> rescueInheritance(
-    TestamentModel testamentModel,
-    String beneficiary,
-  ) async {
-    try {
-      TestamentModel newTestament = testamentModel;
-
-      for (var heir in newTestament.listHeir) {
-        if (beneficiary == heir.address) {
-          if (heir.canWithdraw) {
-            heir.canWithdraw = false;
-            final userData =
-                await firestore
-                    .collection("users")
-                    .doc(firebaseAuth.currentUser?.uid)
-                    .get();
-
-            if (userData.exists && userData.data() != null) {
-              UserModel user = UserModel.fromMap(userData.data()!);
-              user.balance += newTestament.value * (heir.percentage / 100);
-
-              await firestore
-                  .collection("users")
-                  .doc(firebaseAuth.currentUser?.uid)
-                  .update(user.toMap());
-
-              await firestore
-                  .collection("testaments")
-                  .doc(testamentModel.testamentAddress)
-                  .update(newTestament.toMap());
-            }
-          }
-        }
-      }
-      return Right(null);
-    } catch (e) {
-      return Left(ExceptionMessage("Erro ao resgatar heranca"));
-    }
-  }
 }

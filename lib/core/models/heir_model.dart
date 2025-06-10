@@ -1,20 +1,14 @@
 class HeirModel {
-  String address;
-  int percentage;
-  bool canWithdraw;
+  final String address;
+  final int percentage;
 
-  HeirModel({
-    required this.address,
-    required this.percentage,
-    this.canWithdraw = true,
-  });
+  HeirModel({required this.address, required this.percentage});
 
   // Converte o objeto para Map (pra salvar no Firestore)
   Map<String, dynamic> toMap() {
     return {
       'address': address,
       'percentage': percentage,
-      'canWithdraw': canWithdraw,
     };
   }
 
@@ -23,7 +17,6 @@ class HeirModel {
     return HeirModel(
       address: map['address'],
       percentage: map['percentage'],
-      canWithdraw: map['canWithdraw'],
     );
   }
 }

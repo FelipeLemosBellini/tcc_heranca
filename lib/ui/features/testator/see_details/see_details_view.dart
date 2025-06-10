@@ -140,21 +140,18 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
   Future<void> _mainAction() async {
     if (widget.enumTypeUser == EnumTypeUser.testator) {
       await updateDateProveOfLife();
-    } else {
-      await rescueInheritance();
     }
-  }
 
-  Future<void> rescueInheritance() async {
-    await seeDetailsController.rescueInheritance(widget.testamentModel);
     AlertHelper.showAlertSnackBar(
       context: context,
       alertData: AlertData(
-        message: 'Regate realizado.',
+        message: widget.enumTypeUser == EnumTypeUser.testator
+            ? 'Prova de vida realizada.'
+            : 'Resgate realizado.',
         errorType: ErrorType.success,
       ),
     );
-    eventBus.fire(TestamentEvent());
+
     context.pop();
   }
 
@@ -169,7 +166,6 @@ class _SeeDetailsViewState extends State<SeeDetailsView> {
       ),
     );
     eventBus.fire(TestamentEvent());
-    context.pop();
   }
 
   void deleteTestament() async {
