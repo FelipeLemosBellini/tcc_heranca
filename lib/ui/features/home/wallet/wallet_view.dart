@@ -18,8 +18,8 @@ class _WalletViewState extends State<WalletView>
     with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
 
-  final double balanceETH = 2.345;
   String? userAddress;
+  double? balanceETH;
 
   @override
   void initState() {
@@ -30,27 +30,13 @@ class _WalletViewState extends State<WalletView>
       final address = await walletController.getUserAddress();
       setState(() {
         userAddress = address;
+        balanceETH = walletController.balance ?? 0.0;
       });
     });
   }
 
   final List<AssetModel> myAssets = [
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
+    AssetModel(name: "Ether", amount: 1.0, ticker: "ETH"),
   ];
 
   @override
@@ -66,7 +52,7 @@ class _WalletViewState extends State<WalletView>
               children: [
                 CardWalletWidget(
                   addressUser: userAddress ?? "",
-                  balanceETH: balanceETH.toString(),
+                  balanceETH: balanceETH == null ? "Loading..." : "$balanceETH ETH",
                 ),
                 ListView.separated(
                   shrinkWrap: true,

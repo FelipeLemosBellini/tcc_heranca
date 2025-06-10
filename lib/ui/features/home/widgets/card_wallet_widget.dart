@@ -121,7 +121,7 @@ class CardWalletWidget extends StatelessWidget {
                       Text("Saldo da Conta", style: AppFonts.labelMediumMedium),
                       const SizedBox(height: 8),
                       Text(
-                        "$balanceETH ETH",
+                        balanceETH,
                         style: AppFonts.labelHeadBold.copyWith(
                           color: AppColors.white,
                         ),

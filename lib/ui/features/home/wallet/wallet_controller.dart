@@ -10,6 +10,8 @@ class WalletController extends BaseController {
   final HomeController _homeController = GetIt.I.get<HomeController>();
   final FirestoreRepositoryInterface _firestoreRepository = GetIt.I.get<FirestoreRepositoryInterface>();
 
+  double? get balance => _homeController.balance;
+
   // Método que retorna só o endereço do usuário (ou null, se não tiver)
   Future<String?> getUserAddress() async {
     final result = await _firestoreRepository.getUser();
@@ -19,19 +21,23 @@ class WalletController extends BaseController {
     );
   }
 
-  Future<void> loadAssets() async {
+  Future<double> loadAssets() async {
     _homeController.setLoading(true);
 
-    final address = await getUserAddress();
-    if (address == null) {
-      print("Usuário ainda não carregado, adiando carregamento de assets");
+    final result = await _firestoreRepository.getUser();
+    if (result.isLeft()) {
       _homeController.setLoading(false);
-      return;
+      return 0.0;
     }
 
-    // Simula carregamento de assets
-    await Future.delayed(const Duration(seconds: 1));
+    final user = result.getRight().toNullable();
+    if (user == null) {
+      _homeController.setLoading(false);
+      return 0.0;
+    }
 
+    await Future.delayed(const Duration(seconds: 1));
     _homeController.setLoading(false);
+    return user.balance;
   }
 }
