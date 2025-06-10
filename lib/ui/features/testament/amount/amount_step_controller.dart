@@ -14,9 +14,7 @@ class AmountStepController extends BaseController {
 
   TestamentController testamentController = GetIt.I.get<TestamentController>();
 
-  AmountStepController({
-    required this.firestoreRepository,
-  });
+  AmountStepController({required this.firestoreRepository});
 
   final TextEditingController _amountController = TextEditingController();
 
@@ -32,7 +30,7 @@ class AmountStepController extends BaseController {
     final result = await firestoreRepository.getUser();
 
     return result.fold(
-          (error) {
+      (error) {
         setMessage(
           AlertData(
             message: "Erro ao carregar dados do usuário",
@@ -42,7 +40,7 @@ class AmountStepController extends BaseController {
         notifyListeners();
         return Left(error);
       },
-          (user) {
+      (user) {
         return Right(user);
       },
     );
@@ -52,15 +50,37 @@ class AmountStepController extends BaseController {
     testamentController.clearTestament();
   }
 
-  Future<Either<Exception, Unit>> setAmount(double value) async {
+  Future<Either<Exception, Unit>> setAmount(
+    double value,
+    FlowTestamentEnum flow,
+  ) async {
     final userResult = await getUser();
 
     return userResult.fold(
-          (error) {
+      (error) {
         return Left(error);
       },
-          (user) {
-        if (user.balance >= value) {
+      (user) async {
+        double availableBalance = user.balance;
+
+        if (flow == FlowTestamentEnum.edit) {
+          final oldTestamentResult = await firestoreRepository
+              .getTestamentByAddress(user.address);
+
+          double oldValue = 0.0;
+          oldTestamentResult.fold(
+            (error) {
+              oldValue = 0.0;
+            },
+            (oldTestament) {
+              oldValue = oldTestament.value;
+            },
+          );
+
+          availableBalance += oldValue;
+        }
+
+        if (availableBalance >= value) {
           testamentController.setValue(value);
           return const Right(unit);
         } else {
@@ -69,6 +89,4 @@ class AmountStepController extends BaseController {
       },
     );
   }
-
-
 }

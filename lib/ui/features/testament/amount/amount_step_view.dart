@@ -117,7 +117,7 @@ class _AmountStepViewState extends State<AmountStepView> {
           String amountText = amountStepController.amountController.text.trim();
 
           if (amountText.isNotEmpty && double.tryParse(amountText) != null && double.parse(amountText) > 0) {
-            final result = await amountStepController.setAmount(double.parse(amountText));
+            final result = await amountStepController.setAmount(double.parse(amountText), widget.flowTestamentEnum);
             result.fold(
                   (error) {
                 AlertHelper.showAlertSnackBar(

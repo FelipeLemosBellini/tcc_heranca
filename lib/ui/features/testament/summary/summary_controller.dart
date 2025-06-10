@@ -45,15 +45,40 @@ class SummaryController extends BaseController {
         userModel = user;
       },
     );
+
     testamentController.setTitle(titleController.text);
+    final newValue = testamentController.testament.value;
+
     if (flow == FlowTestamentEnum.edit) {
-      await firestoreRepository.updateTestament(
-        addressTestator: userModel.address,
-        testament: testamentController.testament,
-      );
-      await firestoreRepository.updateBalance(
-          userId: userModel.uid,
-          balance: userModel.balance + testamentController.testament.value
+      final oldTestamentResult = await firestoreRepository
+          .getTestamentByAddress(userModel.address);
+
+      oldTestamentResult.fold(
+        (error) {
+          setMessage(
+            AlertData(
+              message:
+                  "Erro ao buscar testamento antigo: ${error.errorMessage}",
+              errorType: ErrorType.error,
+            ),
+          );
+          return;
+        },
+        (TestamentModel oldTestament) async {
+          final oldValue = oldTestament.value;
+
+          final updatedBalance = userModel.balance + oldValue - newValue;
+
+          await firestoreRepository.updateTestament(
+            addressTestator: userModel.address,
+            testament: testamentController.testament,
+          );
+
+          await firestoreRepository.updateBalance(
+            userId: userModel.uid,
+            balance: updatedBalance,
+          );
+        },
       );
     } else {
       await firestoreRepository.createTestament(
@@ -61,10 +86,11 @@ class SummaryController extends BaseController {
         testament: testamentController.testament,
       );
       await firestoreRepository.updateBalance(
-          userId: userModel.uid,
-          balance: userModel.balance - testamentController.testament.value
+        userId: userModel.uid,
+        balance: userModel.balance - newValue,
       );
     }
+
     clearTestament();
     notifyListeners();
   }
