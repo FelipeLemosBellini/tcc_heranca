@@ -25,12 +25,13 @@ class _WalletViewState extends State<WalletView>
   void initState() {
     super.initState();
 
-    // Carregar endereço async e depois chamar setState
-    walletController.loadAssets().then((_) async {
-      final address = await walletController.getUserAddress();
-      setState(() {
-        userAddress = address;
-        balanceETH = walletController.balance ?? 0.0;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      walletController.loadAssets().then((_) async {
+        final address = await walletController.getUserAddress();
+        setState(() {
+          userAddress = address;
+          balanceETH = walletController.balance ?? 0.0;
+        });
       });
     });
   }
