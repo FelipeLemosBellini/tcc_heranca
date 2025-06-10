@@ -10,6 +10,7 @@ class HomeController extends BaseController {
 
   UserModel? currentUser;
   String? get address => currentUser?.address;
+  double? get balance => currentUser?.balance;
 
   HomeController({
     required this.authRepository,

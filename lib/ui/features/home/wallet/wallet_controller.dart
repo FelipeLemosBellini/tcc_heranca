@@ -1,30 +1,43 @@
+import 'package:fpdart/src/either.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 
 class WalletController extends BaseController {
   final HomeController _homeController = GetIt.I.get<HomeController>();
-  final FirestoreRepositoryInterface _firestoreRepository =
-      GetIt.I.get<FirestoreRepositoryInterface>();
+  final FirestoreRepositoryInterface _firestoreRepository = GetIt.I.get<FirestoreRepositoryInterface>();
 
-  final double balanceETH = 0;
-  String userAddress = "";
+  double? get balance => _homeController.balance;
 
-  Future<void> getUserAddress() async {
+  // Método que retorna só o endereço do usuário (ou null, se não tiver)
+  Future<String?> getUserAddress() async {
     final result = await _firestoreRepository.getUser();
     return result.fold(
-      (exception) => null,
-      (user) => userAddress = user.address,
+          (exception) => null,
+          (user) => user.address,
     );
   }
 
-  Future<void> reloadData() async {
+  Future<double> loadAssets() async {
     _homeController.setLoading(true);
 
-    getUserAddress().then((_) {
-      notifyListeners();
-    });
+    final result = await _firestoreRepository.getUser();
+    if (result.isLeft()) {
+      _homeController.setLoading(false);
+      return 0.0;
+    }
+
+    final user = result.getRight().toNullable();
+    if (user == null) {
+      _homeController.setLoading(false);
+      return 0.0;
+    }
+
+    await Future.delayed(const Duration(seconds: 1));
     _homeController.setLoading(false);
+    return user.balance;
   }
 }

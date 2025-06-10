@@ -3,12 +3,14 @@ class UserModel {
   final String name;
   final String email;
   final String address;
+  final double balance;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.email,
     required this.address,
+    required this.balance,
   });
 
   Map<String, dynamic> toMap() {
@@ -17,6 +19,7 @@ class UserModel {
       "name": name,
       "email": email,
       "address": address,
+      "balance": balance,
     };
   }
 
@@ -26,6 +29,7 @@ class UserModel {
       email: map['email'] ?? "",
       name: map['name'] ?? "",
       address: map['address'] ?? "",
+      balance: map['balance']?.toDouble() ?? 0.0,
     );
   }
 }

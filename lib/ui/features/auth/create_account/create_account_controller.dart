@@ -43,6 +43,7 @@ class CreateAccountController extends BaseController {
           name: name,
           email: email,
           address: await generateWalletAddress(),
+          balance: 1.0,
         );
 
         final profileResponse = await firestoreRepository.createProfile(

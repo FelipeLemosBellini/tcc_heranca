@@ -5,7 +5,6 @@ import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/home/widgets/card_wallet_widget.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
-import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/refresh_indicator_widget.dart';
 
 class WalletView extends StatefulWidget {
@@ -19,50 +18,41 @@ class _WalletViewState extends State<WalletView>
     with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
 
+  String? userAddress;
+  double? balanceETH;
+
   @override
   void initState() {
     super.initState();
 
     // Carregar endereço async e depois chamar setState
-    walletController.getUserAddress();
+    walletController.loadAssets().then((_) async {
+      final address = await walletController.getUserAddress();
+      setState(() {
+        userAddress = address;
+        balanceETH = walletController.balance ?? 0.0;
+      });
+    });
   }
 
   final List<AssetModel> myAssets = [
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
-    AssetModel(name: "Polygon", amount: 1.23, ticker: "POL"),
-    AssetModel(name: "Arbitrum", amount: 1.23, ticker: "ARB"),
-    AssetModel(name: "Pendle", amount: 1.23, ticker: "PENDLE"),
-    AssetModel(name: "Aave", amount: 1.23, ticker: "AAVE"),
+    AssetModel(name: "Ether", amount: 1.0, ticker: "ETH"),
   ];
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicatorWidget(
-      onRefresh: walletController.reloadData,
+      onRefresh: walletController.loadAssets,
       child: ListenableBuilder(
         listenable: walletController,
-        builder: (context, _) {
-          return LoadingAndAlertOverlayWidget(
-            isLoading: walletController.isLoading,
-            alertData: walletController.alertData,
-            child: ListView(
+        builder:
+            (context, _) => ListView(
               shrinkWrap: true,
               children: [
                 CardWalletWidget(
-                  addressUser: walletController.userAddress,
-                  balanceETH: walletController.balanceETH.toString(),
+                  addressUser: userAddress ?? "",
+                  balanceETH: balanceETH == null ? "Loading..." : "$balanceETH ETH",
                 ),
                 ListView.separated(
                   shrinkWrap: true,
@@ -108,8 +98,6 @@ class _WalletViewState extends State<WalletView>
                 ),
               ],
             ),
-          );
-        },
       ),
     );
   }
