@@ -58,8 +58,6 @@ class SeeDetailsController extends BaseController {
     );
   }
 
-
-
   Future<void> deleteTestament(TestamentModel testament) async {
     final response = await firestoreRepository.getUser();
 
@@ -74,6 +72,9 @@ class SeeDetailsController extends BaseController {
           address: user.address,
           testament: testament,
         );
+        await firestoreRepository.updateBalance(
+            userId: user.uid,
+            balance: user.balance + testament.value );
         notifyListeners();
       },
     );
