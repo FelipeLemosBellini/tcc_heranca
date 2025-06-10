@@ -59,10 +59,10 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
                 .collection('listTestamentToHeir')
                 .doc(heirModel.address)
                 .get();
-
         List<dynamic> listTestament = [];
+        var response = data.data();
         if (data.exists) {
-          listTestament = data["listTestament"] as List<dynamic>;
+          listTestament = response?["listTestament"];
         }
 
         if (!listTestament.contains(addressTestator)) {
