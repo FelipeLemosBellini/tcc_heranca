@@ -5,6 +5,7 @@ import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/home/widgets/card_wallet_widget.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
+import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/refresh_indicator_widget.dart';
 
 class WalletView extends StatefulWidget {
@@ -18,20 +19,12 @@ class _WalletViewState extends State<WalletView>
     with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
 
-  final double balanceETH = 2.345;
-  String? userAddress;
-
   @override
   void initState() {
     super.initState();
 
     // Carregar endereço async e depois chamar setState
-    walletController.loadAssets().then((_) async {
-      final address = await walletController.getUserAddress();
-      setState(() {
-        userAddress = address;
-      });
-    });
+    walletController.getUserAddress();
   }
 
   final List<AssetModel> myAssets = [
@@ -57,16 +50,19 @@ class _WalletViewState extends State<WalletView>
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicatorWidget(
-      onRefresh: walletController.loadAssets,
+      onRefresh: walletController.reloadData,
       child: ListenableBuilder(
         listenable: walletController,
-        builder:
-            (context, _) => ListView(
+        builder: (context, _) {
+          return LoadingAndAlertOverlayWidget(
+            isLoading: walletController.isLoading,
+            alertData: walletController.alertData,
+            child: ListView(
               shrinkWrap: true,
               children: [
                 CardWalletWidget(
-                  addressUser: userAddress ?? "",
-                  balanceETH: balanceETH.toString(),
+                  addressUser: walletController.userAddress,
+                  balanceETH: walletController.balanceETH.toString(),
                 ),
                 ListView.separated(
                   shrinkWrap: true,
@@ -112,6 +108,8 @@ class _WalletViewState extends State<WalletView>
                 ),
               ],
             ),
+          );
+        },
       ),
     );
   }

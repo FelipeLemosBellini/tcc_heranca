@@ -8,30 +8,26 @@ import 'package:tcc/ui/features/home/home_controller.dart';
 
 class WalletController extends BaseController {
   final HomeController _homeController = GetIt.I.get<HomeController>();
-  final FirestoreRepositoryInterface _firestoreRepository = GetIt.I.get<FirestoreRepositoryInterface>();
+  final FirestoreRepositoryInterface _firestoreRepository =
+      GetIt.I.get<FirestoreRepositoryInterface>();
 
-  // Método que retorna só o endereço do usuário (ou null, se não tiver)
-  Future<String?> getUserAddress() async {
+  final double balanceETH = 0;
+  String userAddress = "";
+
+  Future<void> getUserAddress() async {
     final result = await _firestoreRepository.getUser();
     return result.fold(
-          (exception) => null,
-          (user) => user.address,
+      (exception) => null,
+      (user) => userAddress = user.address,
     );
   }
 
-  Future<void> loadAssets() async {
+  Future<void> reloadData() async {
     _homeController.setLoading(true);
 
-    final address = await getUserAddress();
-    if (address == null) {
-      print("Usuário ainda não carregado, adiando carregamento de assets");
-      _homeController.setLoading(false);
-      return;
-    }
-
-    // Simula carregamento de assets
-    await Future.delayed(const Duration(seconds: 1));
-
+    getUserAddress().then((_) {
+      notifyListeners();
+    });
     _homeController.setLoading(false);
   }
 }
