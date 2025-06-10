@@ -18,29 +18,21 @@ class _WalletViewState extends State<WalletView>
     with AutomaticKeepAliveClientMixin {
   WalletController walletController = GetIt.I.get<WalletController>();
 
-  String? userAddress;
-
   @override
   void initState() {
     super.initState();
 
     // Carregar endereço async e depois chamar setState
-    walletController.loadAssets().then((_) async {
-      final address = await walletController.getUserAddress();
-      setState(() {
-        userAddress = address;
-      });
-    });
+    walletController.loadUser();
   }
 
-  final List<AssetModel> myAssets = [
-  ];
+  final List<AssetModel> myAssets = [];
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicatorWidget(
-      onRefresh: walletController.loadAssets,
+      onRefresh: walletController.loadUser,
       child: ListenableBuilder(
         listenable: walletController,
         builder:
@@ -48,11 +40,11 @@ class _WalletViewState extends State<WalletView>
               shrinkWrap: true,
               children: [
                 CardWalletWidget(
-                  addressUser: userAddress ?? "",
-                  balanceETH: walletController.balance == null
-                      ? "Loading..."
-                      : "${walletController.balance} ETH",
-
+                  addressUser: walletController.userModel?.address ?? "",
+                  balanceETH:
+                      walletController.userModel?.balance == null
+                          ? "Loading..."
+                          : "${walletController.userModel?.balance} ETH",
                 ),
                 ListView.separated(
                   shrinkWrap: true,
