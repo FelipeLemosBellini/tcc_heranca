@@ -198,4 +198,18 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
       return Left(ExceptionMessage("Erro ao excluir testamento"));
     }
   }
+
+  Future<Either<ExceptionMessage, void>> updateBalance({
+    required String userId,
+    required double balance,
+  }) async {
+    try {
+      await firestore.collection('users').doc(userId).update({
+        'balance': balance,
+      });
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao atualizar saldo"));
+    }
+  }
 }

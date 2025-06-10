@@ -19,7 +19,6 @@ class _WalletViewState extends State<WalletView>
   WalletController walletController = GetIt.I.get<WalletController>();
 
   String? userAddress;
-  double? balanceETH;
 
   @override
   void initState() {
@@ -30,13 +29,11 @@ class _WalletViewState extends State<WalletView>
       final address = await walletController.getUserAddress();
       setState(() {
         userAddress = address;
-        balanceETH = walletController.balance ?? 0.0;
       });
     });
   }
 
   final List<AssetModel> myAssets = [
-    AssetModel(name: "Ether", amount: 1.0, ticker: "ETH"),
   ];
 
   @override
@@ -52,7 +49,10 @@ class _WalletViewState extends State<WalletView>
               children: [
                 CardWalletWidget(
                   addressUser: userAddress ?? "",
-                  balanceETH: balanceETH == null ? "Loading..." : "$balanceETH ETH",
+                  balanceETH: walletController.balance == null
+                      ? "Loading..."
+                      : "${walletController.balance} ETH",
+
                 ),
                 ListView.separated(
                   shrinkWrap: true,

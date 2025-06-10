@@ -58,7 +58,9 @@ abstract class DI {
     );
     getIt.registerFactory(() => LoginWalletController());
     getIt.registerFactory(() => AddressStepController());
-    getIt.registerFactory(() => AmountStepController());
+    getIt.registerFactory(() => AmountStepController(
+      firestoreRepository: getIt.get<FirestoreRepositoryInterface>() as FirestoreRepository,
+    ));
     getIt.registerFactory(() => ProveOfLiveStepController());
     getIt.registerFactory(
       () => SummaryController(firestoreRepository: FirestoreRepository()),
