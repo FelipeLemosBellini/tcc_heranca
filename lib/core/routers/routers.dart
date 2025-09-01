@@ -17,6 +17,7 @@ abstract class RouterApp {
 
   static const String createAccount = "/createAccount";
   static const String forgotPassword = "/forgotPassword";
+  static const String kycStep = "/kycStep";
 
   static const String amountStep = "/amountStep";
   static const String addressStep = "/addressStep";

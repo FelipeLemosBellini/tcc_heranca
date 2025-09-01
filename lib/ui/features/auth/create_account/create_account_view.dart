@@ -92,7 +92,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                 ),
               ),
             ),
-            bottomSheet: ElevatedButtonWidget(onTap: () => register(context), text: "Criar conta"),
+            bottomSheet: ElevatedButtonWidget(onTap: () => context.push(RouterApp.kycStep), text: "Próximo"),
           ),
         );
       },
