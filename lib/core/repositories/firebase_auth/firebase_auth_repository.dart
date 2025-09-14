@@ -6,6 +6,7 @@ import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_int
 class FirebaseAuthRepository implements FirebaseAuthRepositoryInterface {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+
   @override
   Future<Either<ExceptionMessage, User?>> getCredential() async {
     try {
@@ -23,6 +24,8 @@ class FirebaseAuthRepository implements FirebaseAuthRepositoryInterface {
     try {
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
+
+
 
       return Right(userCredential.user?.uid ?? "");
     } on FirebaseAuthException catch (error) {

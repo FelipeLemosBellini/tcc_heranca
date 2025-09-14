@@ -18,7 +18,8 @@ class CreateAccountView extends StatefulWidget {
 }
 
 class _CreateAccountViewState extends State<CreateAccountView> {
-  CreateAccountController controller = GetIt.instance.get<CreateAccountController>();
+  CreateAccountController controller =
+      GetIt.instance.get<CreateAccountController>();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -92,7 +93,10 @@ class _CreateAccountViewState extends State<CreateAccountView> {
                 ),
               ),
             ),
-            bottomSheet: ElevatedButtonWidget(onTap: () => context.push(RouterApp.kycStep), text: "Próximo"),
+            bottomSheet: ElevatedButtonWidget(
+              onTap: () => register(context),
+              text: "Próximo",
+            ),
           ),
         );
       },
@@ -102,7 +106,10 @@ class _CreateAccountViewState extends State<CreateAccountView> {
   void register(BuildContext context) async {
     if (passwordController.text != repeatPasswordController.text) {
       controller.setMessage(
-        AlertData(message: "As senhas precisam ser iguais", errorType: ErrorType.warning),
+        AlertData(
+          message: "As senhas precisam ser iguais",
+          errorType: ErrorType.warning,
+        ),
       );
       return;
     }
@@ -116,7 +123,7 @@ class _CreateAccountViewState extends State<CreateAccountView> {
         password: passwordController.text,
       );
       if (successCreateAccount) {
-        context.go(RouterApp.home);
+        context.go(RouterApp.kycStep);
       }
     } else {
       controller.setMessage(

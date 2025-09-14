@@ -41,7 +41,7 @@ class HeirController extends BaseController {
     );
 
     var response = await firestoreRepository.getHeirTestament(
-      currentUser.address,
+      currentUser.address ?? "",
     );
 
     response.fold(

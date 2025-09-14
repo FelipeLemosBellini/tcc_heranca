@@ -200,13 +200,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
   }
 
   Future<Either<ExceptionMessage, void>> updateBalance({
-    required String userId,
     required double balance,
   }) async {
     try {
-      await firestore.collection('users').doc(userId).update({
-        'balance': balance,
-      });
+      final uid = firebaseAuth.currentUser?.uid;
+      await firestore.collection('users').doc(uid).update({'balance': balance});
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao atualizar saldo"));
@@ -232,7 +230,6 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
 
             if (userData.exists && userData.data() != null) {
               UserModel user = UserModel.fromMap(userData.data()!);
-              user.balance += newTestament.value * (heir.percentage / 100);
 
               await firestore
                   .collection("users")

@@ -41,10 +41,11 @@ class _WalletViewState extends State<WalletView>
               children: [
                 CardWalletWidget(
                   addressUser: walletController.userModel?.address ?? "",
-                  balanceETH:
-                      walletController.userModel?.balance == null
-                          ? "Loading..."
-                          : "${walletController.userModel?.balance} ETH",
+                  balanceETH: "0"
+                      // walletController.userModel?.balance == null
+                      //     ? "Loading..."
+                      //     : "${walletController.userModel?.balance} ETH"
+                  ,
                 ),
                 ListView.separated(
                   shrinkWrap: true,

@@ -36,7 +36,7 @@ class SeeDetailsController extends BaseController {
       },
       (UserModel user) async {
         final testamentResult = await firestoreRepository.getTestamentByAddress(
-          user.address,
+          user.address ?? "",
         );
 
         await testamentResult.fold(
@@ -51,7 +51,7 @@ class SeeDetailsController extends BaseController {
             _testamentController.setTestamentToEdit(updatedTestament);
 
             var response = await firestoreRepository.updateTestament(
-              addressTestator: user.address,
+              addressTestator: user.address ?? "",
               testament: updatedTestament,
             );
             response.fold((error) {
@@ -76,13 +76,10 @@ class SeeDetailsController extends BaseController {
       },
       (UserModel user) async {
         await firestoreRepository.deleteTestament(
-          address: user.address,
+          address: user.address ?? "",
           testament: testament,
         );
-        await firestoreRepository.updateBalance(
-          userId: user.uid,
-          balance: user.balance + testament.value,
-        );
+        await firestoreRepository.updateBalance(balance: 0 + testament.value);
         notifyListeners();
       },
     );
@@ -106,7 +103,7 @@ class SeeDetailsController extends BaseController {
 
     final responseRescue = await firestoreRepository.rescueInheritance(
       testamentModel,
-      user.address,
+      user.address ?? "",
     );
 
     await responseRescue.fold((error) async {
@@ -117,21 +114,19 @@ class SeeDetailsController extends BaseController {
   }
 
   Future<Either<ExceptionMessage, TestamentModel>> getTestamentByAddress(
-      String address,
-      ) async {
+    String address,
+  ) async {
     final responseUser = await firestoreRepository.getUser();
 
-    return await responseUser.fold(
-          (error) async => Left(error),
-          (user) async {
-        final responseTestament = await firestoreRepository.getTestamentByAddress(user.address);
+    return await responseUser.fold((error) async => Left(error), (user) async {
+      final responseTestament = await firestoreRepository.getTestamentByAddress(
+        user.address ?? "",
+      );
 
-        return responseTestament.fold(
-              (error) => Left(error),
-              (testament) => Right(testament),
-        );
-      },
-    );
+      return responseTestament.fold(
+        (error) => Left(error),
+        (testament) => Right(testament),
+      );
+    });
   }
-
 }

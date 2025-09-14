@@ -1,6 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:fpdart/fpdart.dart';
+import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
@@ -25,7 +24,6 @@ class CreateAccountController extends BaseController {
     required String password,
   }) async {
     setLoading(true);
-    String? uid;
     bool successCreateAccount = false;
 
     Either<ExceptionMessage, String> response = await firebaseAuthRepository
@@ -39,11 +37,9 @@ class CreateAccountController extends BaseController {
       },
       (String userId) async {
         final newUser = UserModel(
-          uid: userId,
           name: name,
           email: email,
-          address: await generateWalletAddress(),
-          balance: 1.0,
+          kycStatus: KycStatus.waiting,
         );
 
         final profileResponse = await firestoreRepository.createProfile(
@@ -79,9 +75,9 @@ class CreateAccountController extends BaseController {
     return successCreateAccount;
   }
 
-  Future<String> generateWalletAddress() async {
-    final credentials = EthPrivateKey.createRandom(math.Random.secure());
-    final address = await credentials.extractAddress();
-    return address.hexEip55;
-  }
+  // Future<String> generateWalletAddress() async {
+  //   final credentials = EthPrivateKey.createRandom(math.Random.secure());
+  //   final address = await credentials.extractAddress();
+  //   return address.hexEip55;
+  // }
 }

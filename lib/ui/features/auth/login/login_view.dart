@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
@@ -67,7 +68,11 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.wallet_travel, size: 80, color: AppColors.primary),
+                        Icon(
+                          Icons.wallet_travel,
+                          size: 80,
+                          color: AppColors.primary,
+                        ),
                         const SizedBox(height: 16),
                         TextFieldWidget(
                           hintText: "Digite seu email",
@@ -92,7 +97,10 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             GestureDetector(
                               onTap: () => context.go(RouterApp.forgotPassword),
-                              child: Text("Esqueci minha senha", style: AppFonts.labelMediumMedium),
+                              child: Text(
+                                "Esqueci minha senha",
+                                style: AppFonts.labelMediumMedium,
+                              ),
                             ),
                           ],
                         ),
@@ -108,7 +116,10 @@ class _LoginViewState extends State<LoginView> {
                     onTap: () => context.push(RouterApp.materialDesign),
                     text: "material design",
                   ),*/
-                  ElevatedButtonWidget(onTap: () => login(context), text: "Entrar"),
+                  ElevatedButtonWidget(
+                    onTap: () => login(context),
+                    text: "Entrar",
+                  ),
                 ],
               ),
             ),
@@ -117,13 +128,30 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void login(BuildContext context) async {
-    if (Validators.isValidEmail(emailController.text) && passwordController.text.isNotEmpty) {
-      bool successLogin = await controller.login(emailController.text, passwordController.text);
-      if (successLogin) {
-        context.go(RouterApp.home);
+    if (Validators.isValidEmail(emailController.text) &&
+        passwordController.text.isNotEmpty) {
+      KycStatus successLogin = await controller.login(
+        emailController.text,
+        passwordController.text,
+      );
+      switch (successLogin) {
+        case KycStatus.rejected:
+          context.go(RouterApp.kycStep);
+        case KycStatus.approved:
+          context.go(RouterApp.home);
+        case KycStatus.submitted:
+        case KycStatus.waiting:
+          controller.setMessage(
+            AlertData(
+              message: "Seus documentos estão sendo validados",
+              errorType: ErrorType.warning,
+            ),
+          );
       }
     } else {
-      controller.setMessage(AlertData(message: "Preencha os campos", errorType: ErrorType.warning));
+      controller.setMessage(
+        AlertData(message: "Preencha os campos", errorType: ErrorType.warning),
+      );
     }
   }
 }

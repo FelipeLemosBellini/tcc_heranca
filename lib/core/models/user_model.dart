@@ -1,35 +1,34 @@
+import 'package:tcc/core/enum/kyc_status.dart';
+import 'package:tcc/core/models/kyc_model.dart';
+
 class UserModel {
-  final String uid;
   final String name;
   final String email;
-  final String address;
-  double balance;
+  final String? address;
+  KycStatus kycStatus;
 
   UserModel({
-    required this.uid,
     required this.name,
     required this.email,
-    required this.address,
-    required this.balance,
+    required this.kycStatus,
+    this.address,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      "uid": uid,
       "name": name,
       "email": email,
       "address": address,
-      "balance": balance,
+      "kycStatus": kycStatus.name,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'] ?? "",
       email: map['email'] ?? "",
       name: map['name'] ?? "",
+      kycStatus: KycStatus.convertStringToEnum(map['kycStatus'] ?? ""),
       address: map['address'] ?? "",
-      balance: map['balance']?.toDouble() ?? 0.0,
     );
   }
 }

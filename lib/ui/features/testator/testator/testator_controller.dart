@@ -38,7 +38,7 @@ class TestatorController extends BaseController {
         return;
       },
       (UserModel user) {
-        address = user.address;
+        address = user.address ?? "";
       },
     );
 

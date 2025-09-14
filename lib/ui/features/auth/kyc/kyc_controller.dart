@@ -1,6 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:fpdart/fpdart.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/kyc_status.dart';
+import 'package:tcc/core/enum/review_status_document.dart';
+import 'package:tcc/core/enum/type_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/kyc_model.dart';
@@ -12,19 +16,22 @@ class KycController extends BaseController {
 
   KycController({required this.kycRepository});
 
-  KycModel? _kyc;
+  UserDocument? _kyc;
   Uint8List? _docFront;
   Uint8List? _docBack;
   Uint8List? _proofResidence;
 
-  KycModel? get kyc => _kyc;
+  UserDocument? get kyc => _kyc;
+
   Uint8List? get docFront => _docFront;
+
   Uint8List? get docBack => _docBack;
+
   Uint8List? get proofResidence => _proofResidence;
 
   Future<void> load() async {
     setLoading(true);
-    final Either<ExceptionMessage, KycModel?> response =
+    final Either<ExceptionMessage, UserDocument?> response =
         await kycRepository.getCurrent();
 
     response.fold(
@@ -102,71 +109,54 @@ class KycController extends BaseController {
     return true;
   }
 
-  Future<bool> saveDraft({required String cpf, required String rg}) async {
+  Future<bool> submit({
+    required String cpf,
+    required String rg,
+    required XFile cpfFront,
+    required XFile proofResidence,
+  }) async {
     if (!_validateInput(cpf: cpf, rg: rg)) return false;
     setLoading(true);
-    final draft = KycModel(
-      cpf: _digitsOnly(cpf),
-      rg: rg.trim(),
-      status: KycStatus.draft,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+
+    bool cpfOk = false;
+    bool proofOk = false;
+    UserDocument userCpfDocument = UserDocument(
+      content: cpf,
+      reviewStatus: ReviewStatusDocument.pending,
+      typeDocument: TypeDocument.cpf,
+      uploadedAt: DateTime.now(),
+    );
+    var cpfResponse = await kycRepository.submit(
+      userDocument: userCpfDocument,
+      xFile: cpfFront,
     );
 
-    final Either<ExceptionMessage, void> res =
-        await kycRepository.saveDraft(draft);
+    cpfResponse.fold((error) {}, (success) {
+      cpfOk = true;
+    });
 
-    bool ok = false;
-    res.fold(
-      (err) => setMessage(
-        AlertData(message: err.errorMessage, errorType: ErrorType.error),
-      ),
-      (_) {
-        _kyc = draft;
-        ok = true;
-        setMessage(
-          AlertData(
-            message: 'Rascunho do KYC salvo.',
-            errorType: ErrorType.success,
-          ),
-        );
-      },
+    UserDocument userProofDocument = UserDocument(
+      content: rg,
+      reviewStatus: ReviewStatusDocument.pending,
+      typeDocument: TypeDocument.proofResidence,
+      uploadedAt: DateTime.now(),
     );
+    var proofResponse = await kycRepository.submit(
+      userDocument: userProofDocument,
+      xFile: proofResidence,
+    );
+
+    proofResponse.fold((error) {}, (success) {
+      proofOk = true;
+    });
+
+    var responseUpdateKycStatus = await kycRepository.setStatusKyc(
+      kycStatus: KycStatus.submitted,
+    );
+
+    responseUpdateKycStatus.fold((error) {}, (success) {});
+
     setLoading(false);
-    return ok;
-  }
-
-  Future<bool> submit({required String cpf, required String rg}) async {
-    if (!_validateInput(cpf: cpf, rg: rg)) return false;
-    setLoading(true);
-    final submission = KycModel(
-      cpf: _digitsOnly(cpf),
-      rg: rg.trim(),
-      status: KycStatus.submitted,
-      createdAt: _kyc?.createdAt ?? DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-
-    final Either<ExceptionMessage, void> res =
-        await kycRepository.submit(submission);
-
-    bool ok = false;
-    res.fold(
-      (err) => setMessage(
-        AlertData(message: err.errorMessage, errorType: ErrorType.error),
-      ),
-      (_) {
-        _kyc = submission;
-        ok = true;
-        setMessage(
-          AlertData(
-            message: 'KYC enviado para análise.',
-            errorType: ErrorType.success,
-          ),
-        );
-      },
-    );
-    setLoading(false);
-    return ok;
+    return cpfOk && proofOk;
   }
 }

@@ -1,52 +1,46 @@
-enum KycStatus { draft, submitted, approved, rejected }
+import 'package:tcc/core/enum/review_status_document.dart';
+import 'package:tcc/core/enum/type_document.dart';
 
-class KycModel {
-  final String cpf;
-  final String rg;
-  final KycStatus status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+class UserDocument {
+  final String content;
+  String? pathStorage;
+  final String? reviewMessage;
+  final ReviewStatusDocument reviewStatus;
+  final TypeDocument typeDocument;
+  final DateTime uploadedAt;
+  String? id;
 
-  KycModel({
-    required this.cpf,
-    required this.rg,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+  UserDocument({
+    required this.content,
+    this.pathStorage,
+    this.reviewMessage,
+    required this.reviewStatus,
+    required this.typeDocument,
+    required this.uploadedAt,
+    this.id,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'cpf': cpf,
-      'rg': rg,
-      'status': status.name,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      "content": content,
+      "pathStorage": pathStorage,
+      "reviewMessage": reviewMessage,
+      "reviewStatus": reviewStatus.name,
+      "type": typeDocument.name,
+      "uploadedAt": uploadedAt.toIso8601String(),
+      "id": id,
     };
   }
 
-  factory KycModel.fromMap(Map<String, dynamic> map) {
-    return KycModel(
-      cpf: map['cpf'] ?? '',
-      rg: map['rg'] ?? '',
-      status: _statusFromString(map['status'] as String?),
-      createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(map['updatedAt'] ?? '') ?? DateTime.now(),
+  factory UserDocument.fromMap(Map<String, dynamic> map) {
+    return UserDocument(
+      id: map['id'] ?? '',
+      content: map['content'] ?? '',
+      pathStorage: map['pathStorage'] ?? '',
+      reviewStatus: ReviewStatusDocument.toEnum(map['reviewStatus'] ?? ''),
+      typeDocument: TypeDocument.toEnum(map['type'] ?? ''),
+      reviewMessage: map['reviewMessage'] ?? '',
+      uploadedAt: DateTime.tryParse(map['uploadedAt'] ?? '') ?? DateTime.now(),
     );
   }
-
-  static KycStatus _statusFromString(String? value) {
-    switch (value) {
-      case 'submitted':
-        return KycStatus.submitted;
-      case 'approved':
-        return KycStatus.approved;
-      case 'rejected':
-        return KycStatus.rejected;
-      case 'draft':
-      default:
-        return KycStatus.draft;
-    }
-  }
 }
-

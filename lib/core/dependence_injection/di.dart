@@ -6,7 +6,7 @@ import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_int
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
-import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
 import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.dart';
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
@@ -37,11 +37,12 @@ abstract class DI {
     getIt.registerLazySingleton<FirestoreRepositoryInterface>(
       () => FirestoreRepository(),
     );
+    getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
+    getIt.registerLazySingleton<KycRepository>(
+      () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
+    );
     getIt.registerLazySingleton<FirebaseAuthRepositoryInterface>(
       () => FirebaseAuthRepository(),
-    );
-    getIt.registerLazySingleton<KycRepositoryInterface>(
-      () => KycRepository(),
     );
 
     //Controllers
@@ -60,13 +61,19 @@ abstract class DI {
       ),
     );
     getIt.registerFactory(
-      () => LoginController(firebaseAuthRepository: FirebaseAuthRepository()),
+      () => LoginController(
+        firebaseAuthRepository: FirebaseAuthRepository(),
+        kycRepository: getIt.get<KycRepository>(),
+      ),
     );
     getIt.registerFactory(() => LoginWalletController());
     getIt.registerFactory(() => AddressStepController());
-    getIt.registerFactory(() => AmountStepController(
-      firestoreRepository: getIt.get<FirestoreRepositoryInterface>() as FirestoreRepository,
-    ));
+    getIt.registerFactory(
+      () => AmountStepController(
+        firestoreRepository:
+            getIt.get<FirestoreRepositoryInterface>() as FirestoreRepository,
+      ),
+    );
     getIt.registerFactory(() => ProveOfLiveStepController());
     getIt.registerFactory(
       () => SummaryController(firestoreRepository: FirestoreRepository()),
@@ -76,7 +83,11 @@ abstract class DI {
     );
     getIt.registerFactory(() => PlanStepController());
     getIt.registerFactory<KycController>(
-      () => KycController(kycRepository: KycRepository()),
+      () => KycController(
+        kycRepository: KycRepository(
+          storageRepository: getIt.get<StorageRepository>(),
+        ),
+      ),
     );
 
     //Controllers LazySingletons

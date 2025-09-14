@@ -61,11 +61,11 @@ class AmountStepController extends BaseController {
         return Left(error);
       },
       (user) async {
-        double availableBalance = user.balance;
+        double availableBalance = 0;
 
         if (flow == FlowTestamentEnum.edit) {
           final oldTestamentResult = await firestoreRepository
-              .getTestamentByAddress(user.address);
+              .getTestamentByAddress(user.address ?? "");
 
           double oldValue = 0.0;
           oldTestamentResult.fold(

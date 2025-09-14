@@ -9,8 +9,10 @@ class HomeController extends BaseController {
   final FirestoreRepositoryInterface firestoreRepository;
 
   UserModel? currentUser;
+
   String? get address => currentUser?.address;
-  double? get balance => currentUser?.balance;
+
+  double? get balance => 0;
 
   HomeController({
     required this.authRepository,
@@ -23,13 +25,15 @@ class HomeController extends BaseController {
     final result = await firestoreRepository.getUser();
 
     result.fold(
-          (error) {
-        setMessage(AlertData(
-          message: "Erro ao carregar dados do usuário",
-          errorType: ErrorType.error,
-        ));
+      (error) {
+        setMessage(
+          AlertData(
+            message: "Erro ao carregar dados do usuário",
+            errorType: ErrorType.error,
+          ),
+        );
       },
-          (user) {
+      (user) {
         currentUser = user;
       },
     );

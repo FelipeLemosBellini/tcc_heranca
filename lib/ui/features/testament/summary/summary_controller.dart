@@ -51,7 +51,7 @@ class SummaryController extends BaseController {
 
     if (flow == FlowTestamentEnum.edit) {
       final oldTestamentResult = await firestoreRepository
-          .getTestamentByAddress(userModel.address);
+          .getTestamentByAddress(userModel.address ?? "");
 
       oldTestamentResult.fold(
         (error) {
@@ -67,27 +67,25 @@ class SummaryController extends BaseController {
         (TestamentModel oldTestament) async {
           final oldValue = oldTestament.value;
 
-          final updatedBalance = userModel.balance + oldValue - newValue;
+          final updatedBalance = 0 + oldValue - newValue;
 
           await firestoreRepository.updateTestament(
-            addressTestator: userModel.address,
+            addressTestator: userModel.address ?? "",
             testament: testamentController.testament,
           );
 
           await firestoreRepository.updateBalance(
-            userId: userModel.uid,
             balance: updatedBalance,
           );
         },
       );
     } else {
       await firestoreRepository.createTestament(
-        addressTestator: userModel.address,
+        addressTestator: userModel.address ?? "",
         testament: testamentController.testament,
       );
       await firestoreRepository.updateBalance(
-        userId: userModel.uid,
-        balance: userModel.balance - newValue,
+        balance: 0 - newValue,
       );
     }
 
