@@ -130,23 +130,30 @@ class _LoginViewState extends State<LoginView> {
   void login(BuildContext context) async {
     if (Validators.isValidEmail(emailController.text) &&
         passwordController.text.isNotEmpty) {
-      KycStatus successLogin = await controller.login(
+      LoginSuccess loginSuccess = await controller.login(
         emailController.text,
         passwordController.text,
       );
-      switch (successLogin) {
-        case KycStatus.rejected:
-          context.go(RouterApp.kycStep);
-        case KycStatus.approved:
-          context.go(RouterApp.home);
-        case KycStatus.submitted:
-        case KycStatus.waiting:
-          controller.setMessage(
-            AlertData(
-              message: "Seus documentos estão sendo validados",
-              errorType: ErrorType.warning,
-            ),
-          );
+      if (loginSuccess.isAdmin == true) {
+        context.go(RouterApp.home);
+        return;
+      }
+      if (loginSuccess.kycStatus != null) {
+        switch (loginSuccess.kycStatus) {
+          case KycStatus.rejected:
+          case KycStatus.waiting:
+            context.go(RouterApp.kycStep);
+          case KycStatus.approved:
+            context.go(RouterApp.home);
+          case KycStatus.submitted:
+          default:
+            controller.setMessage(
+              AlertData(
+                message: "Seus documentos estão sendo validados",
+                errorType: ErrorType.warning,
+              ),
+            );
+        }
       }
     } else {
       controller.setMessage(
