@@ -1,6 +1,8 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/routers/auth_routes.dart';
 import 'package:tcc/core/routers/home_routes.dart';
 import 'package:tcc/core/routers/testament_routes.dart';
@@ -31,26 +33,40 @@ abstract class RouterApp {
   static const String aboutUs = "/aboutUs";
 
   static final GoRouter router = GoRouter(
-    // redirect: (BuildContext context, GoRouterState state) async {
-    //   User? user = FirebaseAuth.instance.currentUser;
-    //   final bool isLoggedIn = user != null;
-    //
-    //   //allowed routes
-    //   List<String> allowedRoutes = [login, createAccount, forgotPassword];
-    //
-    //   // if is not logged in go to allowedRoutes
-    //   if (!isLoggedIn && !allowedRoutes.contains(state.topRoute?.path)) {
-    //     return login;
-    //   }
-    //
-    //   //if is logged in go to home
-    //   if (isLoggedIn && state.topRoute?.path == login) {
-    //     return home;
-    //   }
-    //
-    //   // go to any page if logged in
-    //   return null;
-    // },
+    refreshListenable: GoRouterRefreshStream(
+      FirebaseAuth.instance.authStateChanges(),
+    ),
+    redirect: (context, state) async {
+      const publicPrefixes = <String>{
+        materialDesign,
+        login,
+        forgotPassword,
+        createAccount,
+        kycStep,
+      };
+      final isLogged = FirebaseAuth.instance.currentUser != null;
+      final location = state.uri.toString();
+      // Considera pública se a localização começa com algum prefixo público
+      final isPublic = publicPrefixes.any((route) {
+        return location.startsWith(route);
+      });
+
+      // Se NÃO logado:
+      // - Permite rotas públicas
+      // - Bloqueia privadas mandando para /login
+      if (!isLogged) {
+        return isPublic ? null : login;
+      }
+
+      // Se logado:
+      // - Evita ficar nas rotas públicas "de auth"
+      if (isPublic && location != home) {
+        return home;
+      }
+
+      // Sem redirecionamento
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: login,
@@ -67,14 +83,34 @@ abstract class RouterApp {
             pageBuilder: (context, state) {
               return Transitions.customTransitionPage(LoginWalletView(), state);
             },
-          ),GoRoute(
+          ),
+          GoRoute(
             path: materialDesign,
             pageBuilder: (context, state) {
-              return Transitions.customTransitionPage(MaterialDesignView(), state);
+              return Transitions.customTransitionPage(
+                MaterialDesignView(),
+                state,
+              );
             },
           ),
         ],
       ),
     ],
   );
+}
+
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<User?> stream) {
+    _sub = stream.asBroadcastStream().listen((User? user) {
+      notifyListeners();
+    });
+  }
+
+  late final StreamSubscription<User?> _sub;
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }
