@@ -69,5 +69,5 @@ class LoginSuccess{
     this.isAdmin,
     this.kycStatus
   });
-  }
 }
+

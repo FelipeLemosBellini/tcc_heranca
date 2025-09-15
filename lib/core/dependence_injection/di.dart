@@ -63,6 +63,7 @@ abstract class DI {
     getIt.registerFactory(
       () => LoginController(
         firebaseAuthRepository: FirebaseAuthRepository(),
+        firestoreRepositoryInterface: FirestoreRepository(),
         kycRepository: getIt.get<KycRepository>(),
       ),
     );
