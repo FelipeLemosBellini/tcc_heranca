@@ -1,6 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
+import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_repository.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
@@ -12,6 +13,7 @@ import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
 import 'package:tcc/ui/features/auth/login_wallet/login_wallet_controller.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
+import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
 import 'package:tcc/ui/features/heir/heir_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
@@ -105,5 +107,7 @@ abstract class DI {
       () => HeirController(firestoreRepository: FirestoreRepository()),
     );
     getIt.registerLazySingleton(() => WalletController());
+
+    getIt.registerFactory(() => ListUsersController(backofficeFirestoreInterface: BackofficeFirestoreRepository()));
   }
 }

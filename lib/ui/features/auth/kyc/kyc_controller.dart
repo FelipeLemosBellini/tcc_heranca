@@ -7,7 +7,7 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/models/kyc_model.dart';
+import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 

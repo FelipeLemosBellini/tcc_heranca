@@ -1,9 +1,10 @@
 import 'dart:ffi';
 
 import 'package:tcc/core/enum/kyc_status.dart';
-import 'package:tcc/core/models/kyc_model.dart';
+import 'package:tcc/core/models/user_document.dart';
 
 class UserModel {
+  final String? id;
   final String name;
   final String email;
   final String? address;
@@ -16,6 +17,7 @@ class UserModel {
     required this.kycStatus,
     this.isAdmin = false,
     this.address,
+    this.id,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class UserModel {
       kycStatus: KycStatus.convertStringToEnum(map['kycStatus'] ?? ""),
       address: map['address'] ?? "",
       isAdmin: map['isAdmin'] ?? false,
+      id: map['id'] ?? "",
     );
   }
 }

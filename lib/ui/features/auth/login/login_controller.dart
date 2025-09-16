@@ -58,6 +58,7 @@ class LoginController extends BaseController {
 
     }
     setLoading(false);
+
     return loginSuccess;
   }
 }

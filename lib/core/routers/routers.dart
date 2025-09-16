@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/models/testament_model.dart';
+import 'package:tcc/core/routers/admin_routes.dart';
 import 'package:tcc/core/routers/auth_routes.dart';
 import 'package:tcc/core/routers/home_routes.dart';
 import 'package:tcc/core/routers/testament_routes.dart';
@@ -24,6 +25,9 @@ abstract class RouterApp {
   static const String proofOfLifeStep = "/proofOfLifeStep";
   static const String planStep = "/planStep";
   static const String summary = "/summary";
+
+  static const String listUsers = "/listUsers";
+  static const String listDocuments = "/listDocuments";
 
   static const String seeDetails = "/seeDetails";
 
@@ -62,6 +66,8 @@ abstract class RouterApp {
           ...HomeRoutes.homeRoutes,
           ...TestamentRoutes.testamentRoutes,
           ...TestatorRoutes.testatorRoutes,
+          ...AdminRoutes.adminRoutes,
+
           GoRoute(
             path: loginWallet,
             pageBuilder: (context, state) {
