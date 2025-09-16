@@ -1,7 +1,7 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:tcc/app_widget.dart';
 import 'package:tcc/core/dependence_injection/di.dart';
 
@@ -23,6 +23,9 @@ void main() async {
     ),
   );
   DI.setDependencies();
+
+  await GetIt.I.allReady();
+
   // runApp(DevicePreview(
   //   enabled: true,
   //   builder: (context) => MyApp(),

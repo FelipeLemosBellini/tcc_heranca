@@ -22,8 +22,9 @@ class _WalletViewState extends State<WalletView>
   void initState() {
     super.initState();
 
-    // Carregar endereço async e depois chamar setState
-    walletController.loadUser();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+      // walletController.loadUser();
+    // });
   }
 
   final List<AssetModel> myAssets = [];
@@ -41,11 +42,10 @@ class _WalletViewState extends State<WalletView>
               children: [
                 CardWalletWidget(
                   addressUser: walletController.userModel?.address ?? "",
-                  balanceETH: "0"
-                      // walletController.userModel?.balance == null
-                      //     ? "Loading..."
-                      //     : "${walletController.userModel?.balance} ETH"
-                  ,
+                  balanceETH: "0",
+                  // walletController.userModel?.balance == null
+                  //     ? "Loading..."
+                  //     : "${walletController.userModel?.balance} ETH"
                 ),
                 ListView.separated(
                   shrinkWrap: true,

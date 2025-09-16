@@ -29,6 +29,7 @@ dependencies:
   event_bus: ^2.0.0
   image_picker: 1.2.0
   cpf_cnpj_validator: ^2.0.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

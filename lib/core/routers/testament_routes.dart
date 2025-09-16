@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/core/routers/transitions.dart';
+import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_view.dart';
 import 'package:tcc/ui/features/testament/address/address_step_view.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_view.dart';
 import 'package:tcc/ui/features/testament/plan/plan_step_view.dart';
@@ -33,7 +34,9 @@ abstract class TestamentRoutes {
       path: RouterApp.proofOfLifeStep,
       pageBuilder: (BuildContext context, GoRouterState state) {
         return Transitions.customTransitionPage(
-          ProveOfLifeStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+          ProveOfLifeStepView(
+            flowTestamentEnum: state.extra as FlowTestamentEnum,
+          ),
           state,
         );
       },
@@ -52,6 +55,15 @@ abstract class TestamentRoutes {
       pageBuilder: (BuildContext context, GoRouterState state) {
         return Transitions.customTransitionPage(
           PlanStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
+          state,
+        );
+      },
+    ),
+    GoRoute(
+      path: RouterApp.requestInheritance,
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return Transitions.customTransitionPage(
+          RequestInheritanceView(),
           state,
         );
       },

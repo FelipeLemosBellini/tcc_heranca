@@ -6,12 +6,11 @@ import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
-class TestatorController extends BaseController {
+class HeirController extends BaseController {
   final HomeController _homeController = GetIt.I.get<HomeController>();
-
   final FirestoreRepository firestoreRepository;
 
-  TestatorController({required this.firestoreRepository});
+  HeirController({required this.firestoreRepository});
 
   List<TestamentModel> _listTestament = [];
 
@@ -20,16 +19,15 @@ class TestatorController extends BaseController {
   void loadingTestaments() async {
     // _homeController.setLoading(true);
     //
-    // _listTestament.clear();
-    // notifyListeners();
+    // late UserModel currentUser;
     //
-    // var response = await firestoreRepository.getUser();
-    // String address = "";
-    // response.fold(
+    // final result = await firestoreRepository.getUser();
+    //
+    // await result.fold(
     //   (error) {
     //     setMessage(
     //       AlertData(
-    //         message: "Erro ao buscar o testamento",
+    //         message: "Erro ao carregar dados do usuário",
     //         errorType: ErrorType.error,
     //       ),
     //     );
@@ -37,24 +35,26 @@ class TestatorController extends BaseController {
     //     notifyListeners();
     //     return;
     //   },
-    //   (UserModel user) {
-    //     address = user.address ?? "";
+    //   (user) {
+    //     currentUser = user;
     //   },
     // );
     //
-    // var response2 = await firestoreRepository.getTestamentByAddress(address);
-    // response2.fold(
+    // var response = await firestoreRepository.getHeirTestament(
+    //   currentUser.address ?? "",
+    // );
+    //
+    // response.fold(
     //   (error) {
-    //     _listTestament.clear();
     //     setMessage(
     //       AlertData(message: error.errorMessage, errorType: ErrorType.error),
     //     );
+    //     _listTestament = [];
     //   },
     //   (success) {
-    //     _listTestament.add(success);
+    //     _listTestament = success;
     //   },
     // );
-    //
     // await Future.delayed(Duration(seconds: 1));
     // _homeController.setLoading(false);
     // notifyListeners();

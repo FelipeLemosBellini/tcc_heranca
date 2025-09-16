@@ -13,23 +13,23 @@ class WalletController extends BaseController {
   UserModel? userModel;
 
   Future<void> loadUser() async {
-    _homeController.setLoading(true);
-    final result = await _firestoreRepository.getUser();
-    result.fold(
-      (error) {
-        setMessage(
-          AlertData(
-            message: "Erro ao criar o testamento",
-            errorType: ErrorType.error,
-          ),
-        );
-        return;
-      },
-      (UserModel user) {
-        userModel = user;
-        notifyListeners();
-      },
-    );
-    _homeController.setLoading(false);
+    // _homeController.setLoading(true);
+    // final result = await _firestoreRepository.getUser();
+    // result.fold(
+    //   (error) {
+    //     setMessage(
+    //       AlertData(
+    //         message: "Erro ao criar o testamento",
+    //         errorType: ErrorType.error,
+    //       ),
+    //     );
+    //     return;
+    //   },
+    //   (UserModel user) {
+    //     userModel = user;
+    //     notifyListeners();
+    //   },
+    // );
+    // _homeController.setLoading(false);
   }
 }

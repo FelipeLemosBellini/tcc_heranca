@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/routers/auth_routes.dart';
 import 'package:tcc/core/routers/home_routes.dart';
 import 'package:tcc/core/routers/testament_routes.dart';
@@ -32,41 +34,44 @@ abstract class RouterApp {
   static const String home = "/home";
   static const String aboutUs = "/aboutUs";
 
+  static const String requestInheritance = "/requestInheritance";
+
   static final GoRouter router = GoRouter(
-    refreshListenable: GoRouterRefreshStream(
-      FirebaseAuth.instance.authStateChanges(),
-    ),
-    redirect: (context, state) async {
-      const publicPrefixes = <String>{
-        materialDesign,
-        login,
-        forgotPassword,
-        createAccount,
-        kycStep,
-      };
-      final isLogged = FirebaseAuth.instance.currentUser != null;
-      final location = state.uri.toString();
-      // Considera pública se a localização começa com algum prefixo público
-      final isPublic = publicPrefixes.any((route) {
-        return location.startsWith(route);
-      });
-
-      // Se NÃO logado:
-      // - Permite rotas públicas
-      // - Bloqueia privadas mandando para /login
-      if (!isLogged) {
-        return isPublic ? null : login;
-      }
-
-      // Se logado:
-      // - Evita ficar nas rotas públicas "de auth"
-      if (isPublic && location != home) {
-        return home;
-      }
-
-      // Sem redirecionamento
-      return null;
-    },
+    // refreshListenable: GoRouterRefreshStream(
+    //   FirebaseAuth.instance.authStateChanges(),
+    // ),
+    // redirect: (context, state) async {
+    //   const publicPrefixes = <String>{
+    //     materialDesign,
+    //     login,
+    //     forgotPassword,
+    //     createAccount,
+    //     kycStep,
+    //   };
+    //   final isLogged = FirebaseAuth.instance.currentUser != null;
+    //   final location = state.uri.toString();
+    //   // bool isAdmin = GetIt.I.get<LocalStorageService>().getIsAdmin();
+    //   // Considera pública se a localização começa com algum prefixo público
+    //   final isPublic = publicPrefixes.any((route) {
+    //     return location.startsWith(route);
+    //   });
+    //
+    //   // Se NÃO logado:
+    //   // - Permite rotas públicas
+    //   // - Bloqueia privadas mandando para /login
+    //   if (!isLogged) {
+    //     return isPublic ? null : login;
+    //   }
+    //
+    //   // Se logado:
+    //   // - Evita ficar nas rotas públicas "de auth"
+    //   if (isPublic && location != home) {
+    //     return home;
+    //   }
+    //
+    //   // Sem redirecionamento
+    //   return null;
+    // },
     routes: <RouteBase>[
       GoRoute(
         path: login,

@@ -1,6 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
+import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
@@ -12,7 +13,8 @@ import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
 import 'package:tcc/ui/features/auth/login_wallet/login_wallet_controller.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
-import 'package:tcc/ui/features/heir/heir_controller.dart';
+import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
+import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/testament/address/address_step_controller.dart';
@@ -27,12 +29,18 @@ import 'package:tcc/ui/widgets/material_widgets/material_design_controller.dart'
 abstract class DI {
   static final GetIt getIt = GetIt.instance;
 
-  static void setDependencies() {
+  static void setDependencies() async {
     getIt.registerLazySingleton<EventBus>(() => EventBus());
 
     //Controllers Notifiers
     getIt.registerLazySingleton(() => TestamentController());
 
+    //Local Storage
+    getIt.registerSingletonAsync<LocalStorageService>(
+      () async => LocalStorageService.init(),
+    );
+
+    await getIt.allReady();
     //Repositories
     getIt.registerLazySingleton<FirestoreRepositoryInterface>(
       () => FirestoreRepository(),
@@ -64,6 +72,7 @@ abstract class DI {
       () => LoginController(
         firebaseAuthRepository: FirebaseAuthRepository(),
         firestoreRepositoryInterface: FirestoreRepository(),
+        localStorageService: getIt.get<LocalStorageService>(),
         kycRepository: getIt.get<KycRepository>(),
       ),
     );
@@ -83,6 +92,9 @@ abstract class DI {
       () => SeeDetailsController(firestoreRepository: FirestoreRepository()),
     );
     getIt.registerFactory(() => PlanStepController());
+    getIt.registerFactory<RequestInheritanceController>(
+      () => RequestInheritanceController(),
+    );
     getIt.registerFactory<KycController>(
       () => KycController(
         kycRepository: KycRepository(
@@ -96,6 +108,7 @@ abstract class DI {
       () => HomeController(
         authRepository: FirebaseAuthRepository(),
         firestoreRepository: FirestoreRepository(),
+        localStorageService: getIt.get<LocalStorageService>(),
       ),
     );
     getIt.registerLazySingleton(

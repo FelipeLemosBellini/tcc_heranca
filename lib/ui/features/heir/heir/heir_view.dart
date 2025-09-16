@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/routers/routers.dart';
-import 'package:tcc/ui/features/heir/heir_controller.dart';
+import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
@@ -22,18 +22,19 @@ class HeirView extends StatefulWidget {
   State<HeirView> createState() => _HeirViewState();
 }
 
-class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin {
+class _HeirViewState extends State<HeirView>
+    with AutomaticKeepAliveClientMixin {
   HeirController heirController = GetIt.I.get<HeirController>();
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      heirController.loadingTestaments();
-      eventBus.on<TestamentEvent>().listen((event) {
-        heirController.loadingTestaments();
-      });
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+      // heirController.loadingTestaments();
+      // eventBus.on<TestamentEvent>().listen((event) {
+      //   heirController.loadingTestaments();
+      // });
+    // });
     super.initState();
   }
 
@@ -61,14 +62,20 @@ class _HeirViewState extends State<HeirView> with AutomaticKeepAliveClientMixin 
                   final testament = heirController.listTestament[index];
                   return Padding(
                     padding: EdgeInsets.only(
-                      bottom: heirController.listTestament.length - 1 == index ? 64 : 16,
+                      bottom:
+                          heirController.listTestament.length - 1 == index
+                              ? 64
+                              : 16,
                     ),
                     child: CardTestamentInfoWidget(
                       testament: testament,
                       seeDetails: () {
                         context.push(
                           RouterApp.seeDetails,
-                          extra: {"testament": testament, "typeUser": EnumTypeUser.heir},
+                          extra: {
+                            "testament": testament,
+                            "typeUser": EnumTypeUser.heir,
+                          },
                         );
                       },
                     ),

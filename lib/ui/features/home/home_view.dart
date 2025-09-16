@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
-import 'package:tcc/ui/features/heir/heir_view.dart';
+import 'package:tcc/ui/features/heir/heir/heir_view.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_view.dart';
 import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
@@ -25,7 +25,11 @@ class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [const WalletView(), const TestatorView(), const HeirView()];
+  final List<Widget> _screens = [
+    const WalletView(),
+    const TestatorView(),
+    const HeirView(),
+  ];
 
   final List<String> _titles = ['Carteira', 'Meus testamentos', 'Heranças'];
 
@@ -44,15 +48,18 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    homeController.addListener(_onLoadingChanged);
-    homeController.loadUserData();
-    _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
+    // homeController.addListener(_onLoadingChanged);
+    // homeController.loadUserData();
+    _pageController = PageController(
+      initialPage: _selectedIndex,
+      keepPage: true,
+    );
     super.initState();
   }
 
   @override
   void dispose() {
-    homeController.removeListener(_onLoadingChanged);
+    // homeController.removeListener(_onLoadingChanged);
     super.dispose();
   }
 
@@ -93,17 +100,27 @@ class _HomeViewState extends State<HomeView> {
           onItemTapped: _onItemTapped,
         ),
         floatingActionButton:
-            _selectedIndex == 1
+            _selectedIndex == 1 || _selectedIndex == 2
                 ? FloatingActionButton(
                   onPressed: () {
-                    context.push(RouterApp.planStep, extra: FlowTestamentEnum.creation);
+                    if (_selectedIndex == 1) {
+                      context.push(
+                        RouterApp.planStep,
+                        extra: FlowTestamentEnum.creation,
+                      );
+                    }
+                    if (_selectedIndex == 2) {
+                      context.push(RouterApp.requestInheritance);
+                    }
                   },
                   backgroundColor: AppColors.primaryLight2,
                   child: Icon(Icons.add_sharp, color: AppColors.primary),
                 )
                 : null,
         floatingActionButtonLocation:
-            _selectedIndex == 1 ? FloatingActionButtonLocation.endFloat : null,
+            _selectedIndex == 1 || _selectedIndex == 2
+                ? FloatingActionButtonLocation.endFloat
+                : null,
       ),
     );
   }

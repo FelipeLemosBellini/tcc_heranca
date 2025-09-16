@@ -24,13 +24,13 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      testatorController.loadingTestaments();
-
-      eventBus.on<TestamentEvent>().listen((event) {
-        testatorController.loadingTestaments();
-      });
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+      // testatorController.loadingTestaments();
+      //
+      // eventBus.on<TestamentEvent>().listen((event) {
+      //   testatorController.loadingTestaments();
+      // });
+    // });
 
     super.initState();
   }

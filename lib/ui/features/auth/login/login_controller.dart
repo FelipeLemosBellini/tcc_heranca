@@ -5,6 +5,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
+import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
@@ -14,11 +15,13 @@ class LoginController extends BaseController {
   final FirebaseAuthRepositoryInterface firebaseAuthRepository;
   final FirestoreRepositoryInterface firestoreRepositoryInterface;
   final KycRepository kycRepository;
+  final LocalStorageService localStorageService;
 
   LoginController({
     required this.kycRepository,
     required this.firebaseAuthRepository,
-    required this.firestoreRepositoryInterface
+    required this.firestoreRepositoryInterface,
+    required this.localStorageService,
   });
 
   Future<LoginSuccess> login(String email, String password) async {
@@ -52,22 +55,17 @@ class LoginController extends BaseController {
       var user = await firestoreRepositoryInterface.getUser();
       user.fold((error) {}, (success) {
         loginSuccess.isAdmin = success.isAdmin;
+        localStorageService.setIsAdmin(success.isAdmin == true);
       });
-
-
-
     }
     setLoading(false);
     return loginSuccess;
   }
 }
 
-class LoginSuccess{
+class LoginSuccess {
   bool? isAdmin;
   KycStatus? kycStatus;
-  LoginSuccess({
-    this.isAdmin,
-    this.kycStatus
-  });
-}
 
+  LoginSuccess({this.isAdmin, this.kycStatus});
+}
