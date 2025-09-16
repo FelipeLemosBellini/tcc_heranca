@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
-import 'package:tcc/core/models/kyc_model.dart';
+import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
@@ -99,6 +99,18 @@ class KycRepository implements KycRepositoryInterface {
       return Right(userModel.kycStatus);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o status do Kyc."));
+    }
+  }
+
+  Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
+    required String userId,
+  }) async {
+    try{
+      final response = await firestore.collection('user_documents').where('id', isEqualTo: userId).get();
+      final documents = response.docs.map((doc) => UserDocument.fromMap(doc.data())).toList();
+      return Right(documents);
+    } catch (e){
+      return Left(ExceptionMessage("Erro ao pegar os documentos"));
     }
   }
 }

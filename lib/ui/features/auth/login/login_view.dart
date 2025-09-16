@@ -135,7 +135,7 @@ class _LoginViewState extends State<LoginView> {
         passwordController.text,
       );
       if (loginSuccess.isAdmin == true) {
-        context.go(RouterApp.home);
+        context.go(RouterApp.listUsers);
         return;
       }
       if (loginSuccess.kycStatus != null) {
