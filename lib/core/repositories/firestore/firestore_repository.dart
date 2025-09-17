@@ -33,11 +33,11 @@ class FirestoreRepository implements FirestoreRepositoryInterface {
 
   @override
   Future<Either<ExceptionMessage, void>> createProfile(
-    String uid,
     UserModel data,
   ) async {
+
     try {
-      await firestore.collection("users").doc(uid).set(data.toMap());
+      await firestore.collection("users").doc(data.id).set(data.toMap());
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao criar perfil: ${e.toString()}"));

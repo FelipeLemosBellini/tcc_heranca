@@ -25,8 +25,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   LoginController controller = GetIt.I.get<LoginController>();
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController(text: "f@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "@Abc1234");
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();

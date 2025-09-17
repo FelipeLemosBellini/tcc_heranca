@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
+import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/core/models/user_model.dart';
@@ -105,12 +106,50 @@ class KycRepository implements KycRepositoryInterface {
   Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
     required String userId,
   }) async {
-    try{
-      final response = await firestore.collection('user_documents').where('id', isEqualTo: userId).get();
-      final documents = response.docs.map((doc) => UserDocument.fromMap(doc.data())).toList();
-      return Right(documents);
-    } catch (e){
+    try {
+      final response =
+          await firestore
+              .collection('user_documents')
+              .where('id', isEqualTo: userId)
+              .get();
+      final docs =
+          response.docs.map((doc) {
+            return UserDocument.fromMap(doc.data())..idDocument = doc.id;
+          }).toList();
+
+      return Right(docs);
+    } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar os documentos"));
+    }
+  }
+
+  Future<Either<ExceptionMessage, UserDocument>> getDocumentById({
+    required String docId,
+  }) async {
+    try {
+      final response =
+          await firestore.collection('user_documents').doc(docId).get();
+      final doc = UserDocument.fromMap(response.data()!);
+      return Right(doc);
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao pegar o documento"));
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> updateDocument({
+    required String docId,
+    required ReviewStatusDocument reviewStatus,
+  }) async {
+    try {
+      await firestore.collection('user_documents').doc(docId).update({
+        'reviewStatus': reviewStatus.name,
+        'updatedAt': DateTime.now(),
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
+      );
     }
   }
 }

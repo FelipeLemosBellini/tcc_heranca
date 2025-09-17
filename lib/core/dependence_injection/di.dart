@@ -14,6 +14,7 @@ import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
 import 'package:tcc/ui/features/auth/login_wallet/login_wallet_controller.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
+import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
 import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
 import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
@@ -121,9 +122,15 @@ abstract class DI {
     );
     getIt.registerLazySingleton(() => WalletController());
 
-    getIt.registerFactory(
+    getIt.registerLazySingleton(
       () => ListUsersController(
         backofficeFirestoreInterface: BackofficeFirestoreRepository(),
+      ),
+    );
+
+    getIt.registerLazySingleton(
+          () => ListUserDocumentsController(
+          kycRepositoryInterface: KycRepository(storageRepository: StorageRepository()),
       ),
     );
   }
