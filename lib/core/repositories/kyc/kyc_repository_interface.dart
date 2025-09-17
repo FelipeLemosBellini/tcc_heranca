@@ -12,9 +12,17 @@ abstract class KycRepositoryInterface {
 
   Future<Either<ExceptionMessage, UserDocument?>> getCurrent();
 
-  Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({required String userId});
+  Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
+    required String userId,
+  });
 
-  Future<Either<ExceptionMessage, UserDocument>> getDocumentById({required String docId});
+  Future<Either<ExceptionMessage, UserDocument>> getDocumentById({
+    required String docId,
+  });
 
-  Future<Either<ExceptionMessage, void>> updateDocument({required String docId, required ReviewStatusDocument reviewStatus, required String reason});
+  Future<Either<ExceptionMessage, void>> updateDocument({
+    required String docId,
+    required ReviewStatusDocument reviewStatus,
+    required String reason,
+  });
 }

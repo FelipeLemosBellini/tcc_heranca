@@ -103,6 +103,7 @@ class KycRepository implements KycRepositoryInterface {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
     required String userId,
   }) async {
@@ -123,6 +124,7 @@ class KycRepository implements KycRepositoryInterface {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, UserDocument>> getDocumentById({
     required String docId,
   }) async {
@@ -136,6 +138,7 @@ class KycRepository implements KycRepositoryInterface {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> updateDocument({
     required String docId,
     required ReviewStatusDocument reviewStatus,
