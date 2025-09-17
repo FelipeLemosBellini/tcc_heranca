@@ -172,16 +172,16 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   documents: _controller.listDocuments,
                   reason: _controller.reasonControllers[index].text,
                 );
-
-                AlertHelper.showAlertSnackBar(
-                  context: context,
-                  alertData: AlertData(
-                    message: 'Documentos enviados com sucesso',
-                    errorType: ErrorType.success,
-                  ),
-                );
-                context.pop();
               }
+
+              AlertHelper.showAlertSnackBar(
+                context: context,
+                alertData: AlertData(
+                  message: 'Documentos enviados com sucesso',
+                  errorType: ErrorType.success,
+                ),
+              );
+              context.pop();
             },
             text: "Enviar",
           ),
