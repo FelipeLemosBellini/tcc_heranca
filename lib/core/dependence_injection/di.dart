@@ -50,8 +50,11 @@ abstract class DI {
     getIt.registerLazySingleton<KycRepository>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
-    getIt.registerLazySingleton<FirebaseAuthRepositoryInterface>(
+    getIt.registerLazySingleton<FirebaseAuthRepository>(
       () => FirebaseAuthRepository(),
+    );
+    getIt.registerLazySingleton<BackofficeFirestoreRepository>(
+      () => BackofficeFirestoreRepository(),
     );
 
     //Controllers

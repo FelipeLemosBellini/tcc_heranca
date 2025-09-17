@@ -5,6 +5,8 @@ import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
+import 'package:tcc/ui/features/backoffice/list_users/widgets/drawer_list_users_widget.dart';
+import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
 
@@ -34,7 +36,15 @@ class _ListUsersViewState extends State<ListUsersView> {
       key: _scaffoldKey,
       appBar: AppBarDrawerWidget(
         title: 'Usuários Pendentes',
-        openDrawer: () {},
+        openDrawer: () {
+          _scaffoldKey.currentState?.openDrawer();
+        },
+      ),
+      drawer: DrawerListUsersWidget(
+
+        signOut: () {
+          context.go(RouterApp.login);
+        },
       ),
       body: ListenableBuilder(
         listenable: _controller,
