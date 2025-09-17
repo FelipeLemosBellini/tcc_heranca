@@ -1,4 +1,4 @@
-enum TypeDocument {
+enum  TypeDocument {
   cpf,
   proofResidence;
 
@@ -11,4 +11,17 @@ enum TypeDocument {
         return TypeDocument.cpf;
     }
   }
+
+  String get Name{
+    switch(this){
+      case TypeDocument.cpf:
+        return "CPF";
+      case TypeDocument.proofResidence:
+        return "Comprovante de Residência";
+      default:
+        return "";
+    }
+  }
+
+  static String labelPtOf(String value) => toEnum(value).Name;
 }

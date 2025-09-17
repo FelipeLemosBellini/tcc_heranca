@@ -37,14 +37,14 @@ class CreateAccountController extends BaseController {
       },
       (String userId) async {
         final newUser = UserModel(
+          id: userId,
           name: name,
           email: email,
           kycStatus: KycStatus.waiting,
         );
 
         final profileResponse = await firestoreRepository.createProfile(
-          userId,
-          newUser,
+          newUser
         );
 
         profileResponse.fold(

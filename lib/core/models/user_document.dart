@@ -9,6 +9,7 @@ class UserDocument {
   final TypeDocument typeDocument;
   final DateTime uploadedAt;
   String? id;
+  String? idDocument;
 
   UserDocument({
     required this.content,
@@ -18,6 +19,7 @@ class UserDocument {
     required this.typeDocument,
     required this.uploadedAt,
     this.id,
+    this.idDocument,
   });
 
   Map<String, dynamic> toMap() {

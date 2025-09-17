@@ -31,7 +31,7 @@ class _ListUsersViewState extends State<ListUsersView> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBarDrawerWidget(title: 'Usuários', openDrawer: () {}),
+      appBar: AppBarDrawerWidget(title: 'Usuários Pendentes', openDrawer: () {}),
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {

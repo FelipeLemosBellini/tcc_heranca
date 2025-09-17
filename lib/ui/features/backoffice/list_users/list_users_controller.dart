@@ -18,6 +18,7 @@ class ListUsersController extends BaseController{
 
     response.fold((error){}, (success){
       _users = success;
+      notifyListeners();
     });
   }
 

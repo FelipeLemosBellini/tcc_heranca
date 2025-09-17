@@ -4,7 +4,7 @@ import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/models/user_document.dart';
 
 class UserModel {
-  final String? id;
+  String? id;
   final String name;
   final String email;
   final String? address;
@@ -27,6 +27,7 @@ class UserModel {
       "address": address,
       "kycStatus": kycStatus.name,
       "isAdmin": isAdmin,
+      "id": id
     };
   }
 

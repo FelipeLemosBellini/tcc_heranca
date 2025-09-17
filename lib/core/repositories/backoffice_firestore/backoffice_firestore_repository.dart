@@ -39,7 +39,10 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
               .where('userId', isEqualTo: userId)
               .get();
       final docs =
-          query.docs.map((doc) => UserDocument.fromMap(doc.data())).toList();
+          query.docs.map((doc) {
+
+            return UserDocument.fromMap(doc.data())..idDocument = doc.id;
+          }).toList();
       // Ajuste conforme seu modelo: se UserDocument encapsula uma lista, crie a instância apropriada.
       return right(docs);
     } catch (e) {
