@@ -128,7 +128,7 @@ class _KycViewState extends State<KycView> {
                         UploadTileSimple(
                           label: 'Documento de identidade (frente/verso)',
                           hasSelected: cpfFront != null,
-                          imageFront: () async {
+                          attach: () async {
                             cpfFront = await imagePicker.pickImage(
                               source: ImageSource.camera,
                             );
@@ -139,7 +139,7 @@ class _KycViewState extends State<KycView> {
                         UploadTileSimple(
                           label: 'Comprovante de residência',
                           hasSelected: proofResidence != null,
-                          imageFront: () async {
+                          attach: () async {
                             proofResidence = await imagePicker.pickImage(
                               source: ImageSource.camera,
                             );

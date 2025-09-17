@@ -23,6 +23,9 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
 
   ImagePicker imagePicker = ImagePicker();
 
+  XFile? decisaoHomologatoriaDaPartilha;
+  XFile? certidaoDeObito;
+  XFile? producacaoDoAdvogado;
   XFile? cpfFront;
   XFile? proofResidence;
 
@@ -92,12 +95,11 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                         icon: Icons.attach_file_outlined,
                         children: [
                           UploadTileSimple(
-                            label: 'Documento de identidade (frente/verso)',
-                            hasSelected: cpfFront != null,
-                            imageFront: () async {
-                              cpfFront = await imagePicker.pickImage(
-                                source: ImageSource.camera,
-                              );
+                            label: 'Procuração do advogado/representante',
+                            hasSelected: producacaoDoAdvogado != null,
+                            attach: () async {
+                              producacaoDoAdvogado = await imagePicker
+                                  .pickImage(source: ImageSource.camera);
                               setState(() {});
                             },
                           ),
@@ -105,7 +107,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                           UploadTileSimple(
                             label: 'Comprovante de residência',
                             hasSelected: proofResidence != null,
-                            imageFront: () async {
+                            attach: () async {
                               proofResidence = await imagePicker.pickImage(
                                 source: ImageSource.camera,
                               );
