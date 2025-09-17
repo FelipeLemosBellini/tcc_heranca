@@ -45,9 +45,7 @@ abstract class DI {
 
     await getIt.allReady();
     //Repositories
-    getIt.registerLazySingleton<FirestoreRepositoryInterface>(
-      () => FirestoreRepository(),
-    );
+    getIt.registerSingleton<FirestoreRepository>(FirestoreRepository());
     getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
     getIt.registerLazySingleton<KycRepository>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
