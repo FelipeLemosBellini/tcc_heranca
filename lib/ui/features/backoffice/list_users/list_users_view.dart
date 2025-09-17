@@ -19,6 +19,7 @@ class _ListUsersViewState extends State<ListUsersView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final ListUsersController _controller = GetIt.I.get<ListUsersController>();
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +32,10 @@ class _ListUsersViewState extends State<ListUsersView> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBarDrawerWidget(title: 'Usuários Pendentes', openDrawer: () {}),
+      appBar: AppBarDrawerWidget(
+        title: 'Usuários Pendentes',
+        openDrawer: () {},
+      ),
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
@@ -41,18 +45,30 @@ class _ListUsersViewState extends State<ListUsersView> {
               final user = _controller.listUsers[index];
               return GestureDetector(
                 onTap: () {
-                  context.push(RouterApp.listDocuments, extra: {"userId": user.id});
+                  context.push(
+                    RouterApp.listDocuments,
+                    extra: {"userId": user.id},
+                  );
                 },
                 child: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(16),
+                  margin: EdgeInsets.only(
+                    left: 24,
+                    right: 24,
+                    top: index == 0 ? 24 : 12,
+                  ),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primary3,
-                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: ListTile(
+                    iconColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     leading: const Icon(Icons.person),
-                    title: Text(user.name.toUpperCase()),
+                    title: Text(
+                      user.name.toUpperCase(),
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               );

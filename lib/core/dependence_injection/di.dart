@@ -62,19 +62,19 @@ abstract class DI {
     );
     getIt.registerFactory<ForgotPasswordController>(
       () => ForgotPasswordController(
-        firebaseAuthRepository: FirebaseAuthRepository(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
       ),
     );
     getIt.registerFactory<CreateAccountController>(
       () => CreateAccountController(
-        firestoreRepository: FirestoreRepository(),
-        firebaseAuthRepository: FirebaseAuthRepository(),
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
       ),
     );
     getIt.registerFactory(
       () => LoginController(
         firebaseAuthRepository: FirebaseAuthRepository(),
-        firestoreRepositoryInterface: FirestoreRepository(),
+        firestoreRepositoryInterface: getIt.get<FirestoreRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
         kycRepository: getIt.get<KycRepository>(),
       ),
@@ -83,18 +83,21 @@ abstract class DI {
     getIt.registerFactory(() => AddressStepController());
     getIt.registerFactory(
       () => AmountStepController(
-        firestoreRepository:
-            getIt.get<FirestoreRepositoryInterface>() as FirestoreRepository,
+        firestoreRepository: getIt.get<FirestoreRepository>(),
       ),
     );
     getIt.registerFactory(() => ProveOfLiveStepController());
     getIt.registerFactory(
-      () => SummaryController(firestoreRepository: FirestoreRepository()),
+      () => SummaryController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+      ),
     );
     getIt.registerFactory(
-      () => SeeDetailsController(firestoreRepository: FirestoreRepository()),
+      () => SeeDetailsController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+      ),
     );
-    getIt.registerFactory(() => PlanStepController());
+    getIt.registerFactory<PlanStepController>(() => PlanStepController());
     getIt.registerFactory<RequestInheritanceController>(
       () => RequestInheritanceController(),
     );
@@ -109,28 +112,32 @@ abstract class DI {
     //Controllers LazySingletons
     getIt.registerLazySingleton(
       () => HomeController(
-        authRepository: FirebaseAuthRepository(),
-        firestoreRepository: FirestoreRepository(),
+        authRepository: getIt.get<FirebaseAuthRepository>(),
+        firestoreRepository: getIt.get<FirestoreRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
       ),
     );
     getIt.registerLazySingleton(
-      () => TestatorController(firestoreRepository: FirestoreRepository()),
+      () => TestatorController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+      ),
     );
     getIt.registerLazySingleton(
-      () => HeirController(firestoreRepository: FirestoreRepository()),
+      () =>
+          HeirController(firestoreRepository: getIt.get<FirestoreRepository>()),
     );
     getIt.registerLazySingleton(() => WalletController());
 
-    getIt.registerLazySingleton(
+    getIt.registerFactory(
       () => ListUsersController(
-        backofficeFirestoreInterface: BackofficeFirestoreRepository(),
+        backofficeFirestoreInterface:
+            getIt.get<BackofficeFirestoreRepository>(),
       ),
     );
 
-    getIt.registerLazySingleton(
-          () => ListUserDocumentsController(
-          kycRepositoryInterface: KycRepository(storageRepository: StorageRepository()),
+    getIt.registerFactory(
+      () => ListUserDocumentsController(
+        kycRepositoryInterface: getIt.get<KycRepository>(),
       ),
     );
   }

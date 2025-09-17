@@ -18,7 +18,6 @@ class ListUserDocumentsView extends StatefulWidget {
 }
 
 class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final ListUserDocumentsController _controller =
       GetIt.I.get<ListUserDocumentsController>();
 
@@ -41,7 +40,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
       builder: (context, _) {
         return Scaffold(
           appBar: AppBarSimpleWidget(
-            title: 'Usuários Pendentes',
+            title: 'Validar documentos',
             onTap: () {
               context.pop();
             },
