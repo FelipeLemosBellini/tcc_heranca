@@ -145,7 +145,7 @@ class KycRepository implements KycRepositoryInterface {
     String? reason,
   }) async {
     try {
-      await firestore.collection('user_documents').doc(docId).set({
+      await firestore.collection('user_documents').doc(docId).update({
         'reviewStatus': reviewStatus.name,
         'updatedAt': DateTime.now(),
         'reason': reason,
