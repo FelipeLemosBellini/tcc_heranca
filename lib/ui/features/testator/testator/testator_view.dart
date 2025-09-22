@@ -46,34 +46,30 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
           return LoadingAndAlertOverlayWidget(
             isLoading: testatorController.isLoading,
             alertData: testatorController.alertData,
-            child: Visibility(
-              visible: testatorController.listTestament.isNotEmpty,
-              replacement: EmptyListTestamentWidget(
-                text: 'Você não possui nenhum testamento.',
-                onTap: testatorController.loadingTestaments,
-              ),
-              child: ListView.builder(
-                itemCount: testatorController.listTestament.length,
-                padding: const EdgeInsets.all(24.0),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final testament = testatorController.listTestament[index];
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: testatorController.listTestament.length - 1 == index ? 64 : 16,
+            child: Stack(
+              children: [
+                Visibility(
+                  visible: testatorController.listTestament.isNotEmpty,
+                  child: ListView.builder(
+                    itemCount: testatorController.listTestament.length,
+                    padding: const EdgeInsets.all(24.0),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) { },
+                  ),
+                ),
+
+                if (testatorController.listTestament.isEmpty)
+                  Center(
+                    child: SizedBox(
+                      width: 240,
+                      child: ElevatedButton.icon(
+                        onPressed: () => {},
+                        icon: const Icon(Icons.lock_outline),
+                        label: const Text('Criar cofre'),
+                      ),
                     ),
-                    child: CardTestamentInfoWidget(
-                      testament: testament,
-                      seeDetails: () {
-                        context.push(
-                          RouterApp.seeDetails,
-                          extra: {"testament": testament, "typeUser": EnumTypeUser.testator},
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                  ),
+              ],
             ),
           );
         },

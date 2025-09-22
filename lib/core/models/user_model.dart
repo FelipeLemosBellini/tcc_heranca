@@ -10,6 +10,7 @@ class UserModel {
   final String? address;
   final bool? isAdmin;
   KycStatus kycStatus;
+  bool hasVault;
 
   UserModel({
     required this.name,
@@ -18,6 +19,7 @@ class UserModel {
     this.isAdmin = false,
     this.address,
     this.id,
+    this.hasVault = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -27,7 +29,8 @@ class UserModel {
       "address": address,
       "kycStatus": kycStatus.name,
       "isAdmin": isAdmin,
-      "id": id
+      "id": id,
+      "hasVault": hasVault
     };
   }
 
@@ -39,6 +42,7 @@ class UserModel {
       address: map['address'] ?? "",
       isAdmin: map['isAdmin'] ?? false,
       id: map['id'] ?? "",
+      hasVault: map['hasVault'] ?? false
     );
   }
 }
