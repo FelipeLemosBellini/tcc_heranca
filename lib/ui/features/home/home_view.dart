@@ -31,7 +31,7 @@ class _HomeViewState extends State<HomeView> {
     const HeirView(),
   ];
 
-  final List<String> _titles = ['Carteira', 'Meus testamentos', 'Heranças'];
+  final List<String> _titles = ['Carteira', 'Meu testamento', 'Heranças'];
 
   late PageController _pageController;
 
@@ -100,15 +100,9 @@ class _HomeViewState extends State<HomeView> {
           onItemTapped: _onItemTapped,
         ),
         floatingActionButton:
-            _selectedIndex == 1 || _selectedIndex == 2
+            _selectedIndex == 2
                 ? FloatingActionButton(
                   onPressed: () {
-                    if (_selectedIndex == 1) {
-                      context.push(
-                        RouterApp.planStep,
-                        extra: FlowTestamentEnum.creation,
-                      );
-                    }
                     if (_selectedIndex == 2) {
                       context.push(RouterApp.requestInheritance);
                     }
@@ -118,9 +112,7 @@ class _HomeViewState extends State<HomeView> {
                 )
                 : null,
         floatingActionButtonLocation:
-            _selectedIndex == 1 || _selectedIndex == 2
-                ? FloatingActionButtonLocation.endFloat
-                : null,
+            _selectedIndex == 2 ? FloatingActionButtonLocation.endFloat : null,
       ),
     );
   }
