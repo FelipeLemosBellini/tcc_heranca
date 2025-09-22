@@ -23,5 +23,6 @@ abstract class KycRepositoryInterface {
   Future<Either<ExceptionMessage, void>> updateDocument({
     required String docId,
     required ReviewStatusDocument reviewStatus,
+    String? reason,
   });
 }

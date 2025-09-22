@@ -51,7 +51,8 @@ class ListUserDocumentsController extends BaseController {
 
     final result = await kycRepositoryInterface.updateDocument(
       docId: documents.idDocument!,
-      reviewStatus: status
+      reviewStatus: status,
+      reason: documents.reviewMessage??null,
     );
 
     result.fold((error) {}, (_) {});
