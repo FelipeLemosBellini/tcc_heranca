@@ -142,12 +142,10 @@ class KycRepository implements KycRepositoryInterface {
   Future<Either<ExceptionMessage, void>> updateDocument({
     required String docId,
     required ReviewStatusDocument reviewStatus,
-    required String reason,
   }) async {
     try {
       await firestore.collection('user_documents').doc(docId).update({
         'reviewStatus': reviewStatus.name,
-        'reviewMessage': reason,
         'updatedAt': DateTime.now(),
       });
       return const Right(null);

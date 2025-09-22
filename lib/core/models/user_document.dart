@@ -2,9 +2,9 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 
 class UserDocument {
-  final String content;
+  final String? content;
   String? pathStorage;
-  final String? reviewMessage;
+  String? reviewMessage;
   final ReviewStatusDocument reviewStatus;
   final TypeDocument typeDocument;
   final DateTime uploadedAt;
@@ -12,7 +12,7 @@ class UserDocument {
   String? idDocument;
 
   UserDocument({
-    required this.content,
+    this.content,
     this.pathStorage,
     this.reviewMessage,
     required this.reviewStatus,

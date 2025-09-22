@@ -100,7 +100,9 @@ abstract class DI {
     );
     getIt.registerFactory<PlanStepController>(() => PlanStepController());
     getIt.registerFactory<RequestInheritanceController>(
-      () => RequestInheritanceController(),
+      () => RequestInheritanceController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+      ),
     );
     getIt.registerFactory<KycController>(
       () => KycController(

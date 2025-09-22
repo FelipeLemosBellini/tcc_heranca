@@ -43,33 +43,21 @@ class ListUserDocumentsController extends BaseController {
     });
   }
 
-  Future<void> submit({
-    required List<UserDocument> documents,
-    required String reason,
-  }) async {
+  Future<void> submit({required UserDocument documents}) async {
     setLoading(true);
-    try {
-      for (final doc in documents) {
-        final decision = decisions[doc.idDocument];
-        if (decision == null) continue;
+    final decision = decisions[documents.idDocument]!;
+    final status =
+        decision ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
 
-        final status =
-            decision
-                ? ReviewStatusDocument.approved
-                : ReviewStatusDocument.invalid;
+    final result = await kycRepositoryInterface.updateDocument(
+      docId: documents.idDocument!,
+      reviewStatus: status
+    );
 
-        final result = await kycRepositoryInterface.updateDocument(
-          docId: doc.idDocument!,
-          reviewStatus: status,
-          reason: reason,
-        );
+    result.fold((error) {}, (_) {});
 
-        result.fold((error) {}, (_) {});
-      }
+    notifyListeners();
 
-      notifyListeners();
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
   }
 }

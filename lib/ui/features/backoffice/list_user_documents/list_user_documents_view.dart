@@ -167,11 +167,15 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   );
                   return;
                 }
-
-                _controller.submit(
-                  documents: _controller.listDocuments,
-                  reason: _controller.reasonControllers[index].text,
-                );
+              }
+              for (
+                int index = 0;
+                index < _controller.listDocuments.length;
+                index++
+              ) {
+                _controller.listDocuments[index].reviewMessage =
+                    _controller.reasonControllers[index].text;
+                _controller.submit(documents: _controller.listDocuments[index]);
               }
 
               AlertHelper.showAlertSnackBar(
