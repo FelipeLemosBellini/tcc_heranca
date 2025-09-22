@@ -4,7 +4,7 @@ import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 
-class ListUsersController extends BaseController{
+class ListUsersController extends BaseController {
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
 
   ListUsersController({required this.backofficeFirestoreInterface});
@@ -13,13 +13,12 @@ class ListUsersController extends BaseController{
 
   List<UserModel> get listUsers => _users;
 
-  Future<void> getUsers() async{
+  Future<void> getUsers() async {
     var response = await backofficeFirestoreInterface.getUsers();
 
-    response.fold((error){}, (success){
+    response.fold((error) {}, (success) {
       _users = success;
       notifyListeners();
     });
   }
-
 }

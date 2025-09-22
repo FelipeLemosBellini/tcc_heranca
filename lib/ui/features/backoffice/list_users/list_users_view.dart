@@ -1,6 +1,8 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/update_users_event.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/routers/routers.dart';
@@ -19,7 +21,7 @@ class ListUsersView extends StatefulWidget {
 
 class _ListUsersViewState extends State<ListUsersView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final EventBus eventBus = GetIt.I.get<EventBus>();
   final ListUsersController _controller = GetIt.I.get<ListUsersController>();
 
   @override
@@ -27,6 +29,10 @@ class _ListUsersViewState extends State<ListUsersView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _controller.getUsers();
+    });
+
+    eventBus.on<UpdateUsersEvent>().listen((event) async {
+      await _controller.getUsers();
     });
   }
 
@@ -41,7 +47,6 @@ class _ListUsersViewState extends State<ListUsersView> {
         },
       ),
       drawer: DrawerListUsersWidget(
-
         signOut: () {
           context.go(RouterApp.login);
         },

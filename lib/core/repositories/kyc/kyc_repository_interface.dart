@@ -25,4 +25,9 @@ abstract class KycRepositoryInterface {
     required ReviewStatusDocument reviewStatus,
     String? reason,
   });
+
+  Future<Either<ExceptionMessage, void>> updateStatusUser({
+    required bool hasInvalidDocument,
+    required String userId,
+  });
 }

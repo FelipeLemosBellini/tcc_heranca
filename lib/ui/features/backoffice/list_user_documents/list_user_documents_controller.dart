@@ -52,13 +52,25 @@ class ListUserDocumentsController extends BaseController {
     final result = await kycRepositoryInterface.updateDocument(
       docId: documents.idDocument!,
       reviewStatus: status,
-      reason: documents.reviewMessage??null,
+      reason: documents.reviewMessage,
     );
 
     result.fold((error) {}, (_) {});
 
     notifyListeners();
 
+    setLoading(false);
+  }
+
+  Future<void> updateKycStatus({
+    required bool hasInvalidDocument,
+    required String userId,
+  }) async {
+    setLoading(true);
+    var response = await kycRepositoryInterface.updateStatusUser(
+      hasInvalidDocument: hasInvalidDocument,
+      userId: userId,
+    );
     setLoading(false);
   }
 }

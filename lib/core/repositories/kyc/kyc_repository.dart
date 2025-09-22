@@ -157,4 +157,21 @@ class KycRepository implements KycRepositoryInterface {
       );
     }
   }
+
+  @override
+  Future<Either<ExceptionMessage, void>> updateStatusUser({
+    required bool hasInvalidDocument,
+    required String userId,
+  }) async {
+    try {
+      await firestore.collection('users').doc(userId).update({
+        'kycStatus': hasInvalidDocument ? "reproved" : "approved",
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
+      );
+    }
+  }
 }

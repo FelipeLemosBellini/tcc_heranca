@@ -1,6 +1,8 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/update_users_event.dart';
 import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
@@ -20,6 +22,7 @@ class ListUserDocumentsView extends StatefulWidget {
 class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
   final ListUserDocumentsController _controller =
       GetIt.I.get<ListUserDocumentsController>();
+  final EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   void dispose() {
@@ -178,6 +181,27 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                 _controller.submit(documents: _controller.listDocuments[index]);
               }
 
+              bool hasInvalidDocuments = false;
+
+              for (
+                int index = 0;
+                index < _controller.listDocuments.length;
+                index++
+              ) {
+                if (_controller.decisions[_controller
+                        .listDocuments[index]
+                        .idDocument] ==
+                    false) {
+                  hasInvalidDocuments = true;
+                  break;
+                }
+              }
+
+              _controller.updateKycStatus(
+                hasInvalidDocument: hasInvalidDocuments,
+                userId: widget.userId,
+              );
+
               AlertHelper.showAlertSnackBar(
                 context: context,
                 alertData: AlertData(
@@ -185,6 +209,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   errorType: ErrorType.success,
                 ),
               );
+              eventBus.fire(UpdateUsersEvent());
               context.pop();
             },
             text: "Enviar",
