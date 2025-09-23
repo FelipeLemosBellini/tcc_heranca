@@ -56,7 +56,7 @@ class _AmountStepViewState extends State<AmountStepView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProgressBarWidget(progress: 0.25),
+            ProgressBarWidget(progress: 0.10),
             const SizedBox(height: 24),
             Text('Insira um valor', style: AppFonts.bodyLargeBold),
             const SizedBox(height: 16),

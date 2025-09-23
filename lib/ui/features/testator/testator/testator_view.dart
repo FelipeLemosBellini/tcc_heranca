@@ -5,11 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
+import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
 import 'package:tcc/ui/widgets/cards/card_testament_info_widget.dart';
 import 'package:tcc/ui/widgets/empty_list_widgets/empty_list_testament_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/refresh_indicator_widget.dart';
+
+import '../../../widgets/buttons/elevated_button_widget.dart';
 
 class TestatorView extends StatefulWidget {
   const TestatorView({super.key});
@@ -18,18 +21,20 @@ class TestatorView extends StatefulWidget {
   State<TestatorView> createState() => _TestatorViewState();
 }
 
-class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClientMixin {
-  final TestatorController testatorController = GetIt.I.get<TestatorController>();
+class _TestatorViewState extends State<TestatorView>
+    with AutomaticKeepAliveClientMixin {
+  final TestatorController testatorController =
+      GetIt.I.get<TestatorController>();
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
   @override
   void initState() {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-      // testatorController.loadingTestaments();
-      //
-      // eventBus.on<TestamentEvent>().listen((event) {
-      //   testatorController.loadingTestaments();
-      // });
+    // testatorController.loadingTestaments();
+    //
+    // eventBus.on<TestamentEvent>().listen((event) {
+    //   testatorController.loadingTestaments();
+    // });
     // });
 
     super.initState();
@@ -54,7 +59,7 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
                     itemCount: testatorController.listTestament.length,
                     padding: const EdgeInsets.all(24.0),
                     shrinkWrap: true,
-                    itemBuilder: (context, index) { },
+                    itemBuilder: (context, index) {},
                   ),
                 ),
 
@@ -62,10 +67,15 @@ class _TestatorViewState extends State<TestatorView> with AutomaticKeepAliveClie
                   Center(
                     child: SizedBox(
                       width: 240,
-                      child: ElevatedButton.icon(
-                        onPressed: () => {},
-                        icon: const Icon(Icons.lock_outline),
-                        label: const Text('Criar cofre'),
+                      child: ElevatedButtonWidget(
+                        text: "Criar Cofre",
+                        onTap:
+                            () => {
+                              context.push(
+                                RouterApp.amountStep,
+                                extra: FlowTestamentEnum.creation,
+                              ),
+                            },
                       ),
                     ),
                   ),
