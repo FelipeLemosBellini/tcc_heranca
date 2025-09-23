@@ -72,7 +72,7 @@ class _TestatorViewState extends State<TestatorView>
                         onTap:
                             () => {
                               context.push(
-                                RouterApp.amountStep,
+                                RouterApp.vault,
                                 extra: FlowTestamentEnum.creation,
                               ),
                             },

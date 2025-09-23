@@ -9,6 +9,7 @@ import 'package:tcc/ui/features/testament/plan/plan_step_view.dart';
 import 'package:tcc/ui/features/testament/prove_of_life/prove_of_life_step_view.dart';
 import 'package:tcc/ui/features/testament/summary/summary_view.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
+import 'package:tcc/ui/features/vault/vault_view.dart';
 
 abstract class TestamentRoutes {
   static List<RouteBase> testamentRoutes = [
@@ -64,6 +65,15 @@ abstract class TestamentRoutes {
       pageBuilder: (BuildContext context, GoRouterState state) {
         return Transitions.customTransitionPage(
           RequestInheritanceView(),
+          state,
+        );
+      },
+    ),
+    GoRoute(
+      path: RouterApp.vault,
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return Transitions.customTransitionPage(
+          VaultView(flowTestamentEnum: state.extra as FlowTestamentEnum),
           state,
         );
       },

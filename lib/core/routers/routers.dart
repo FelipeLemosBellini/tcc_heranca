@@ -37,6 +37,8 @@ abstract class RouterApp {
   static const String home = "/home";
   static const String aboutUs = "/aboutUs";
 
+  static const String vault = "/vault";
+
   static const String requestInheritance = "/requestInheritance";
 
   static final GoRouter router = GoRouter(
@@ -52,6 +54,7 @@ abstract class RouterApp {
           ...TestamentRoutes.testamentRoutes,
           ...TestatorRoutes.testatorRoutes,
           ...AdminRoutes.adminRoutes,
+
 
           GoRoute(
             path: loginWallet,
