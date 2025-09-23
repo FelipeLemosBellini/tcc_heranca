@@ -129,7 +129,12 @@ abstract class DI {
       () =>
           HeirController(firestoreRepository: getIt.get<FirestoreRepository>()),
     );
-    getIt.registerLazySingleton(() => WalletController());
+    getIt.registerLazySingleton(
+      () => WalletController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+        homeController: getIt.get<HomeController>(),
+      ),
+    );
 
     getIt.registerFactory(
       () => ListUsersController(

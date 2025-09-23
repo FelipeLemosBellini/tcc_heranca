@@ -3,12 +3,15 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
-import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class WalletController extends BaseController {
-  final HomeController _homeController = GetIt.I.get<HomeController>();
-  final FirestoreRepositoryInterface _firestoreRepository =
-      GetIt.I.get<FirestoreRepositoryInterface>();
+  final HomeController homeController;
+  final FirestoreRepositoryInterface firestoreRepository;
+
+  WalletController({
+    required this.homeController,
+    required this.firestoreRepository,
+  });
 
   UserModel? userModel;
 
