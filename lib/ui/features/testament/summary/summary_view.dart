@@ -71,17 +71,6 @@ class _SummaryViewState extends State<SummaryView> {
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 24),
-                  Text(
-                    'Frequência da Prova de Vida: ${summaryController.testamentModel.proveOfLiveRecurring.name}',
-                    style: AppFonts.bodyMediumLight,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Plano: ${summaryController.testamentModel.plan.name}',
-                    style: AppFonts.bodyMediumLight,
-                  ),
                   const SizedBox(height: 24),
                   Text('Herdeiros:', style: AppFonts.bodyMediumLight),
                   const SizedBox(height: 18),
@@ -113,7 +102,7 @@ class _SummaryViewState extends State<SummaryView> {
                             ),
                           ),
                           subtitle: Text(
-                            "Participação: ${summaryController.testamentModel.listHeir[index].percentage}%",
+                            "Participação: ${summaryController.testamentModel.listHeir[index].percentage}",
                             style: AppFonts.bodyMediumRegular.copyWith(
                               color: AppColors.primary5,
                             ),

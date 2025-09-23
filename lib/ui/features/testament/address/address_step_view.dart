@@ -41,7 +41,7 @@ class _AddressStepViewState extends State<AddressStepView> {
     for (var controller in addressStepController.addressControllers) {
       controller.dispose();
     }
-    for (var controller in addressStepController.percentageControllers) {
+    for (var controller in addressStepController.amountControllers) {
       controller.removeListener(addressStepController.checkAllFieldsUnfocused);
       controller.dispose();
     }
@@ -93,8 +93,8 @@ class _AddressStepViewState extends State<AddressStepView> {
                             Expanded(
                               flex: 2,
                               child: TextFieldWidget(
-                                controller: addressStepController.percentageControllers[index],
-                                hintText: '%',
+                                controller: addressStepController.amountControllers[index],
+                                hintText: '100.00',
                                 focusNode: addressStepController.focusNodes[index],
                                 keyboardType: TextInputType.number,
                                 maxLines: 1,
@@ -120,7 +120,7 @@ class _AddressStepViewState extends State<AddressStepView> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  NumberEnablerWidget(counter: addressStepController.counterPercentage),
+                  NumberEnablerWidget(counter: addressStepController.counterAmount),
                   SizedBox(height: 100),
                 ],
               ),
@@ -145,18 +145,8 @@ class _AddressStepViewState extends State<AddressStepView> {
   }
 
   void _next() {
-    if (addressStepController.counterPercentage != 100) {
-      AlertHelper.showAlertSnackBar(
-        context: context,
-        alertData: AlertData(
-          message: 'A soma das porcentagens deve ser igual a 100%',
-          errorType: ErrorType.warning,
-        ),
-      );
-      return;
-    }
     if (addressStepController.addressControllers.any((element) => element.text.isEmpty) ||
-        addressStepController.percentageControllers.any((element) => element.text.isEmpty)) {
+        addressStepController.amountControllers.any((element) => element.text.isEmpty)) {
       AlertHelper.showAlertSnackBar(
         context: context,
         alertData: AlertData(message: 'Preencha todos os campos!', errorType: ErrorType.warning),
@@ -173,11 +163,11 @@ class _AddressStepViewState extends State<AddressStepView> {
     List<HeirModel> heirs = [];
     for (int i = 0; i < addressStepController.addressControllers.length; i++) {
       String address = addressStepController.addressControllers[i].text.trim();
-      String percentage = addressStepController.percentageControllers[i].text.trim();
+      String percentage = addressStepController.amountControllers[i].text.trim();
       heirs.add(HeirModel(address: address, percentage: int.parse(percentage)));
     }
     addressStepController.setListHeir(heirs);
-    context.push(RouterApp.proofOfLifeStep, extra: widget.flowTestamentEnum);
+    context.push(RouterApp.summary, extra: widget.flowTestamentEnum);
   }
 }
 

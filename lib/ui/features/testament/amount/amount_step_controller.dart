@@ -80,12 +80,8 @@ class AmountStepController extends BaseController {
           availableBalance += oldValue;
         }
 
-        if (availableBalance >= value) {
-          testamentController.setValue(value);
-          return const Right(unit);
-        } else {
-          return Left(Exception("Saldo insuficiente"));
-        }
+        testamentController.setValue(value);
+        return const Right(unit);
       },
     );
   }

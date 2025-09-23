@@ -10,18 +10,18 @@ class AddressStepController extends BaseController {
   TestamentController testamentController = GetIt.I.get<TestamentController>();
 
   List<TextEditingController> addressControllers = [];
-  List<TextEditingController> percentageControllers = [];
+  List<TextEditingController> amountControllers = [];
   List<FocusNode> focusNodes = [];
 
-  int counterPercentage = 0;
+  int counterAmount = 0;
 
   void initController(FlowTestamentEnum flow) {
     if (flow == FlowTestamentEnum.edit) {
       TestamentModel testamentModel = testamentController.testament;
       for (HeirModel heirModel in testamentModel.listHeir) {
         addressControllers.add(TextEditingController(text: heirModel.address));
-        percentageControllers.add(TextEditingController(text: heirModel.percentage.toString()));
-        percentageControllers.last.addListener(checkAllFieldsUnfocused);
+        amountControllers.add(TextEditingController(text: heirModel.percentage.toString()));
+        amountControllers.last.addListener(checkAllFieldsUnfocused);
         focusNodes.add(FocusNode());
       }
       checkAllFieldsUnfocused();
@@ -37,15 +37,15 @@ class AddressStepController extends BaseController {
 
   void addNewField() {
     addressControllers.add(TextEditingController());
-    percentageControllers.add(TextEditingController());
+    amountControllers.add(TextEditingController());
     focusNodes.add(FocusNode());
-    percentageControllers.last.addListener(checkAllFieldsUnfocused);
+    amountControllers.last.addListener(checkAllFieldsUnfocused);
     notifyListeners();
   }
 
   void removeField(int index) {
     addressControllers.removeAt(index);
-    percentageControllers.removeAt(index);
+    amountControllers.removeAt(index);
     focusNodes.removeAt(index);
     notifyListeners();
   }
@@ -53,12 +53,12 @@ class AddressStepController extends BaseController {
   void checkAllFieldsUnfocused() {
     int count = 0;
 
-    for (TextEditingController controller in percentageControllers) {
+    for (TextEditingController controller in amountControllers) {
       if (controller.text != '') {
         count += int.parse(controller.text);
       }
     }
-    counterPercentage = count;
+    counterAmount = count;
     notifyListeners();
   }
 }
