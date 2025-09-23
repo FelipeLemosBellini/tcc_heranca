@@ -127,7 +127,7 @@ class _KycViewState extends State<KycView> {
                       children: [
                         UploadTileSimple(
                           label: 'Documento de identidade (frente/verso)',
-                          hasSelected: cpfFront != null,
+                          hasAttach: cpfFront != null,
                           attach: () async {
                             cpfFront = await imagePicker.pickImage(
                               source: ImageSource.camera,
@@ -138,7 +138,7 @@ class _KycViewState extends State<KycView> {
                         SizedBox(height: 12),
                         UploadTileSimple(
                           label: 'Comprovante de residência',
-                          hasSelected: proofResidence != null,
+                          hasAttach: proofResidence != null,
                           attach: () async {
                             proofResidence = await imagePicker.pickImage(
                               source: ImageSource.camera,

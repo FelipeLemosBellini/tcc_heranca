@@ -7,13 +7,13 @@ import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 class UploadTileSimple extends StatelessWidget {
   final String label;
   final Function() attach;
-  final bool hasSelected;
+  final bool hasAttach;
 
   const UploadTileSimple({
     super.key,
     required this.label,
     required this.attach,
-    required this.hasSelected,
+    required this.hasAttach,
   });
 
   @override
@@ -25,9 +25,10 @@ class UploadTileSimple extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(width: 12),
@@ -44,9 +45,24 @@ class UploadTileSimple extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           ElevatedButtonWidget(text: "Anexar", onTap: attach),
-          Text(
-            hasSelected ? "Imagem salva" : "",
-            style: TextStyle(color: Colors.white),
+          Visibility(
+            visible: hasAttach,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: EdgeInsets.all(4),
+              alignment: Alignment.center,
+              child: Text(
+                "Anexado",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
+            ),
           ),
         ],
       ),

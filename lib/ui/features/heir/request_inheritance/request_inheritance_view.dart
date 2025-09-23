@@ -23,11 +23,12 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
 
   ImagePicker imagePicker = ImagePicker();
 
-  XFile? decisaoHomologatoriaDaPartilha;
+  XFile? procuracaoDoInventariante;
   XFile? certidaoDeObito;
-  XFile? producacaoDoAdvogado;
-  XFile? cpfFront;
-  XFile? proofResidence;
+  XFile? documentoCpf;
+  XFile? enderecoDoInventariante;
+  XFile? testamento;
+  XFile? transferenciaDeAtivos;
 
   // Controllers
   final cpfController = TextEditingController();
@@ -95,22 +96,66 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                         icon: Icons.attach_file_outlined,
                         children: [
                           UploadTileSimple(
-                            label: 'Procuração do advogado/representante',
-                            hasSelected: producacaoDoAdvogado != null,
+                            label: 'Procuração do inventariantes',
+                            hasAttach: procuracaoDoInventariante != null,
                             attach: () async {
-                              producacaoDoAdvogado = await imagePicker
+                              procuracaoDoInventariante = await imagePicker
                                   .pickImage(source: ImageSource.camera);
                               setState(() {});
                             },
                           ),
                           SizedBox(height: 12),
                           UploadTileSimple(
-                            label: 'Comprovante de residência',
-                            hasSelected: proofResidence != null,
+                            label: 'Certidão de óbito',
+                            hasAttach: certidaoDeObito != null,
                             attach: () async {
-                              proofResidence = await imagePicker.pickImage(
+                              certidaoDeObito = await imagePicker.pickImage(
                                 source: ImageSource.camera,
                               );
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(height: 12),
+                          UploadTileSimple(
+                            label: 'Documento CPF',
+                            hasAttach: documentoCpf != null,
+                            attach: () async {
+                              documentoCpf = await imagePicker.pickImage(
+                                source: ImageSource.camera,
+                              );
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(height: 12),
+                          UploadTileSimple(
+                            label: 'Endereço do representante/inventariante',
+                            hasAttach: enderecoDoInventariante != null,
+                            attach: () async {
+                              enderecoDoInventariante = await imagePicker
+                                  .pickImage(source: ImageSource.camera);
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(height: 12),
+                          UploadTileSimple(
+                            label:
+                                'Testamento ou documento do processo do inventário',
+                            hasAttach: testamento != null,
+                            attach: () async {
+                              testamento = await imagePicker.pickImage(
+                                source: ImageSource.camera,
+                              );
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(height: 12),
+                          UploadTileSimple(
+                            label:
+                                'Ordem judicial para transferência dos ativos',
+                            hasAttach: transferenciaDeAtivos != null,
+                            attach: () async {
+                              transferenciaDeAtivos = await imagePicker
+                                  .pickImage(source: ImageSource.camera);
                               setState(() {});
                             },
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tcc/core/assets/ethernium_svg_assets.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/helpers/extensions.dart';
@@ -89,15 +90,17 @@ class CardWalletWidget extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgPicture.network(
-                          "https://worldvectorlogo.com/download/ethereum-eth.svg",
-                          placeholderBuilder: (_) {
-                            return Icon(
-                              Icons.monetization_on,
-                              color: AppColors.primaryLight2,
-                              size: 32,
-                            );
-                          },
+                        SvgPicture.asset(
+                          EtherniumSvgAssets.ethereumEth,
+                          height: 32,
+                          width: 32,
+                          // placeholderBuilder: (_) {
+                          //   return Icon(
+                          //     Icons.monetization_on,
+                          //     color: AppColors.primaryLight2,
+                          //     size: 32,
+                          //   );
+                          // },
                         ),
                         SizedBox(width: 8),
                         Icon(
