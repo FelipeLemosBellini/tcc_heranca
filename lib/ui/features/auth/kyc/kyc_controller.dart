@@ -152,6 +152,8 @@ class KycController extends BaseController {
 
     var responseUpdateKycStatus = await kycRepository.setStatusKyc(
       kycStatus: KycStatus.submitted,
+      cpf: cpf,
+      rg: rg,
     );
 
     responseUpdateKycStatus.fold((error) {}, (success) {});

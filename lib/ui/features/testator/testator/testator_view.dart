@@ -7,6 +7,7 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
+import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 import 'package:tcc/ui/widgets/cards/card_testament_info_widget.dart';
 import 'package:tcc/ui/widgets/empty_list_widgets/empty_list_testament_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -65,18 +66,15 @@ class _TestatorViewState extends State<TestatorView>
 
                 if (testatorController.listTestament.isEmpty)
                   Center(
-                    child: SizedBox(
-                      width: 240,
-                      child: ElevatedButtonWidget(
-                        text: "Criar Cofre",
-                        onTap:
-                            () => {
-                              context.push(
-                                RouterApp.vault,
-                                extra: FlowTestamentEnum.creation,
-                              ),
-                            },
-                      ),
+                    child: ElevatedButtonWidget(
+                      text: "Criar Cofre",
+                      onTap:
+                          () => {
+                            context.push(
+                              RouterApp.vault,
+                              extra: FlowTestamentEnum.creation,
+                            ),
+                          },
                     ),
                   ),
               ],

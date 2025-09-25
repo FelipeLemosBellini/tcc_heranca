@@ -5,16 +5,16 @@ import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/models/user_model.dart';
-import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class AmountStepController extends BaseController {
-  final FirestoreRepository firestoreRepository;
+  final UserRepository userRepository;
 
   TestamentController testamentController = GetIt.I.get<TestamentController>();
 
-  AmountStepController({required this.firestoreRepository});
+  AmountStepController({required this.userRepository});
 
   final TextEditingController _amountController = TextEditingController();
 
@@ -27,7 +27,7 @@ class AmountStepController extends BaseController {
   }
 
   Future<Either<Exception, UserModel>> getUser() async {
-    final result = await firestoreRepository.getUser();
+    final result = await userRepository.getUser();
 
     return result.fold(
       (error) {
@@ -48,41 +48,5 @@ class AmountStepController extends BaseController {
 
   void clearTestament() {
     testamentController.clearTestament();
-  }
-
-  Future<Either<Exception, Unit>> setAmount(
-    double value,
-    FlowTestamentEnum flow,
-  ) async {
-    final userResult = await getUser();
-
-    return userResult.fold(
-      (error) {
-        return Left(error);
-      },
-      (user) async {
-        double availableBalance = 0;
-
-        if (flow == FlowTestamentEnum.edit) {
-          final oldTestamentResult = await firestoreRepository
-              .getTestamentByAddress(user.address ?? "");
-
-          double oldValue = 0.0;
-          oldTestamentResult.fold(
-            (error) {
-              oldValue = 0.0;
-            },
-            (oldTestament) {
-              oldValue = oldTestament.value;
-            },
-          );
-
-          availableBalance += oldValue;
-        }
-
-        testamentController.setValue(value);
-        return const Right(unit);
-      },
-    );
   }
 }

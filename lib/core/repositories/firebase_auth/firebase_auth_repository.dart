@@ -25,8 +25,6 @@ class FirebaseAuthRepository implements FirebaseAuthRepositoryInterface {
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-
-
       return Right(userCredential.user?.uid ?? "");
     } on FirebaseAuthException catch (error) {
       return Left(ExceptionMessage("Erro ao criar a conta"));

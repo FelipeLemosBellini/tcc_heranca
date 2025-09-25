@@ -5,6 +5,8 @@ import 'package:tcc/core/models/user_document.dart';
 
 class UserModel {
   String? id;
+  String? rg;
+  String? cpf;
   final String name;
   final String email;
   final String? address;
@@ -17,6 +19,8 @@ class UserModel {
     required this.email,
     required this.kycStatus,
     this.isAdmin = false,
+    this.cpf,
+    this.rg,
     this.address,
     this.id,
     this.hasVault = false,
@@ -24,25 +28,29 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      "cpf": cpf,
+      "rg": rg,
       "name": name,
       "email": email,
       "address": address,
       "kycStatus": kycStatus.name,
       "isAdmin": isAdmin,
       "id": id,
-      "hasVault": hasVault
+      "hasVault": hasVault,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
+      cpf: map['cpf'] ?? "",
+      rg: map['rg'] ?? "",
       email: map['email'] ?? "",
       name: map['name'] ?? "",
       kycStatus: KycStatus.convertStringToEnum(map['kycStatus'] ?? ""),
       address: map['address'] ?? "",
       isAdmin: map['isAdmin'] ?? false,
       id: map['id'] ?? "",
-      hasVault: map['hasVault'] ?? false
+      hasVault: map['hasVault'] ?? false,
     );
   }
 }

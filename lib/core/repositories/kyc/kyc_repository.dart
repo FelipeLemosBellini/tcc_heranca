@@ -85,6 +85,8 @@ class KycRepository implements KycRepositoryInterface {
 
   Future<Either<ExceptionMessage, void>> setStatusKyc({
     required KycStatus kycStatus,
+    required String cpf,
+    required String rg,
   }) async {
     try {
       final uid = firebaseAuth.currentUser?.uid;
@@ -95,6 +97,8 @@ class KycRepository implements KycRepositoryInterface {
         userModel = UserModel.fromMap(response.data()!);
       }
       userModel.kycStatus = kycStatus;
+      userModel.cpf = cpf;
+      userModel.rg = rg;
       await firestore.collection('users').doc(uid).update(userModel.toMap());
 
       return Right(userModel.kycStatus);

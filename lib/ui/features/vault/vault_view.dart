@@ -178,21 +178,21 @@ class _VaultViewState extends State<VaultView> {
             }
 
             final total = _items.fold<double>(0, (acc, it) => acc + it.amount);
-            final result = await amountStepController.setAmount(total, widget.flowTestamentEnum);
-            result.fold(
-              (error) {
-                AlertHelper.showAlertSnackBar(
-                  context: context,
-                  alertData: AlertData(
-                    message: 'Saldo Insuficiente',
-                    errorType: ErrorType.error,
-                  ),
-                );
-              },
-              (_) {
-                context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
-              },
-            );
+            // final result = await amountStepController.setAmount(total, widget.flowTestamentEnum);
+            // result.fold(
+            //   (error) {
+            //     AlertHelper.showAlertSnackBar(
+            //       context: context,
+            //       alertData: AlertData(
+            //         message: 'Saldo Insuficiente',
+            //         errorType: ErrorType.error,
+            //       ),
+            //     );
+            //   },
+            //   (_) {
+            //     context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
+            //   },
+            // );
           },
         ),
       ),

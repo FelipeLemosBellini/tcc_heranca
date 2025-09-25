@@ -114,33 +114,33 @@ class _AmountStepViewState extends State<AmountStepView> {
       bottomSheet: ElevatedButtonWidget(
         text: "Next",
         onTap: () async {
-          String amountText = amountStepController.amountController.text.trim();
-
-          if (amountText.isNotEmpty && double.tryParse(amountText) != null && double.parse(amountText) > 0) {
-            final result = await amountStepController.setAmount(double.parse(amountText), widget.flowTestamentEnum);
-            result.fold(
-                  (error) {
-                AlertHelper.showAlertSnackBar(
-                  context: context,
-                  alertData: AlertData(
-                    message: "Saldo Insuficiente",
-                    errorType: ErrorType.error,
-                  ),
-                );
-              },
-                  (_) {
-                context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
-              },
-            );
-          } else {
-            AlertHelper.showAlertSnackBar(
-              context: context,
-              alertData: AlertData(
-                message: 'Preencha a quantidade de ETH',
-                errorType: ErrorType.warning,
-              ),
-            );
-          }
+          // String amountText = amountStepController.amountController.text.trim();
+          //
+          // if (amountText.isNotEmpty && double.tryParse(amountText) != null && double.parse(amountText) > 0) {
+          //   final result = await amountStepController.setAmount(double.parse(amountText), widget.flowTestamentEnum);
+          //   result.fold(
+          //         (error) {
+          //       AlertHelper.showAlertSnackBar(
+          //         context: context,
+          //         alertData: AlertData(
+          //           message: "Saldo Insuficiente",
+          //           errorType: ErrorType.error,
+          //         ),
+          //       );
+          //     },
+          //         (_) {
+          //       context.push(RouterApp.addressStep, extra: widget.flowTestamentEnum);
+          //     },
+          //   );
+          // } else {
+          //   AlertHelper.showAlertSnackBar(
+          //     context: context,
+          //     alertData: AlertData(
+          //       message: 'Preencha a quantidade de ETH',
+          //       errorType: ErrorType.warning,
+          //     ),
+          //   );
+          // }
         },
       ),
     );

@@ -129,9 +129,7 @@ class _KycViewState extends State<KycView> {
                           label: 'Documento de identidade (frente/verso)',
                           hasAttach: cpfFront != null,
                           attach: () async {
-                            cpfFront = await imagePicker.pickImage(
-                              source: ImageSource.camera,
-                            );
+                            cpfFront = await getFile(context);
                             setState(() {});
                           },
                         ),
@@ -140,9 +138,7 @@ class _KycViewState extends State<KycView> {
                           label: 'Comprovante de residência',
                           hasAttach: proofResidence != null,
                           attach: () async {
-                            proofResidence = await imagePicker.pickImage(
-                              source: ImageSource.camera,
-                            );
+                            proofResidence = await getFile(context);
                             setState(() {});
                           },
                         ),
@@ -167,5 +163,30 @@ class _KycViewState extends State<KycView> {
         );
       },
     );
+  }
+
+  Future<XFile?> getFile(BuildContext context) async {
+    XFile? file = await imagePicker.pickMedia();
+    if (file != null) {
+      if (!file.path.endsWith('.pdf')) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: "Selecione um .pdf",
+            errorType: ErrorType.warning,
+          ),
+        );
+      }
+      return file;
+    } else {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: "Selecione um arquivo",
+          errorType: ErrorType.warning,
+        ),
+      );
+      return null;
+    }
   }
 }

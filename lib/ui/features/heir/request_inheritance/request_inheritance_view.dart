@@ -7,6 +7,7 @@ import 'package:tcc/ui/features/auth/kyc/widgets/upload_tile_simple.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
@@ -92,15 +93,16 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                       ),
                       const SizedBox(height: 20),
                       SectionCard(
-                        title: 'Anexos',
+                        title: 'Anexos - somente PDF',
                         icon: Icons.attach_file_outlined,
                         children: [
                           UploadTileSimple(
                             label: 'Procuração do inventariantes',
                             hasAttach: procuracaoDoInventariante != null,
                             attach: () async {
-                              procuracaoDoInventariante = await imagePicker
-                                  .pickImage(source: ImageSource.camera);
+                              procuracaoDoInventariante = await getFile(
+                                context,
+                              );
                               setState(() {});
                             },
                           ),
@@ -109,9 +111,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             label: 'Certidão de óbito',
                             hasAttach: certidaoDeObito != null,
                             attach: () async {
-                              certidaoDeObito = await imagePicker.pickImage(
-                                source: ImageSource.camera,
-                              );
+                              certidaoDeObito = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -120,9 +120,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             label: 'Documento CPF',
                             hasAttach: documentoCpf != null,
                             attach: () async {
-                              documentoCpf = await imagePicker.pickImage(
-                                source: ImageSource.camera,
-                              );
+                              documentoCpf = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -131,9 +129,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             label: 'Endereço do representante/inventariante',
                             hasAttach: enderecoDoInventariante != null,
                             attach: () async {
-                              enderecoDoInventariante = await imagePicker
-                                  .pickImage(source: ImageSource.camera);
-                              setState(() {});
+                              enderecoDoInventariante = await getFile(context);
                             },
                           ),
                           SizedBox(height: 12),
@@ -142,9 +138,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                                 'Testamento ou documento do processo do inventário',
                             hasAttach: testamento != null,
                             attach: () async {
-                              testamento = await imagePicker.pickImage(
-                                source: ImageSource.camera,
-                              );
+                              testamento = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -154,8 +148,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                                 'Ordem judicial para transferência dos ativos',
                             hasAttach: transferenciaDeAtivos != null,
                             attach: () async {
-                              transferenciaDeAtivos = await imagePicker
-                                  .pickImage(source: ImageSource.camera);
+                              transferenciaDeAtivos = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -167,7 +160,9 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                           Expanded(
                             child: ElevatedButtonWidget(
                               text: 'Enviar',
-                              onTap: () {},
+                              onTap: () {
+
+                              },
                             ),
                           ),
                         ],
@@ -179,5 +174,30 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
             ),
           ),
     );
+  }
+
+  Future<XFile?> getFile(BuildContext context) async {
+    XFile? file = await imagePicker.pickMedia();
+    if (file != null) {
+      if (!file.path.endsWith('.pdf')) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: "Selecione um .pdf",
+            errorType: ErrorType.warning,
+          ),
+        );
+      }
+      return file;
+    } else {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: "Selecione um arquivo",
+          errorType: ErrorType.warning,
+        ),
+      );
+      return null;
+    }
   }
 }

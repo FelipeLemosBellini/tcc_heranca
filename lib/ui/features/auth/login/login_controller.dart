@@ -7,20 +7,20 @@ import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
-import 'package:tcc/core/repositories/firestore/firestore_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class LoginController extends BaseController {
   final FirebaseAuthRepositoryInterface firebaseAuthRepository;
-  final FirestoreRepositoryInterface firestoreRepositoryInterface;
+  final UserRepository userRepository;
   final KycRepository kycRepository;
   final LocalStorageService localStorageService;
 
   LoginController({
     required this.kycRepository,
     required this.firebaseAuthRepository,
-    required this.firestoreRepositoryInterface,
+    required this.userRepository,
     required this.localStorageService,
   });
 
@@ -52,7 +52,7 @@ class LoginController extends BaseController {
         loginSuccess.kycStatus = success;
       });
 
-      var user = await firestoreRepositoryInterface.getUser();
+      var user = await userRepository.getUser();
       user.fold((error) {}, (success) {
         loginSuccess.isAdmin = success.isAdmin;
         localStorageService.setIsAdmin(success.isAdmin == true);

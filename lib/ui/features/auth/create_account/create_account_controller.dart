@@ -3,19 +3,18 @@ import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
-import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
-import 'package:web3dart/credentials.dart';
 
 import '../../../../core/exceptions/exception_message.dart';
 
 class CreateAccountController extends BaseController {
   final FirebaseAuthRepository firebaseAuthRepository;
-  final FirestoreRepository firestoreRepository;
+  final UserRepository userRepository;
 
   CreateAccountController({
     required this.firebaseAuthRepository,
-    required this.firestoreRepository,
+    required this.userRepository,
   });
 
   Future<bool> createAccount({
@@ -43,9 +42,7 @@ class CreateAccountController extends BaseController {
           kycStatus: KycStatus.waiting,
         );
 
-        final profileResponse = await firestoreRepository.createProfile(
-          newUser
-        );
+        final profileResponse = await userRepository.createProfile(newUser);
 
         profileResponse.fold(
           (error) {

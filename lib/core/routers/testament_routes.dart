@@ -5,9 +5,6 @@ import 'package:tcc/core/routers/transitions.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_view.dart';
 import 'package:tcc/ui/features/testament/address/address_step_view.dart';
 import 'package:tcc/ui/features/testament/amount/amount_step_view.dart';
-import 'package:tcc/ui/features/testament/plan/plan_step_view.dart';
-import 'package:tcc/ui/features/testament/prove_of_life/prove_of_life_step_view.dart';
-import 'package:tcc/ui/features/testament/summary/summary_view.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/vault/vault_view.dart';
 
@@ -27,35 +24,6 @@ abstract class TestamentRoutes {
       pageBuilder: (BuildContext context, GoRouterState state) {
         return Transitions.customTransitionPage(
           AddressStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
-          state,
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterApp.proofOfLifeStep,
-      pageBuilder: (BuildContext context, GoRouterState state) {
-        return Transitions.customTransitionPage(
-          ProveOfLifeStepView(
-            flowTestamentEnum: state.extra as FlowTestamentEnum,
-          ),
-          state,
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterApp.summary,
-      pageBuilder: (BuildContext context, GoRouterState state) {
-        return Transitions.customTransitionPage(
-          SummaryView(flowTestamentEnum: state.extra as FlowTestamentEnum),
-          state,
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterApp.planStep,
-      pageBuilder: (BuildContext context, GoRouterState state) {
-        return Transitions.customTransitionPage(
-          PlanStepView(flowTestamentEnum: state.extra as FlowTestamentEnum),
           state,
         );
       },

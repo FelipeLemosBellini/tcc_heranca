@@ -31,7 +31,7 @@ class _HomeViewState extends State<HomeView> {
     const HeirView(),
   ];
 
-  final List<String> _titles = ['Carteira', 'Meu testamento', 'Heranças'];
+  final List<String> _titles = ['Carteira', 'Meu cofre', 'Heranças'];
 
   late PageController _pageController;
 
