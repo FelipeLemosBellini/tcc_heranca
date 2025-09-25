@@ -57,10 +57,7 @@ class KycRepository implements KycRepositoryInterface {
         namePath: userDocument.pathStorage ?? "",
       );
 
-      firestore
-          .collection('documents')
-          .doc()
-          .set(userDocument.toMap(), SetOptions(merge: true));
+      await firestore.collection("documents").doc().set(userDocument.toMap());
 
       return const Right(null);
     } catch (e) {
@@ -117,7 +114,7 @@ class KycRepository implements KycRepositoryInterface {
           await firestore
               .collection('documents')
               .where('id', isEqualTo: userId)
-              .where('from', isEqualTo: EnumDocumentsFrom.kyc)
+              .where('from', isEqualTo: EnumDocumentsFrom.kyc.name)
               .get();
       final docs =
           response.docs.map((doc) {
@@ -135,8 +132,7 @@ class KycRepository implements KycRepositoryInterface {
     required String docId,
   }) async {
     try {
-      final response =
-          await firestore.collection('documents').doc(docId).get();
+      final response = await firestore.collection('documents').doc(docId).get();
       final doc = Document.fromMap(response.data()!);
       return Right(doc);
     } catch (e) {
@@ -155,23 +151,6 @@ class KycRepository implements KycRepositoryInterface {
         'reviewStatus': reviewStatus.name,
         'updatedAt': DateTime.now(),
         'reason': reason,
-      });
-      return const Right(null);
-    } catch (e) {
-      return Left(
-        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
-      );
-    }
-  }
-
-  @override
-  Future<Either<ExceptionMessage, void>> updateStatusUser({
-    required bool hasInvalidDocument,
-    required String userId,
-  }) async {
-    try {
-      await firestore.collection('users').doc(userId).update({
-        'kycStatus': hasInvalidDocument ? "reproved" : "approved",
       });
       return const Right(null);
     } catch (e) {

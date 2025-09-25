@@ -71,10 +71,4 @@ class CreateAccountController extends BaseController {
     setLoading(false);
     return successCreateAccount;
   }
-
-  // Future<String> generateWalletAddress() async {
-  //   final credentials = EthPrivateKey.createRandom(math.Random.secure());
-  //   final address = await credentials.extractAddress();
-  //   return address.hexEip55;
-  // }
 }
