@@ -88,9 +88,7 @@ abstract class DI {
     );
 
     getIt.registerFactory<RequestVaultController>(
-          () => RequestVaultController(
-        userRepository: getIt.get<UserRepository>(),
-      ),
+      () => RequestVaultController(userRepository: getIt.get<UserRepository>()),
     );
 
     getIt.registerFactory<KycController>(
@@ -130,6 +128,7 @@ abstract class DI {
     getIt.registerFactory(
       () => ListUserDocumentsController(
         kycRepositoryInterface: getIt.get<KycRepository>(),
+        storageRepository: getIt.get<StorageRepository>(),
       ),
     );
   }

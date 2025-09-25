@@ -5,13 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 
 class StorageRepository {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<Either<ExceptionMessage, void>> saveImage({
+  Future<Either<ExceptionMessage, void>> saveFile({
     required XFile xFile,
     required String namePath,
   }) async {
@@ -24,13 +25,18 @@ class StorageRepository {
 
       File file = File(xFile.path);
       String typeImage = xFile.path.split('.').last;
-      ref.putFile(
-        file,
-        SettableMetadata(contentType: 'image/$typeImage'),
-      );
+      ref.putFile(file, SettableMetadata(contentType: 'image/$typeImage'));
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao salvar imagem"));
     }
+  }
+
+  Future<File?> getFile({required String path}) async {
+    final ref = FirebaseStorage.instance.ref(path);
+    final tempDir = await getTemporaryDirectory();
+    final localFile = File('${tempDir.path}/${ref.name}');
+    await ref.writeToFile(localFile);
+    return (localFile);
   }
 }

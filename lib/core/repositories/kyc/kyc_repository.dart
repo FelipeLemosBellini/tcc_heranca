@@ -51,7 +51,7 @@ class KycRepository implements KycRepositoryInterface {
       String typeImage = xFile.path.split('.').last;
       userDocument.pathStorage =
           'users/$uid/documents/${userDocument.typeDocument.name}.$typeImage';
-      await storageRepository.saveImage(
+      await storageRepository.saveFile(
         xFile: xFile,
         namePath: userDocument.pathStorage ?? "",
       );

@@ -122,7 +122,7 @@ class _KycViewState extends State<KycView> {
                     ),
                     const SizedBox(height: 20),
                     SectionCard(
-                      title: 'Anexos',
+                      title: 'Anexos - somente PDF',
                       icon: Icons.attach_file_outlined,
                       children: [
                         UploadTileSimple(
