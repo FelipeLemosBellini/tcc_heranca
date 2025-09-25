@@ -39,6 +39,7 @@ abstract class RouterApp {
 
   static const String vault = "/vault";
 
+  static const String requestVault = "/requestVault";
   static const String requestInheritance = "/requestInheritance";
 
   static final GoRouter router = GoRouter(

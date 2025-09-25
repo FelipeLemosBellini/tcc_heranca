@@ -103,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
                 ? FloatingActionButton(
                   onPressed: () {
                     if (_selectedIndex == 2) {
-                      context.push(RouterApp.requestInheritance);
+                      context.push(RouterApp.requestVault);
                     }
                   },
                   backgroundColor: AppColors.primaryLight2,
