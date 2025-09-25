@@ -1,3 +1,4 @@
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 
@@ -10,6 +11,7 @@ class Document {
   final DateTime uploadedAt;
   String? id;
   String? idDocument;
+  final EnumDocumentsFrom from;
 
   Document({
     this.content,
@@ -20,6 +22,7 @@ class Document {
     required this.uploadedAt,
     this.id,
     this.idDocument,
+    required this.from,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +34,7 @@ class Document {
       "type": typeDocument.name,
       "uploadedAt": uploadedAt.toIso8601String(),
       "id": id,
+      "from": from,
     };
   }
 
@@ -43,6 +47,7 @@ class Document {
       typeDocument: TypeDocument.toEnum(map['type'] ?? ''),
       reviewMessage: map['reviewMessage'] ?? '',
       uploadedAt: DateTime.tryParse(map['uploadedAt'] ?? '') ?? DateTime.now(),
+      from: map['from'] ?? '',
     );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
@@ -125,6 +126,7 @@ class KycController extends BaseController {
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.cpf,
       uploadedAt: DateTime.now(),
+      from: EnumDocumentsFrom.kyc
     );
     var cpfResponse = await kycRepository.submit(
       userDocument: userCpfDocument,
@@ -140,6 +142,7 @@ class KycController extends BaseController {
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.proofResidence,
       uploadedAt: DateTime.now(),
+      from: EnumDocumentsFrom.kyc
     );
     var proofResponse = await kycRepository.submit(
       userDocument: userProofDocument,

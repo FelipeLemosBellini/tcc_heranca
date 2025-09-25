@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
@@ -116,6 +117,7 @@ class KycRepository implements KycRepositoryInterface {
           await firestore
               .collection('documents')
               .where('id', isEqualTo: userId)
+              .where('from', isEqualTo: EnumDocumentsFrom.kyc)
               .get();
       final docs =
           response.docs.map((doc) {
