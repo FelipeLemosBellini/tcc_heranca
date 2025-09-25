@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/assets/ethernium_svg_assets.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/helpers/validators.dart';
 import 'package:tcc/core/routers/routers.dart';
@@ -68,12 +69,11 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.wallet_travel,
-                          size: 80,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(height: 16),
+                      Image.asset(
+                      'assets/images/ethernium-logo.png',
+                      height: 200,
+                      fit: BoxFit.contain,
+                      ),
                         TextFieldWidget(
                           hintText: "Digite seu email",
                           controller: emailController,
