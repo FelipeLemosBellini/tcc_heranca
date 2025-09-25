@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/repositories/firestore/firestore_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 
 class RequestVaultController extends BaseController {
-  final FirestoreRepository firestoreRepository;
+  final UserRepository userRepository;
 
   TextEditingController cpfHeirController = TextEditingController();
   TextEditingController cpfTestatorController = TextEditingController();
@@ -13,7 +13,7 @@ class RequestVaultController extends BaseController {
   FocusNode cpfTestatorFocus = FocusNode();
 
 
-  RequestVaultController({required this.firestoreRepository});
+  RequestVaultController({required this.userRepository});
 
   Future<void> createRequestInheritance({
     required String cpfHeir,

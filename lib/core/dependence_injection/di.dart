@@ -89,7 +89,7 @@ abstract class DI {
 
     getIt.registerFactory<RequestVaultController>(
           () => RequestVaultController(
-        firestoreRepository: getIt.get<FirestoreRepository>(),
+        userRepository: getIt.get<UserRepository>(),
       ),
     );
 
