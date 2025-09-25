@@ -34,7 +34,7 @@ class Document {
       "type": typeDocument.name,
       "uploadedAt": uploadedAt.toIso8601String(),
       "id": id,
-      "from": from,
+      "from": from.name,
     };
   }
 

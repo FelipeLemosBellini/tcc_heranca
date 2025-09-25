@@ -129,6 +129,8 @@ abstract class DI {
       () => ListUserDocumentsController(
         kycRepositoryInterface: getIt.get<KycRepository>(),
         storageRepository: getIt.get<StorageRepository>(),
+        backofficeFirestoreInterface:
+            getIt.get<BackofficeFirestoreRepository>(),
       ),
     );
   }

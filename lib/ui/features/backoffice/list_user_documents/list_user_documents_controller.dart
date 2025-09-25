@@ -5,16 +5,19 @@ import 'package:open_filex/open_filex.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
+import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 
 class ListUserDocumentsController extends BaseController {
   final KycRepositoryInterface kycRepositoryInterface;
   final StorageRepository storageRepository;
+  final BackofficeFirestoreInterface backofficeFirestoreInterface;
 
   ListUserDocumentsController({
     required this.kycRepositoryInterface,
     required this.storageRepository,
+    required this.backofficeFirestoreInterface,
   });
 
   List<Document> _documents = [];
@@ -73,7 +76,7 @@ class ListUserDocumentsController extends BaseController {
     required String userId,
   }) async {
     setLoading(true);
-    var response = await kycRepositoryInterface.updateStatusUser(
+    var response = await backofficeFirestoreInterface.updateStatusUser(
       hasInvalidDocument: hasInvalidDocument,
       userId: userId,
     );

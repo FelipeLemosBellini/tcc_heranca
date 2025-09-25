@@ -19,4 +19,9 @@ abstract class BackofficeFirestoreInterface {
     required String userId,
     required bool status,
   });
+
+  Future<Either<ExceptionMessage, void>> updateStatusUser({
+    required bool hasInvalidDocument,
+    required String userId,
+  });
 }

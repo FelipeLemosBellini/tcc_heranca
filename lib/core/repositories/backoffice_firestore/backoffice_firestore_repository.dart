@@ -79,4 +79,20 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       return left(ExceptionMessage(e.toString()));
     }
   }
+  @override
+  Future<Either<ExceptionMessage, void>> updateStatusUser({
+    required bool hasInvalidDocument,
+    required String userId,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'kycStatus': hasInvalidDocument ? "reproved" : "approved",
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
+      );
+    }
+  }
 }
