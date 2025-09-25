@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
-import 'package:tcc/core/models/user_document.dart';
+import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 
@@ -29,19 +29,19 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
+  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
   }) async {
     try {
       final query =
           await _firestore
-              .collection('user_documents')
+              .collection('documents')
               .where('userId', isEqualTo: userId)
               .get();
       final docs =
           query.docs.map((doc) {
 
-            return UserDocument.fromMap(doc.data())..idDocument = doc.id;
+            return Document.fromMap(doc.data())..idDocument = doc.id;
           }).toList();
       // Ajuste conforme seu modelo: se UserDocument encapsula uma lista, crie a instância apropriada.
       return right(docs);
@@ -56,7 +56,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     required bool status,
   }) async {
     try {
-      await _firestore.collection('user_documents').doc(documentId).update({
+      await _firestore.collection('documents').doc(documentId).update({
         'reviewStatus': status,
       });
       return right(null);

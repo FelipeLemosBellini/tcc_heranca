@@ -1,5 +1,4 @@
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 

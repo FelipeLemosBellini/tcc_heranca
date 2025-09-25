@@ -1,7 +1,7 @@
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 
-class UserDocument {
+class Document {
   final String? content;
   String? pathStorage;
   String? reviewMessage;
@@ -11,7 +11,7 @@ class UserDocument {
   String? id;
   String? idDocument;
 
-  UserDocument({
+  Document({
     this.content,
     this.pathStorage,
     this.reviewMessage,
@@ -34,8 +34,8 @@ class UserDocument {
     };
   }
 
-  factory UserDocument.fromMap(Map<String, dynamic> map) {
-    return UserDocument(
+  factory Document.fromMap(Map<String, dynamic> map) {
+    return Document(
       id: map['id'] ?? '',
       content: map['content'] ?? '',
       pathStorage: map['pathStorage'] ?? '',

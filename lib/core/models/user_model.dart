@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:tcc/core/enum/kyc_status.dart';
-import 'package:tcc/core/models/user_document.dart';
 
 class UserModel {
   String? id;

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/events/update_users_event.dart';
-import 'package:tcc/core/models/user_document.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';

@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
-import 'package:tcc/core/models/user_document.dart';
+import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
@@ -20,17 +20,17 @@ class KycRepository implements KycRepositoryInterface {
 
   DocumentReference<Map<String, dynamic>> _docRef() {
     final uid = firebaseAuth.currentUser?.uid;
-    return firestore.collection('user_documents').doc(uid);
+    return firestore.collection('documents').doc(uid);
   }
 
   @override
-  Future<Either<ExceptionMessage, UserDocument?>> getCurrent() async {
+  Future<Either<ExceptionMessage, Document?>> getCurrent() async {
     try {
       final doc = await _docRef().get();
       if (!doc.exists) return const Right(null);
       final data = doc.data();
       if (data == null) return const Right(null);
-      return Right(UserDocument.fromMap(data));
+      return Right(Document.fromMap(data));
     } catch (e) {
       return Left(ExceptionMessage('Erro ao carregar KYC: ${e.toString()}'));
     }
@@ -38,7 +38,7 @@ class KycRepository implements KycRepositoryInterface {
 
   @override
   Future<Either<ExceptionMessage, void>> submit({
-    required UserDocument userDocument,
+    required Document userDocument,
     required XFile xFile,
   }) async {
     try {
@@ -57,7 +57,7 @@ class KycRepository implements KycRepositoryInterface {
       );
 
       firestore
-          .collection('user_documents')
+          .collection('documents')
           .doc()
           .set(userDocument.toMap(), SetOptions(merge: true));
 
@@ -108,18 +108,18 @@ class KycRepository implements KycRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<UserDocument>>> getDocumentsByUserId({
+  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
   }) async {
     try {
       final response =
           await firestore
-              .collection('user_documents')
+              .collection('documents')
               .where('id', isEqualTo: userId)
               .get();
       final docs =
           response.docs.map((doc) {
-            return UserDocument.fromMap(doc.data())..idDocument = doc.id;
+            return Document.fromMap(doc.data())..idDocument = doc.id;
           }).toList();
 
       return Right(docs);
@@ -129,13 +129,13 @@ class KycRepository implements KycRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, UserDocument>> getDocumentById({
+  Future<Either<ExceptionMessage, Document>> getDocumentById({
     required String docId,
   }) async {
     try {
       final response =
-          await firestore.collection('user_documents').doc(docId).get();
-      final doc = UserDocument.fromMap(response.data()!);
+          await firestore.collection('documents').doc(docId).get();
+      final doc = Document.fromMap(response.data()!);
       return Right(doc);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o documento"));
@@ -149,7 +149,7 @@ class KycRepository implements KycRepositoryInterface {
     String? reason,
   }) async {
     try {
-      await firestore.collection('user_documents').doc(docId).update({
+      await firestore.collection('documents').doc(docId).update({
         'reviewStatus': reviewStatus.name,
         'updatedAt': DateTime.now(),
         'reason': reason,

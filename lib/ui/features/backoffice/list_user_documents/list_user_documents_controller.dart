@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/models/user_document.dart';
+import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
-import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
-import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class ListUserDocumentsController extends BaseController {
   final KycRepositoryInterface kycRepositoryInterface;
 
   ListUserDocumentsController({required this.kycRepositoryInterface});
 
-  List<UserDocument> _documents = [];
+  List<Document> _documents = [];
   List<TextEditingController> reasonControllers = [];
   List<FocusNode> focusNodes = [];
 
   final Map<String, bool?> decisions = {};
 
-  List<UserDocument> get listDocuments => _documents;
+  List<Document> get listDocuments => _documents;
 
   @override
   dispose() {
@@ -43,7 +41,7 @@ class ListUserDocumentsController extends BaseController {
     });
   }
 
-  Future<void> submit({required UserDocument documents}) async {
+  Future<void> submit({required Document documents}) async {
     setLoading(true);
     final decision = decisions[documents.idDocument]!;
     final status =

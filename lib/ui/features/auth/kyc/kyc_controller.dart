@@ -7,7 +7,7 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/models/user_document.dart';
+import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
@@ -16,12 +16,12 @@ class KycController extends BaseController {
 
   KycController({required this.kycRepository});
 
-  UserDocument? _kyc;
+  Document? _kyc;
   Uint8List? _docFront;
   Uint8List? _docBack;
   Uint8List? _proofResidence;
 
-  UserDocument? get kyc => _kyc;
+  Document? get kyc => _kyc;
 
   Uint8List? get docFront => _docFront;
 
@@ -31,7 +31,7 @@ class KycController extends BaseController {
 
   Future<void> load() async {
     setLoading(true);
-    final Either<ExceptionMessage, UserDocument?> response =
+    final Either<ExceptionMessage, Document?> response =
         await kycRepository.getCurrent();
 
     response.fold(
@@ -120,7 +120,7 @@ class KycController extends BaseController {
 
     bool cpfOk = false;
     bool proofOk = false;
-    UserDocument userCpfDocument = UserDocument(
+    Document userCpfDocument = Document(
       content: cpf,
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.cpf,
@@ -135,7 +135,7 @@ class KycController extends BaseController {
       cpfOk = true;
     });
 
-    UserDocument userProofDocument = UserDocument(
+    Document userProofDocument = Document(
       content: rg,
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.proofResidence,
