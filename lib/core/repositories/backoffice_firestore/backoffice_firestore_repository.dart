@@ -79,6 +79,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       return left(ExceptionMessage(e.toString()));
     }
   }
+
   @override
   Future<Either<ExceptionMessage, void>> updateStatusUser({
     required bool hasInvalidDocument,

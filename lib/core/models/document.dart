@@ -11,7 +11,7 @@ class Document {
   final DateTime uploadedAt;
   String? id;
   String? idDocument;
-  final EnumDocumentsFrom from;
+  EnumDocumentsFrom? from;
 
   Document({
     this.content,
@@ -22,7 +22,7 @@ class Document {
     required this.uploadedAt,
     this.id,
     this.idDocument,
-    required this.from,
+    this.from,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,7 +34,7 @@ class Document {
       "type": typeDocument.name,
       "uploadedAt": uploadedAt.toIso8601String(),
       "id": id,
-      "from": from.name,
+      "from": from?.name,
     };
   }
 
@@ -47,7 +47,7 @@ class Document {
       typeDocument: TypeDocument.toEnum(map['type'] ?? ''),
       reviewMessage: map['reviewMessage'] ?? '',
       uploadedAt: DateTime.tryParse(map['uploadedAt'] ?? '') ?? DateTime.now(),
-      from: map['from'] ?? '',
+      from: EnumDocumentsFrom.toEnum(map['from'] ?? ''),
     );
   }
 }
