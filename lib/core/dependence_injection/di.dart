@@ -18,6 +18,7 @@ import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documen
 import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
 import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
+import 'package:tcc/ui/features/heir/request_vault/request_vault_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/testament/address/address_step_controller.dart';
@@ -104,6 +105,13 @@ abstract class DI {
         firestoreRepository: getIt.get<FirestoreRepository>(),
       ),
     );
+
+    getIt.registerFactory<RequestVaultController>(
+          () => RequestVaultController(
+        firestoreRepository: getIt.get<FirestoreRepository>(),
+      ),
+    );
+
     getIt.registerFactory<KycController>(
       () => KycController(
         kycRepository: KycRepository(
