@@ -48,6 +48,7 @@ class KycRepository implements KycRepositoryInterface {
         return Left(ExceptionMessage("Erro ao buscar usuário"));
       }
       userDocument.id = uid;
+      userDocument.idDocument = uid;
 
       String typeImage = xFile.path.split('.').last;
       userDocument.pathStorage =
@@ -113,7 +114,7 @@ class KycRepository implements KycRepositoryInterface {
       final response =
           await firestore
               .collection('documents')
-              .where('id', isEqualTo: userId)
+              .where('idDocument', isEqualTo: userId)
               .where('from', isEqualTo: EnumDocumentsFrom.kyc.name)
               .get();
       final docs =
