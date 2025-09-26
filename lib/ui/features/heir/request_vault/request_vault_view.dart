@@ -9,6 +9,7 @@ import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_con
 import 'package:tcc/ui/features/heir/request_vault/request_vault_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
@@ -27,10 +28,6 @@ class _RequestVaultViewState extends State<RequestVaultView> {
 
   XFile? procuracaoDoInventariante;
   XFile? certidaoDeObito;
-  XFile? documentoCpf;
-  XFile? enderecoDoInventariante;
-  XFile? testamento;
-  XFile? transferenciaDeAtivos;
 
   @override
   void initState() {
@@ -70,7 +67,8 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                         children: [
                           TextFieldWidget(
                             hintText: 'CPF (somente números)',
-                            controller: _requestVaultController.cpfTestatorController,
+                            controller:
+                                _requestVaultController.cpfTestatorController,
                             keyboardType: TextInputType.number,
                             onlyNumber: true,
                             focusNode: _requestVaultController.cpfTestatorFocus,
@@ -111,7 +109,27 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             child: ElevatedButtonWidget(
                               text: 'Enviar',
                               onTap: () {
-                                context.pop();
+                                if (procuracaoDoInventariante == null ||
+                                    certidaoDeObito == null) {
+                                  _requestVaultController.setMessage(
+                                    AlertData(
+                                      message: "Anexe os documentos!",
+                                      errorType: ErrorType.error,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                _requestVaultController
+                                    .createRequestInheritance(
+                                      certificadoDeObito: certidaoDeObito!,
+                                      procuracaoAdvogado:
+                                          procuracaoDoInventariante!,
+                                      cpfTestator:
+                                          _requestVaultController
+                                              .cpfTestatorController
+                                              .text,
+                                    );
                               },
                             ),
                           ),

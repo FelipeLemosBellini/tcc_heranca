@@ -40,7 +40,6 @@ abstract class DI {
 
     await getIt.allReady();
     //Repositories
-    getIt.registerSingleton<InheritanceRepository>(InheritanceRepository());
     getIt.registerSingleton<UserRepository>(UserRepository());
     getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
     getIt.registerLazySingleton<KycRepository>(
@@ -70,7 +69,7 @@ abstract class DI {
     );
     getIt.registerFactory(
       () => LoginController(
-        firebaseAuthRepository: FirebaseAuthRepository(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
         kycRepository: getIt.get<KycRepository>(),
@@ -87,8 +86,15 @@ abstract class DI {
       ),
     );
 
+    getIt.registerSingleton<InheritanceRepository>(
+      InheritanceRepository(storageRepository: getIt.get<StorageRepository>()),
+    );
+
     getIt.registerFactory<RequestVaultController>(
-      () => RequestVaultController(inheritanceRepository: getIt.get<InheritanceRepository>(), userRepository: getIt.get<UserRepository>()),
+      () => RequestVaultController(
+        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        userRepository: getIt.get<UserRepository>(),
+      ),
     );
 
     getIt.registerFactory<KycController>(

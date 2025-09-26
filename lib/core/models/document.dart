@@ -33,14 +33,14 @@ class Document {
       "reviewStatus": reviewStatus.name,
       "type": typeDocument.name,
       "uploadedAt": uploadedAt.toIso8601String(),
-      "id": id,
+      "idDocument": idDocument,
       "from": from?.name,
     };
   }
 
   factory Document.fromMap(Map<String, dynamic> map) {
     return Document(
-      id: map['id'] ?? '',
+      idDocument: map['idDocument'] ?? '',
       content: map['content'] ?? '',
       pathStorage: map['pathStorage'] ?? '',
       reviewStatus: ReviewStatusDocument.toEnum(map['reviewStatus'] ?? ''),

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
+import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 
 class InheritanceRepository {
@@ -15,7 +16,7 @@ class InheritanceRepository {
 
   InheritanceRepository({required this.storageRepository});
 
-  Future<Either<ExceptionMessage, void>> createInheritance(
+  Future<Either<ExceptionMessage, String>> createInheritance(
     RequestInheritanceModel requestInheritanceModel,
   ) async {
     try {
@@ -26,38 +27,47 @@ class InheritanceRepository {
 
       requestInheritanceModel.requestById = uid;
 
+      var response = await firestore.collection("users").where('cpf', isEqualTo: requestInheritanceModel.cpf).get();
+      var user = response.docs.map((doc) => UserModel.fromMap(doc.data())..id = doc.id).toList().first;
+
+      requestInheritanceModel.userId = user.id;
+      requestInheritanceModel.name = user.name;
+
+
       await firestore
           .collection("inheritance")
           .doc()
           .set(requestInheritanceModel.toMap());
 
-      return Right('');
+      String idInheritance = await firestore
+          .collection("inheritance")
+          .where('cpf', isEqualTo: requestInheritanceModel.cpf)
+          .where('requestById', isEqualTo: uid)
+          .get()
+          .then((value) => value.docs.first.id);
+
+      return Right(idInheritance ?? "");
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }
   }
 
+
+
   Future<Either<ExceptionMessage, void>> submit({
-    required Document userDocument,
-    required String inheritanceId,
+    required Document document,
     required XFile xFile,
   }) async {
     try {
-      final uid = firebaseAuth.currentUser?.uid;
-      if (uid == null) {
-        return Left(ExceptionMessage("Erro ao buscar usuário"));
-      }
-      userDocument.id = uid;
-
       String typeImage = xFile.path.split('.').last;
-      userDocument.pathStorage =
-      'inheritance/$inheritanceId/documents/${userDocument.typeDocument.name}.$typeImage';
+      document.pathStorage =
+          'inheritance/${document.idDocument}/documents/${document.typeDocument.name}.$typeImage';
       await storageRepository.saveFile(
         xFile: xFile,
-        namePath: userDocument.pathStorage ?? "",
+        namePath: document.pathStorage ?? "",
       );
 
-      await firestore.collection("documents").doc().set(userDocument.toMap());
+      await firestore.collection("documents").doc().set(document.toMap());
 
       return const Right(null);
     } catch (e) {

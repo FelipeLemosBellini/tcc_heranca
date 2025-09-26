@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
@@ -18,7 +19,6 @@ import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 
 class RequestVaultController extends BaseController {
   final UserRepository userRepository;
-  final
   final InheritanceRepository inheritanceRepository;
 
   RequestVaultController({
@@ -38,11 +38,21 @@ class RequestVaultController extends BaseController {
     required XFile procuracaoAdvogado,
   }) {
     if (certificadoDeObito.path.isEmpty) {
-      setMessage(AlertData(message: 'Anexe a Certidão de Óbito.', errorType: ErrorType.warning));
+      setMessage(
+        AlertData(
+          message: 'Anexe a Certidão de Óbito.',
+          errorType: ErrorType.warning,
+        ),
+      );
       return false;
     }
     if (procuracaoAdvogado.path.isEmpty) {
-      setMessage(AlertData(message: 'Anexe a Procuração do Advogado.', errorType: ErrorType.warning));
+      setMessage(
+        AlertData(
+          message: 'Anexe a Procuração do Advogado.',
+          errorType: ErrorType.warning,
+        ),
+      );
       return false;
     }
     return true;
@@ -57,33 +67,115 @@ class RequestVaultController extends BaseController {
       cpfTestator: cpfTestator,
       certificadoDeObito: certificadoDeObito,
       procuracaoAdvogado: procuracaoAdvogado,
-    )) return false;
+    )) {
+      return false;
+    }
 
     setLoading(true);
 
-    bool obitoOk = false;
-    bool procuraOk = false;
-
-    final deathDoc = Document(
-      content: 'Certidão de Óbito',
-      reviewStatus: ReviewStatusDocument.pending,
-      typeDocument: TypeDocument.deathCertificate,
-      uploadedAt: DateTime.now(),
-      from: EnumDocumentsFrom.inheritanceRequest,
+    final requestInheritance = RequestInheritanceModel(
+      cpf: cpfTestator,
+      heirStatus: HeirStatus.consultaSaldoSolicitado,
     );
 
-    final procuraDoc = Document(
-      content: 'Procuração do Advogado',
-      reviewStatus: ReviewStatusDocument.pending,
-      typeDocument: TypeDocument.procuracaoAdvogado,
-      uploadedAt: DateTime.now(),
-      from: EnumDocumentsFrom.inheritanceRequest,
+    var result = await inheritanceRepository.createInheritance(
+      requestInheritance,
     );
 
+    result.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: 'Erro ao criar solicitação: ${error.errorMessage}',
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (success) {
 
+        submitDocuments(
+          cpfTestator: cpfTestator,
+          certificadoDeObito: certificadoDeObito,
+          procuracaoAdvogado: procuracaoAdvogado,
+          inheritanceId: success,
+        );
 
+        setMessage(
+          AlertData(
+            message: 'Solicitação criada com sucesso!',
+            errorType: ErrorType.success,
+          ),
+        );
+      },
+    );
 
     setLoading(false);
+    return true;
+  }
+
+  Future<bool> submitDocuments({
+    required String cpfTestator,
+    required XFile certificadoDeObito,
+    required XFile procuracaoAdvogado,
+    required String inheritanceId,
+  }) async {
+    if (!_validateInputs(
+      cpfTestator: cpfTestator,
+      certificadoDeObito: certificadoDeObito,
+      procuracaoAdvogado: procuracaoAdvogado,
+    )) {
+      return false;
+    }
+
+    setLoading(true);
+
+    final obitoDocument = Document(
+      idDocument: inheritanceId,
+      typeDocument: TypeDocument.deathCertificate,
+      reviewStatus: ReviewStatusDocument.pending,
+      reviewMessage: '',
+      from: EnumDocumentsFrom.inheritanceRequest,
+      uploadedAt: DateTime.now(),
+    );
+
+    final procuracaoAdvogadoDocument = Document(
+      idDocument: inheritanceId,
+      typeDocument: TypeDocument.procuracaoAdvogado,
+      reviewStatus: ReviewStatusDocument.pending,
+      reviewMessage: '',
+      from: EnumDocumentsFrom.inheritanceRequest,
+      uploadedAt: DateTime.now(),
+    );
+
+    var resultObito = await inheritanceRepository.submit(
+      document: obitoDocument,
+      xFile: certificadoDeObito,
+    );
+
+    var resultProcuracao = await inheritanceRepository.submit(
+      document: procuracaoAdvogadoDocument,
+      xFile: procuracaoAdvogado,
+    );
+
+    resultProcuracao.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: 'Erro ao enviar documentos ${error.errorMessage}',
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (success) {
+        setMessage(
+          AlertData(
+            message: 'documentos enviados com sucesso!',
+            errorType: ErrorType.success,
+          ),
+        );
+      },
+    );
+
     return true;
   }
 }

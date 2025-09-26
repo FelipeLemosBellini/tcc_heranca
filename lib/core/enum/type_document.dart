@@ -24,7 +24,11 @@ enum  TypeDocument {
       case TypeDocument.cpf:
         return "CPF";
       case TypeDocument.proofResidence:
-        return "Comprovante de Residência";
+        return "ComprovanteDeResidência";
+      case TypeDocument.deathCertificate:
+        return "CertidãoDeÓbito";
+      case TypeDocument.procuracaoAdvogado:
+        return "ProcuraçãoDoAdvogado";
       default:
         return "";
     }
