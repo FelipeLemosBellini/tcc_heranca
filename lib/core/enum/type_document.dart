@@ -1,12 +1,19 @@
 enum  TypeDocument {
   cpf,
-  proofResidence;
+  proofResidence,
+  deathCertificate,
+  procuracaoAdvogado;
 
   static TypeDocument toEnum(String value) {
     switch (value) {
       case "proofResidence":
         return TypeDocument.proofResidence;
       case "cpf":
+        return TypeDocument.cpf;
+      case "deathCertificate":
+        return TypeDocument.deathCertificate;
+      case "procuracaoAdvogado":
+        return TypeDocument.procuracaoAdvogado;
       default:
         return TypeDocument.cpf;
     }

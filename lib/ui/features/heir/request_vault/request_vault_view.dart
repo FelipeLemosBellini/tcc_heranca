@@ -64,22 +64,6 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       SectionCard(
-                        title: 'Dados do inventariante',
-                        subtitle:
-                            'Preencha com os dados básicos do inventariante.',
-                        icon: Icons.person_outline,
-                        children: [
-                          TextFieldWidget(
-                            hintText: 'CPF (somente números)',
-                            controller: _requestVaultController.cpfHeirController,
-                            keyboardType: TextInputType.number,
-                            onlyNumber: true,
-                            focusNode: _requestVaultController.cpfHeirFocus,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      SectionCard(
                         title: 'Dados do falecido',
                         subtitle: 'Preencha com os dados básicos do falecido.',
                         icon: Icons.person_outline,

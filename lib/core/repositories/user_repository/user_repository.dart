@@ -35,4 +35,19 @@ class UserRepository {
       return Left(ExceptionMessage("Erro ao criar perfil: ${e.toString()}"));
     }
   }
+
+  Future<Either<ExceptionMessage, String>> getUserName(String userId) async {
+    try {
+      final doc = await firestore.collection("users").doc(userId).get();
+
+      if (doc.exists && doc.data() != null) {
+        final user = UserModel.fromMap(doc.data()!);
+        return Right(user.name ?? "Usuário");
+      } else {
+        return Left(ExceptionMessage("Usuário não encontrado."));
+      }
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao buscar usuário: ${e.toString()}"));
+    }
+  }
 }
