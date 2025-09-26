@@ -27,12 +27,19 @@ class InheritanceRepository {
 
       requestInheritanceModel.requestById = uid;
 
-      var response = await firestore.collection("users").where('cpf', isEqualTo: requestInheritanceModel.cpf).get();
-      var user = response.docs.map((doc) => UserModel.fromMap(doc.data())..id = doc.id).toList().first;
+      var response =
+          await firestore
+              .collection("users")
+              .where('cpf', isEqualTo: requestInheritanceModel.cpf)
+              .get();
+      var user =
+          response.docs
+              .map((doc) => UserModel.fromMap(doc.data())..id = doc.id)
+              .toList()
+              .first;
 
       requestInheritanceModel.userId = user.id;
       requestInheritanceModel.name = user.name;
-
 
       await firestore
           .collection("inheritance")
@@ -52,8 +59,6 @@ class InheritanceRepository {
     }
   }
 
-
-
   Future<Either<ExceptionMessage, void>> submit({
     required Document document,
     required XFile xFile,
@@ -72,6 +77,34 @@ class InheritanceRepository {
       return const Right(null);
     } catch (e) {
       return Left(ExceptionMessage('Erro ao enviar KYC: ${e.toString()}'));
+    }
+  }
+
+  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>>
+  getInheritancesByUserId() async {
+    try {
+      final uid = firebaseAuth.currentUser?.uid;
+      if (uid == null) {
+        return Left(ExceptionMessage("Erro ao buscar usuário"));
+      }
+
+      var response =
+          await firestore
+              .collection("inheritance")
+              .where('requestById', isEqualTo: uid)
+              .get();
+
+      var inheritances =
+          response.docs
+              .map(
+                (doc) =>
+                    RequestInheritanceModel.fromMap(doc.data())..id = doc.id,
+              )
+              .toList();
+
+      return Right(inheritances);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao buscar heranças: ${e.toString()}'));
     }
   }
 }
