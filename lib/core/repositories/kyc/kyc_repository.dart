@@ -115,7 +115,7 @@ class KycRepository implements KycRepositoryInterface {
           await firestore
               .collection('documents')
               .where('idDocument', isEqualTo: userId)
-              .where('from', isEqualTo: EnumDocumentsFrom.kyc.name)
+              .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
               .get();
       final docs =
           response.docs.map((doc) {

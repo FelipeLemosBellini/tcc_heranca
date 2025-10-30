@@ -12,7 +12,7 @@ class ListUsersController extends BaseController {
   List<UserModel> get listUsers => _users;
 
   Future<void> getUsers() async {
-    var response = await backofficeFirestoreInterface.getUsers();
+    var response = await backofficeFirestoreInterface.getUsersPendentes();
 
     response.fold((error) {}, (success) {
       _users = success;

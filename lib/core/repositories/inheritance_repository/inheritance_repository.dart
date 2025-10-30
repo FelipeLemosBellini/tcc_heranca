@@ -27,33 +27,31 @@ class InheritanceRepository {
 
       requestInheritanceModel.requestById = uid;
 
-      var response =
+      final response =
           await firestore
               .collection("users")
               .where('cpf', isEqualTo: requestInheritanceModel.cpf)
               .get();
-      var user =
-          response.docs
-              .map((doc) => UserModel.fromMap(doc.data())..id = doc.id)
-              .toList()
-              .first;
+
+      if (response.docs.isEmpty) {
+        return Left(
+          ExceptionMessage(
+            "Não encontramos nenhum usuário com o CPF informado.",
+          ),
+        );
+      }
+
+      final userDoc = response.docs.first;
+      final user = UserModel.fromMap(userDoc.data())..id = userDoc.id;
 
       requestInheritanceModel.userId = user.id;
       requestInheritanceModel.name = user.name;
 
-      await firestore
-          .collection("inheritance")
-          .doc()
-          .set(requestInheritanceModel.toMap());
+      final inheritanceCollection = firestore.collection("inheritance");
+      final docRef = inheritanceCollection.doc();
+      await docRef.set(requestInheritanceModel.toMap());
 
-      String idInheritance = await firestore
-          .collection("inheritance")
-          .where('cpf', isEqualTo: requestInheritanceModel.cpf)
-          .where('requestById', isEqualTo: uid)
-          .get()
-          .then((value) => value.docs.first.id);
-
-      return Right(idInheritance ?? "");
+      return Right(docRef.id);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }

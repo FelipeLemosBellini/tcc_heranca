@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
+import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/user_model.dart';
@@ -13,18 +14,54 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Future<Either<ExceptionMessage, List<UserModel>>> getUsers() async {
+  Future<Either<ExceptionMessage, List<UserModel>>> getUsersPendentes() async {
     try {
-      final query =
+      final pendingDocs =
           await _firestore
-              .collection('users')
-              .where("kycStatus", isEqualTo: KycStatus.submitted.name)
+              .collection('documents')
+              .where(
+                'reviewStatus',
+                isEqualTo: ReviewStatusDocument.pending.name,
+              )
               .get();
-      final users =
-          query.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
-      return Right(users);
+
+      final userIds =
+          pendingDocs.docs
+              .map((doc) => doc.data()['idDocument'] as String?)
+              .whereType<String>()
+              .toSet()
+              .toList();
+
+      if (userIds.isEmpty) return right([]);
+
+      final users = <UserModel>[];
+      const chunkSize = 10;
+
+      for (var i = 0; i < userIds.length; i += chunkSize) {
+        final chunk = userIds.sublist(
+          i,
+          i + chunkSize > userIds.length ? userIds.length : i + chunkSize,
+        );
+        final usersSnapshot =
+            await _firestore
+                .collection('users')
+                .where(FieldPath.documentId, whereIn: chunk)
+                .get();
+
+        users.addAll(
+          usersSnapshot.docs.map((userDoc) {
+            final data = userDoc.data();
+            return UserModel.fromMap({
+              ...data,
+              'id': userDoc.id, // garante o id no modelo
+            });
+          }),
+        );
+      }
+
+      return right(users);
     } catch (e) {
-      return Left(ExceptionMessage(e.toString()));
+      return left(ExceptionMessage(e.toString()));
     }
   }
 
@@ -33,20 +70,20 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     required String userId,
   }) async {
     try {
-      final query =
-          await _firestore
-              .collection('documents')
-              .where('userId', isEqualTo: userId)
-              .get();
+      final response =
+      await _firestore
+          .collection('documents')
+          .where('idDocument', isEqualTo: userId)
+          .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
+          .get();
       final docs =
-          query.docs.map((doc) {
+      response.docs.map((doc) {
+        return Document.fromMap(doc.data())..idDocument = doc.id;
+      }).toList();
 
-            return Document.fromMap(doc.data())..idDocument = doc.id;
-          }).toList();
-      // Ajuste conforme seu modelo: se UserDocument encapsula uma lista, crie a instância apropriada.
-      return right(docs);
+      return Right(docs);
     } catch (e) {
-      return left(ExceptionMessage(e.toString()));
+      return Left(ExceptionMessage("Erro ao pegar os documentos"));
     }
   }
 

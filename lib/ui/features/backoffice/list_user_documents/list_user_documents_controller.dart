@@ -39,7 +39,7 @@ class ListUserDocumentsController extends BaseController {
   }
 
   Future<void> getDocumentsByUserId({required String userId}) async {
-    var response = await kycRepositoryInterface.getDocumentsByUserId(
+    var response = await backofficeFirestoreInterface.getDocumentsByUserId(
       userId: userId,
     );
     response.fold((error) {}, (success) {
