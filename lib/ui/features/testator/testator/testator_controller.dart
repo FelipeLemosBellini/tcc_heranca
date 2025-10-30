@@ -10,50 +10,10 @@ class TestatorController extends BaseController {
 
   TestatorController();
 
-  List<TestamentModel> _listTestament = [];
+  double balance = 0.0;
 
-  List<TestamentModel> get listTestament => _listTestament;
-
-  void loadingTestaments() async {
-    // _homeController.setLoading(true);
-    //
-    // _listTestament.clear();
-    // notifyListeners();
-    //
-    // var response = await firestoreRepository.getUser();
-    // String address = "";
-    // response.fold(
-    //   (error) {
-    //     setMessage(
-    //       AlertData(
-    //         message: "Erro ao buscar o testamento",
-    //         errorType: ErrorType.error,
-    //       ),
-    //     );
-    //     _homeController.setLoading(false);
-    //     notifyListeners();
-    //     return;
-    //   },
-    //   (UserModel user) {
-    //     address = user.address ?? "";
-    //   },
-    // );
-    //
-    // var response2 = await firestoreRepository.getTestamentByAddress(address);
-    // response2.fold(
-    //   (error) {
-    //     _listTestament.clear();
-    //     setMessage(
-    //       AlertData(message: error.errorMessage, errorType: ErrorType.error),
-    //     );
-    //   },
-    //   (success) {
-    //     _listTestament.add(success);
-    //   },
-    // );
-    //
-    // await Future.delayed(Duration(seconds: 1));
-    // _homeController.setLoading(false);
-    // notifyListeners();
+  void getBalance() {
+    balance = 1;
+    notifyListeners();
   }
 }

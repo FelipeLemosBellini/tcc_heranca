@@ -1,1 +1,1 @@
-enum FlowTestamentEnum { edit, creation }
+enum FlowTestamentEnum { deposit, withdrawal }

@@ -23,35 +23,17 @@ class CardTestamentInfoWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(testament.title, style: AppFonts.bodyLargeBold),
-            const SizedBox(height: 8),
             Text(
               "Criado em: ${testament.dateCreated.dateFormatted}",
               style: AppFonts.labelSmallLight.copyWith(color: AppColors.primaryLight2),
             ),
             const SizedBox(height: 8),
-            Text(
-              "Prova de vida: ${testament.lastProveOfLife.dateFormatted}",
-              style: AppFonts.labelSmallBold.copyWith(color: AppColors.error2),
-            ),
+
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Divider(color: AppColors.white),
             ),
             Text("Endereço dos herdeiros:", style: AppFonts.labelSmallBold),
-            const SizedBox(height: 8),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: testament.listHeir.length,
-              itemBuilder: (context, index) {
-                final heir = testament.listHeir[index];
-                return Text(
-                  heir.address,
-                  style: AppFonts.bodySmallRegular.copyWith(color: AppColors.primaryLight2),
-                );
-              },
-            ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
