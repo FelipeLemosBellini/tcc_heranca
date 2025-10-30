@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
@@ -14,16 +15,22 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Future<Either<ExceptionMessage, List<UserModel>>> getUsersPendentes() async {
+  Future<Either<ExceptionMessage, List<UserModel>>> getUsersPendentes({
+    EnumDocumentsFrom? from,
+  }) async {
     try {
-      final pendingDocs =
-          await _firestore
-              .collection('documents')
-              .where(
-                'reviewStatus',
-                isEqualTo: ReviewStatusDocument.pending.name,
-              )
-              .get();
+      var query = _firestore
+          .collection('documents')
+          .where(
+            'reviewStatus',
+            isEqualTo: ReviewStatusDocument.pending.name,
+          );
+
+      if (from != null) {
+        query = query.where('from', isEqualTo: from.name);
+      }
+
+      final pendingDocs = await query.get();
 
       final userIds =
           pendingDocs.docs

@@ -2,6 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/events/update_users_event.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/user_model.dart';
@@ -54,40 +55,73 @@ class _ListUsersViewState extends State<ListUsersView> {
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
-          return ListView.builder(
-            itemCount: _controller.listUsers.length,
-            itemBuilder: (context, index) {
-              final user = _controller.listUsers[index];
-              return GestureDetector(
-                onTap: () {
-                  context.push(
-                    RouterApp.listDocuments,
-                    extra: {"userId": user.id},
-                  );
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: 24,
-                    right: 24,
-                    top: index == 0 ? 24 : 12,
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListTile(
-                    iconColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    leading: const Icon(Icons.person),
-                    title: Text(
-                      user.name.toUpperCase(),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+          final filters = [
+            EnumDocumentsFrom.kyc,
+            EnumDocumentsFrom.inheritanceRequest,
+          ];
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
                 ),
-              );
-            },
+                child: Wrap(
+                  spacing: 12,
+                  children: filters.map((filter) {
+                    final isSelected = _controller.selectedFilter == filter;
+                    return ChoiceChip(
+                      label: Text(
+                        filter.enumToString().replaceAll('_', ' '),
+                      ),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        final newFilter = isSelected ? null : filter;
+                        _controller.getUsers(from: newFilter);
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _controller.listUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = _controller.listUsers[index];
+                    return GestureDetector(
+                      onTap: () {
+                        context.push(
+                          RouterApp.listDocuments,
+                          extra: {"userId": user.id},
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          top: index == 0 ? 24 : 12,
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ListTile(
+                          iconColor: Colors.white,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                          leading: const Icon(Icons.person),
+                          title: Text(
+                            user.name.toUpperCase(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
