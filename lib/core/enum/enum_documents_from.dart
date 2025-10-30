@@ -1,5 +1,6 @@
 enum EnumDocumentsFrom {
   kyc,
+  balanceRequest,
   inheritanceRequest;
 
   static EnumDocumentsFrom? toEnum(String value) {
@@ -20,6 +21,8 @@ extension EnumDocumentsFromExtension on EnumDocumentsFrom {
         return "KYC";
       case EnumDocumentsFrom.inheritanceRequest:
         return "INHERITANCE_REQUEST";
+      case EnumDocumentsFrom.balanceRequest:
+        return "BALANCE_REQUEST";
     }
   }
 }
