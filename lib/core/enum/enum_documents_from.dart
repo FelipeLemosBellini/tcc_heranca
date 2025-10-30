@@ -5,9 +5,11 @@ enum EnumDocumentsFrom {
 
   static EnumDocumentsFrom? toEnum(String value) {
     switch (value) {
-      case "kyc":
+      case "KYC":
         return EnumDocumentsFrom.kyc;
-      case "inheritanceRequest":
+      case "BALANCE_REQUEST":
+        return EnumDocumentsFrom.balanceRequest;
+      case "INHERITANCE_REQUEST":
         return EnumDocumentsFrom.inheritanceRequest;
     }
     return null;

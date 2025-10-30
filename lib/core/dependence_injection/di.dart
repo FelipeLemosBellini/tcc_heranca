@@ -6,6 +6,7 @@ import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
+import 'package:tcc/core/repositories/rpc_repository/rpc_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
@@ -40,6 +41,7 @@ abstract class DI {
 
     await getIt.allReady();
     //Repositories
+    getIt.registerSingleton<RpcRepository>(RpcRepository());
     getIt.registerSingleton<UserRepository>(UserRepository());
     getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
     getIt.registerLazySingleton<KycRepository>(
@@ -112,7 +114,9 @@ abstract class DI {
         localStorageService: getIt.get<LocalStorageService>(),
       ),
     );
-    getIt.registerLazySingleton(() => TestatorController());
+    getIt.registerLazySingleton(
+      () => TestatorController(rpcRepository: getIt.get<RpcRepository>()),
+    );
     getIt.registerLazySingleton(
       () => HeirController(userRepository: getIt.get<UserRepository>()),
     );

@@ -33,13 +33,9 @@ class _TestatorViewState extends State<TestatorView>
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // testatorController.loadingTestaments();
-    //
-    // eventBus.on<TestamentEvent>().listen((event) {
-    //   testatorController.loadingTestaments();
-    // });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      testatorController.getBalance();
+    });
 
     super.initState();
   }

@@ -58,30 +58,29 @@ class _ListUsersViewState extends State<ListUsersView> {
           final filters = [
             EnumDocumentsFrom.kyc,
             EnumDocumentsFrom.inheritanceRequest,
+            EnumDocumentsFrom.balanceRequest,
           ];
 
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Wrap(
                   spacing: 12,
-                  children: filters.map((filter) {
-                    final isSelected = _controller.selectedFilter == filter;
-                    return ChoiceChip(
-                      label: Text(
-                        filter.enumToString().replaceAll('_', ' '),
-                      ),
-                      selected: isSelected,
-                      onSelected: (_) {
-                        final newFilter = isSelected ? null : filter;
-                        _controller.getUsers(from: newFilter);
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      filters.map((filter) {
+                        final isSelected = _controller.selectedFilter == filter;
+                        return ChoiceChip(
+                          label: Text(
+                            filter.enumToString().replaceAll('_', ' '),
+                          ),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            final newFilter = isSelected ? null : filter;
+                            _controller.getUsers(from: newFilter);
+                          },
+                        );
+                      }).toList(),
                 ),
               ),
               Expanded(
