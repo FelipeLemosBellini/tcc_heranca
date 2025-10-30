@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 
 class BuyVaultPopUp extends StatelessWidget {
@@ -25,13 +26,11 @@ class BuyVaultPopUp extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Text("Compre seu cofre", style: AppFonts.bodyHeadBold),
+          SizedBox(height: 4),
           Text(
-            "Compre seu cofre",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
-          ),
-          Text(
-            "Para começar a utilizar nosso serviço de armazenamento de Ethereum você precisa conectar sua carteira e pagar a taxa de criação de 0.1 ETH.",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            "Para começar a utilizar nosso serviço de armazenamento de Ethereum você precisa conectar sua carteira e pagar a taxa  de 0.1 ETH.",
+            style: AppFonts.bodySmallRegular,
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
