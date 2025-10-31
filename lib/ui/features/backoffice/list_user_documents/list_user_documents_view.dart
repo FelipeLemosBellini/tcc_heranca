@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/events/update_users_event.dart';
+import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
@@ -195,7 +196,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
               ],
             ),
             bottomSheet: ElevatedButtonWidget(
-              onTap: () {
+              onTap: () async {
                 for (
                   int index = 0;
                   index < _controller.listDocuments.length;
@@ -238,7 +239,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                 ) {
                   _controller.listDocuments[index].reviewMessage =
                       _controller.reasonControllers[index].text;
-                  _controller.submit(
+                  await _controller.submit(
                     documents: _controller.listDocuments[index],
                   );
                 }
@@ -272,7 +273,8 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   ),
                 );
                 eventBus.fire(UpdateUsersEvent());
-                context.pop();
+                if (!mounted) return;
+                context.go(RouterApp.listUsers);
               },
               text: "Enviar",
             ),
