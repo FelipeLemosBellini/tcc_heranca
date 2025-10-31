@@ -29,12 +29,12 @@ class _HeirViewState extends State<HeirView>
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // heirController.loadingTestaments();
-    // eventBus.on<TestamentEvent>().listen((event) {
-    //   heirController.loadingTestaments();
-    // });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      heirController.loadingTestaments();
+      eventBus.on<TestamentEvent>().listen((event) {
+        heirController.loadingTestaments();
+      });
+    });
     super.initState();
   }
 
@@ -52,7 +52,7 @@ class _HeirViewState extends State<HeirView>
             child: Visibility(
               visible: heirController.listTestament.isNotEmpty,
               replacement: EmptyListTestamentWidget(
-                text: 'Abra o processo de uma herança',
+                text: 'Crie um processo de sucessão',
                 onTap: heirController.loadingTestaments,
               ),
               child: ListView.builder(
@@ -71,7 +71,7 @@ class _HeirViewState extends State<HeirView>
                       testament: testament,
                       seeDetails: () {
                         context.push(
-                          RouterApp.seeDetails,
+                          RouterApp.seeDetailsInheritance,
                           extra: {
                             "testament": testament,
                             "typeUser": EnumTypeUser.heir,

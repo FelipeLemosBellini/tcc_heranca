@@ -15,7 +15,7 @@ class TestatorController extends BaseController {
   double balance = 0.0;
 
   void getBalance() {
-    rpcRepository.getEthBalance('https://gas.api.infura.io/v3/3ab1afcb30cb40c3810a5fadfac719b6', '0x8f4B1115dfEddC02F8e2361Ac17D75B4D806d79d');
+    // rpcRepository.getEthBalance('https://gas.api.infura.io/v3/3ab1afcb30cb40c3810a5fadfac719b6', '0x8f4B1115dfEddC02F8e2361Ac17D75B4D806d79d');
     notifyListeners();
   }
 }

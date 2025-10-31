@@ -7,7 +7,7 @@ class RequestInheritanceModel {
   String? cpf; // cpf do cliente
   String? name; // nome do cliente
   String? requestById; // userId do solicitante
-  final HeirStatus heirStatus; // status da heranca
+  HeirStatus? heirStatus; // status da heranca
 
   RequestInheritanceModel({
     this.id,
@@ -15,7 +15,7 @@ class RequestInheritanceModel {
     this.cpf,
     this.name,
     this.requestById,
-    required this.heirStatus,
+    this.heirStatus,
   });
 
   factory RequestInheritanceModel.fromMap(Map<String, dynamic> json) {
@@ -24,7 +24,7 @@ class RequestInheritanceModel {
       cpf: json['cpf'],
       name: json['name'],
       requestById: json['requestById'],
-      heirStatus: json['heirStatus']
+      heirStatus: HeirStatus.toEnum(json['heirStatus'])
     );
   }
 
@@ -34,7 +34,7 @@ class RequestInheritanceModel {
       'cpf': cpf,
       'name': name,
       'requestById': requestById,
-      'heirStatus': heirStatus.name,
+      'heirStatus': heirStatus?.value,
     };
   }
 }

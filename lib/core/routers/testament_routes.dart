@@ -4,11 +4,21 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/core/routers/transitions.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_view.dart';
 import 'package:tcc/ui/features/heir/request_vault/request_vault_view.dart';
+import 'package:tcc/ui/features/heir/see_details_inheritance/see_details_inheritance_view.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/vault/vault_view.dart';
 
 abstract class TestamentRoutes {
   static List<RouteBase> testamentRoutes = [
+    GoRoute(
+      path: RouterApp.seeDetailsInheritance,
+      pageBuilder: (BuildContext context, GoRouterState state) {
+        return Transitions.customTransitionPage(
+          SeeDetailsInheritanceView(),
+          state,
+        );
+      },
+    ),
     GoRoute(
       path: RouterApp.requestInheritance,
       pageBuilder: (BuildContext context, GoRouterState state) {

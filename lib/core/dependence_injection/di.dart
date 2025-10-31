@@ -20,6 +20,7 @@ import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart
 import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
 import 'package:tcc/ui/features/heir/request_vault/request_vault_controller.dart';
+import 'package:tcc/ui/features/heir/see_details_inheritance/see_details_inheritance_controller.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/features/home/wallet/wallet_controller.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
@@ -119,7 +120,9 @@ abstract class DI {
       () => TestatorController(rpcRepository: getIt.get<RpcRepository>()),
     );
     getIt.registerLazySingleton(
-      () => HeirController(userRepository: getIt.get<UserRepository>()),
+      () => HeirController(
+        inheritanceRepository: getIt.get<InheritanceRepository>(),
+      ),
     );
     getIt.registerLazySingleton(
       () => WalletController(
@@ -151,6 +154,9 @@ abstract class DI {
       ),
     );
 
-    getIt.registerFactory(() => VaultController());
+    getIt.registerFactory<VaultController>(() => VaultController());
+    getIt.registerFactory<SeeDetailsInheritanceController>(
+      () => SeeDetailsInheritanceController(),
+    );
   }
 }

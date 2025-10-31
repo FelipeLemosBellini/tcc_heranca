@@ -29,7 +29,7 @@ abstract class RouterApp {
   static const String listUserTestators = "/listUserTestators";
   static const String listDocuments = "/listDocuments";
 
-  static const String seeDetails = "/seeDetails";
+  static const String seeDetailsInheritance = "/seeDetailsInheritance";
 
   static const String home = "/home";
   static const String aboutUs = "/aboutUs";
