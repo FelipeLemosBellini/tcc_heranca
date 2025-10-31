@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ListUserDocumentsController extends BaseController {
   final KycRepositoryInterface kycRepositoryInterface;
@@ -23,13 +25,15 @@ class ListUserDocumentsController extends BaseController {
   List<Document> _documents = [];
   List<TextEditingController> reasonControllers = [];
   List<FocusNode> focusNodes = [];
+  String? _currentTestatorCpf;
 
   final Map<String, bool?> decisions = {};
 
   List<Document> get listDocuments => _documents;
+  String? get currentTestatorCpf => _currentTestatorCpf;
 
   @override
-  dispose() {
+  void dispose() {
     for (var controller in reasonControllers) {
       controller.dispose();
     }
@@ -38,11 +42,39 @@ class ListUserDocumentsController extends BaseController {
     }
   }
 
-  Future<void> getDocumentsByUserId({required String userId}) async {
-    var response = await backofficeFirestoreInterface.getDocumentsByUserId(
+  Future<void> getDocumentsByUserId({
+    required String userId,
+    String? testatorCpf,
+    EnumDocumentsFrom? from,
+  }) async {
+    _currentTestatorCpf = testatorCpf;
+
+    for (final controller in reasonControllers) {
+      controller.dispose();
+    }
+    for (final node in focusNodes) {
+      node.dispose();
+    }
+    reasonControllers = [];
+    focusNodes = [];
+    decisions.clear();
+
+    setLoading(true);
+
+    final response = await backofficeFirestoreInterface.getDocumentsByUserId(
       userId: userId,
+      testatorCpf: testatorCpf,
+      from: from,
     );
-    response.fold((error) {}, (success) {
+
+    response.fold((error) {
+      setMessage(
+        AlertData(
+          message: error.errorMessage,
+          errorType: ErrorType.error,
+        ),
+      );
+    }, (success) {
       _documents = success;
       for (int i = 0; i < _documents.length; i++) {
         reasonControllers.add(TextEditingController());
@@ -50,6 +82,8 @@ class ListUserDocumentsController extends BaseController {
       }
       notifyListeners();
     });
+
+    setLoading(false);
   }
 
   Future<void> submit({required Document documents}) async {

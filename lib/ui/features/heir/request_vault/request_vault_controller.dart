@@ -91,13 +91,14 @@ class RequestVaultController extends BaseController {
           ),
         );
       },
-      (success) {
-
+      (creation) {
         submitDocuments(
           cpfTestator: cpfTestator,
           certificadoDeObito: certificadoDeObito,
           procuracaoAdvogado: procuracaoAdvogado,
-          inheritanceId: success,
+          inheritanceId: creation.inheritanceId,
+          requesterId: creation.requesterId,
+          testatorCpf: creation.testatorCpf,
         );
 
         setMessage(
@@ -118,6 +119,8 @@ class RequestVaultController extends BaseController {
     required XFile certificadoDeObito,
     required XFile procuracaoAdvogado,
     required String inheritanceId,
+    required String requesterId,
+    required String testatorCpf,
   }) async {
     if (!_validateInputs(
       cpfTestator: cpfTestator,
@@ -130,7 +133,8 @@ class RequestVaultController extends BaseController {
     setLoading(true);
 
     final obitoDocument = Document(
-      idDocument: inheritanceId,
+      idDocument: requesterId,
+      content: testatorCpf,
       typeDocument: TypeDocument.deathCertificate,
       reviewStatus: ReviewStatusDocument.pending,
       reviewMessage: '',
@@ -139,7 +143,8 @@ class RequestVaultController extends BaseController {
     );
 
     final procuracaoAdvogadoDocument = Document(
-      idDocument: inheritanceId,
+      idDocument: requesterId,
+      content: testatorCpf,
       typeDocument: TypeDocument.procuracaoAdvogado,
       reviewStatus: ReviewStatusDocument.pending,
       reviewMessage: '',
@@ -150,11 +155,17 @@ class RequestVaultController extends BaseController {
     var resultObito = await inheritanceRepository.submit(
       document: obitoDocument,
       xFile: certificadoDeObito,
+      inheritanceId: inheritanceId,
+      requesterId: requesterId,
+      testatorCpf: testatorCpf,
     );
 
     var resultProcuracao = await inheritanceRepository.submit(
       document: procuracaoAdvogadoDocument,
       xFile: procuracaoAdvogado,
+      inheritanceId: inheritanceId,
+      requesterId: requesterId,
+      testatorCpf: testatorCpf,
     );
 
     resultProcuracao.fold(

@@ -5,6 +5,7 @@ import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
+import 'package:tcc/core/models/testator_summary.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 
@@ -75,22 +76,96 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   @override
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
+    String? testatorCpf,
+    EnumDocumentsFrom? from,
   }) async {
     try {
-      final response =
-      await _firestore
+      var query = _firestore
           .collection('documents')
           .where('idDocument', isEqualTo: userId)
-          .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
-          .get();
-      final docs =
-      response.docs.map((doc) {
+          .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name);
+
+      if (from != null) {
+        query = query.where('from', isEqualTo: from.name);
+      }
+
+      final response = await query.get();
+      var docs = response.docs.map((doc) {
         return Document.fromMap(doc.data())..idDocument = doc.id;
       }).toList();
+
+      if (testatorCpf != null && testatorCpf.isNotEmpty) {
+        docs = docs.where((doc) => doc.content == testatorCpf).toList();
+      }
 
       return Right(docs);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar os documentos"));
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({
+    required String requesterId,
+  }) async {
+    try {
+      final documentsSnapshot =
+          await _firestore
+              .collection('documents')
+              .where('idDocument', isEqualTo: requesterId)
+              .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
+              .where('from', isEqualTo: EnumDocumentsFrom.inheritanceRequest.name)
+              .get();
+
+      final cpfs = documentsSnapshot.docs
+          .map((doc) => (doc.data()['content'] as String?)?.trim())
+          .whereType<String>()
+          .where((cpf) => cpf.isNotEmpty)
+          .toSet()
+          .toList();
+
+      if (cpfs.isEmpty) {
+        return right([]);
+      }
+
+      final usersByCpf = <String, UserModel>{};
+      const chunkSize = 10;
+
+      for (var i = 0; i < cpfs.length; i += chunkSize) {
+        final chunk = cpfs.sublist(
+          i,
+          i + chunkSize > cpfs.length ? cpfs.length : i + chunkSize,
+        );
+
+        final usersSnapshot =
+            await _firestore
+                .collection('users')
+                .where('cpf', whereIn: chunk)
+                .get();
+
+        for (final userDoc in usersSnapshot.docs) {
+          final data = userDoc.data();
+          final user = UserModel.fromMap({
+            ...data,
+            'id': userDoc.id,
+          });
+          if (user.cpf != null && user.cpf!.isNotEmpty) {
+            usersByCpf[user.cpf!] = user;
+          }
+        }
+      }
+
+      final summaries = cpfs.map((cpf) {
+        final user = usersByCpf[cpf];
+        if (user != null) {
+          return TestatorSummary(cpf: cpf, name: user.name, userId: user.id);
+        }
+        return TestatorSummary(cpf: cpf, name: cpf, userId: null);
+      }).toList();
+
+      return right(summaries);
+    } catch (e) {
+      return left(ExceptionMessage(e.toString()));
     }
   }
 

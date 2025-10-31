@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
+import 'package:tcc/core/models/testator_summary.dart';
 import 'package:tcc/core/models/user_model.dart';
 
 abstract class BackofficeFirestoreInterface {
@@ -11,6 +12,12 @@ abstract class BackofficeFirestoreInterface {
 
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
+    String? testatorCpf,
+    EnumDocumentsFrom? from,
+  });
+
+  Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({
+    required String requesterId,
   });
 
   Future<Either<ExceptionMessage, void>> changeStatusDocument({

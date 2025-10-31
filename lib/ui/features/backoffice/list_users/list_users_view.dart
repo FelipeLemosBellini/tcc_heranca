@@ -94,8 +94,11 @@ class _ListUsersViewState extends State<ListUsersView> {
                       return GestureDetector(
                         onTap: () {
                           context.push(
-                            RouterApp.listDocuments,
-                            extra: {"userId": user.id},
+                            RouterApp.listUserTestators,
+                            extra: {
+                              "userId": user.id,
+                              "name": user.name,
+                            },
                           );
                         },
                         child: Container(

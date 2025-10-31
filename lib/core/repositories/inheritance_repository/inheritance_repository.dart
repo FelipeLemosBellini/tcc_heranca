@@ -8,6 +8,18 @@ import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 
+class InheritanceCreationResult {
+  final String inheritanceId;
+  final String requesterId;
+  final String testatorCpf;
+
+  InheritanceCreationResult({
+    required this.inheritanceId,
+    required this.requesterId,
+    required this.testatorCpf,
+  });
+}
+
 class InheritanceRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -16,7 +28,7 @@ class InheritanceRepository {
 
   InheritanceRepository({required this.storageRepository});
 
-  Future<Either<ExceptionMessage, String>> createInheritance(
+  Future<Either<ExceptionMessage, InheritanceCreationResult>> createInheritance(
     RequestInheritanceModel requestInheritanceModel,
   ) async {
     try {
@@ -51,7 +63,13 @@ class InheritanceRepository {
       final docRef = inheritanceCollection.doc();
       await docRef.set(requestInheritanceModel.toMap());
 
-      return Right(docRef.id);
+      return Right(
+        InheritanceCreationResult(
+          inheritanceId: docRef.id,
+          requesterId: uid,
+          testatorCpf: requestInheritanceModel.cpf ?? '',
+        ),
+      );
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }
@@ -60,11 +78,17 @@ class InheritanceRepository {
   Future<Either<ExceptionMessage, void>> submit({
     required Document document,
     required XFile xFile,
+    required String inheritanceId,
+    required String requesterId,
+    required String testatorCpf,
   }) async {
     try {
       String typeImage = xFile.path.split('.').last;
-      document.pathStorage =
-          'inheritance/${document.idDocument}/documents/${document.typeDocument.name}.$typeImage';
+      document
+        ..idDocument = requesterId
+        ..content = testatorCpf
+        ..pathStorage =
+            'inheritance/$inheritanceId/documents/${document.typeDocument.name}.$typeImage';
       await storageRepository.saveFile(
         xFile: xFile,
         namePath: document.pathStorage ?? "",

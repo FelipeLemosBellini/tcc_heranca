@@ -3,7 +3,7 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 
 class Document {
-  final String? content;
+  String? content;
   String? pathStorage;
   String? reviewMessage;
   final ReviewStatusDocument reviewStatus;
