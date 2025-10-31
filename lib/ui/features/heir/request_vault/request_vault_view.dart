@@ -84,8 +84,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             label: 'Certificado de Obito',
                             hasAttach: procuracaoDoInventariante != null,
                             attach: () async {
-                              procuracaoDoInventariante = await imagePicker
-                                  .pickImage(source: ImageSource.camera);
+                              certidaoDeObito = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -94,9 +93,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             label: 'Procuracao do inventariante',
                             hasAttach: certidaoDeObito != null,
                             attach: () async {
-                              certidaoDeObito = await imagePicker.pickImage(
-                                source: ImageSource.camera,
-                              );
+                              certidaoDeObito = await getFile(context);
                               setState(() {});
                             },
                           ),
@@ -142,5 +139,30 @@ class _RequestVaultViewState extends State<RequestVaultView> {
             ),
           ),
     );
+  }
+
+  Future<XFile?> getFile(BuildContext context) async {
+    XFile? file = await imagePicker.pickMedia();
+    if (file != null) {
+      if (!file.path.endsWith('.pdf')) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: "Selecione um .pdf",
+            errorType: ErrorType.warning,
+          ),
+        );
+      }
+      return file;
+    } else {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: "Selecione um arquivo",
+          errorType: ErrorType.warning,
+        ),
+      );
+      return null;
+    }
   }
 }
