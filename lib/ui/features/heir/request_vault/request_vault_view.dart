@@ -84,7 +84,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             label: 'Certificado de Obito',
                             hasAttach: procuracaoDoInventariante != null,
                             attach: () async {
-                              certidaoDeObito = await getFile(context);
+                              procuracaoDoInventariante = await getFile(context);
                               setState(() {});
                             },
                           ),
