@@ -7,6 +7,7 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/testator_summary.dart';
+import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 
@@ -251,6 +252,35 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       return const Right(null);
     } catch (e) {
       return left(ExceptionMessage('Erro ao atualizar status da herança: $e'));
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>> getCompletedInheritances() async {
+    try {
+      final snapshot = await _firestore
+          .collection('inheritance')
+          .where('heirStatus', isEqualTo: HeirStatus.transferenciaSaldoRealizada.value)
+          .get();
+
+      final inheritances = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return RequestInheritanceModel.fromMap({
+          ...data,
+          'id': doc.id,
+          'createdAt': (data['createdAt'] as Timestamp?)?.toDate(),
+          'updatedAt': (data['updatedAt'] as Timestamp?)?.toDate(),
+        });
+      }).toList();
+
+      inheritances.sort(
+        (a, b) => (b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+            .compareTo(a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0)),
+      );
+
+      return Right(inheritances);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao carregar processos finalizados: ${e.toString()}'));
     }
   }
 }

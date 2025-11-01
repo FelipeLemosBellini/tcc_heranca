@@ -14,6 +14,7 @@ import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
 import 'package:tcc/ui/features/auth/login_wallet/login_wallet_controller.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
+import 'package:tcc/ui/features/backoffice/completed_processes/completed_processes_controller.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_testators_controller.dart';
 import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
@@ -149,6 +150,12 @@ abstract class DI {
         storageRepository: getIt.get<StorageRepository>(),
         backofficeFirestoreInterface:
             getIt.get<BackofficeFirestoreRepository>(),
+      ),
+    );
+
+    getIt.registerFactory(
+      () => CompletedProcessesController(
+        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreRepository>(),
       ),
     );
 

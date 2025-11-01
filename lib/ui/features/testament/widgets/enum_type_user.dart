@@ -1,1 +1,1 @@
-enum EnumTypeUser { testator, heir }
+enum EnumTypeUser { testator, heir, admin }

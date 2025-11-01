@@ -26,6 +26,7 @@ abstract class RouterApp {
   static const String summary = "/summary";
 
   static const String listUsers = "/listUsers";
+  static const String completedProcesses = "/completedProcesses";
   static const String listUserTestators = "/listUserTestators";
   static const String listDocuments = "/listDocuments";
 

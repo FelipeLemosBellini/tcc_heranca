@@ -46,6 +46,13 @@ class _ListUsersViewState extends State<ListUsersView> {
         },
       ),
       drawer: DrawerListUsersWidget(
+        goToPending: () {
+          _scaffoldKey.currentState?.closeDrawer();
+        },
+        goToCompleted: () {
+          _scaffoldKey.currentState?.closeDrawer();
+          context.go(RouterApp.completedProcesses);
+        },
         signOut: () {
           context.go(RouterApp.login);
         },
