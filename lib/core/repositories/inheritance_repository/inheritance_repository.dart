@@ -61,7 +61,11 @@ class InheritanceRepository {
 
       final inheritanceCollection = firestore.collection("inheritance");
       final docRef = inheritanceCollection.doc();
-      await docRef.set(requestInheritanceModel.toMap());
+      await docRef.set({
+        ...requestInheritanceModel.toMap(),
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
       return Right(
         InheritanceCreationResult(
@@ -96,6 +100,10 @@ class InheritanceRepository {
 
       await firestore.collection("documents").doc().set(document.toMap());
 
+      await firestore.collection("inheritance").doc(inheritanceId).update({
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
       return const Right(null);
     } catch (e) {
       return Left(ExceptionMessage('Erro ao enviar KYC: ${e.toString()}'));
@@ -118,11 +126,22 @@ class InheritanceRepository {
 
       var inheritances =
           response.docs
-              .map(
-                (doc) =>
-                    RequestInheritanceModel.fromMap(doc.data())..id = doc.id,
-              )
+              .map((doc) {
+                final data = doc.data();
+                return RequestInheritanceModel.fromMap({
+                  ...data,
+                  'id': doc.id,
+                  'createdAt': (data['createdAt'] as Timestamp?)?.toDate(),
+                  'updatedAt': (data['updatedAt'] as Timestamp?)?.toDate(),
+                });
+              })
               .toList();
+
+      inheritances.sort((a, b) {
+        final dateA = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final dateB = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return dateB.compareTo(dateA);
+      });
 
       return Right(inheritances);
     } catch (e) {

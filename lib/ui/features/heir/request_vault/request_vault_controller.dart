@@ -1,9 +1,12 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 
 import 'package:tcc/core/helpers/base_controller.dart';
+import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
@@ -20,6 +23,7 @@ import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 class RequestVaultController extends BaseController {
   final UserRepository userRepository;
   final InheritanceRepository inheritanceRepository;
+  final EventBus eventBus = GetIt.I.get<EventBus>();
 
   RequestVaultController({
     required this.userRepository,
@@ -78,12 +82,14 @@ class RequestVaultController extends BaseController {
       heirStatus: HeirStatus.consultaSaldoSolicitado,
     );
 
-    var result = await inheritanceRepository.createInheritance(
+    final result = await inheritanceRepository.createInheritance(
       requestInheritance,
     );
 
-    result.fold(
-      (error) {
+    bool created = false;
+
+    await result.fold<Future<void>>(
+      (error) async {
         setMessage(
           AlertData(
             message: 'Erro ao criar solicitação: ${error.errorMessage}',
@@ -91,8 +97,8 @@ class RequestVaultController extends BaseController {
           ),
         );
       },
-      (creation) {
-        submitDocuments(
+      (creation) async {
+        created = await submitDocuments(
           cpfTestator: cpfTestator,
           certificadoDeObito: certificadoDeObito,
           procuracaoAdvogado: procuracaoAdvogado,
@@ -101,17 +107,20 @@ class RequestVaultController extends BaseController {
           testatorCpf: creation.testatorCpf,
         );
 
-        setMessage(
-          AlertData(
-            message: 'Solicitação criada com sucesso!',
-            errorType: ErrorType.success,
-          ),
-        );
+        if (created) {
+          eventBus.fire(TestamentEvent());
+          setMessage(
+            AlertData(
+              message: 'Solicitação criada com sucesso!',
+              errorType: ErrorType.success,
+            ),
+          );
+        }
       },
     );
 
     setLoading(false);
-    return true;
+    return created;
   }
 
   Future<bool> submitDocuments({
@@ -129,8 +138,6 @@ class RequestVaultController extends BaseController {
     )) {
       return false;
     }
-
-    setLoading(true);
 
     final obitoDocument = Document(
       idDocument: requesterId,
@@ -168,25 +175,43 @@ class RequestVaultController extends BaseController {
       testatorCpf: testatorCpf,
     );
 
-    resultProcuracao.fold(
+    bool success = true;
+
+    resultObito.fold(
       (error) {
+        success = false;
         setMessage(
           AlertData(
-            message: 'Erro ao enviar documentos ${error.errorMessage}',
+            message: 'Erro ao enviar documentos: ${error.errorMessage}',
             errorType: ErrorType.error,
           ),
         );
       },
-      (success) {
+      (_) {},
+    );
+
+    resultProcuracao.fold(
+      (error) {
+        success = false;
         setMessage(
           AlertData(
-            message: 'documentos enviados com sucesso!',
-            errorType: ErrorType.success,
+            message: 'Erro ao enviar documentos: ${error.errorMessage}',
+            errorType: ErrorType.error,
           ),
         );
       },
+      (_) {},
     );
 
-    return true;
+    if (success) {
+      setMessage(
+        AlertData(
+          message: 'Documentos enviados com sucesso!',
+          errorType: ErrorType.success,
+        ),
+      );
+    }
+
+    return success;
   }
 }

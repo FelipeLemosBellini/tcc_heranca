@@ -42,7 +42,7 @@ class CardTestamentInfoWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    testament.name.toString(),
+                    testament.name ?? 'Não informado',
                     style: AppFonts.labelSmallBold.copyWith(
                       color: AppColors.primaryLight2,
                     ),
@@ -60,7 +60,7 @@ class CardTestamentInfoWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${testament.cpf?.formatCpf()}",
+                    testament.cpf?.formatCpf() ?? '---',
                     style: AppFonts.labelSmallBold.copyWith(
                       color: AppColors.primaryLight2,
                     ),
@@ -68,6 +68,25 @@ class CardTestamentInfoWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
+              if (testament.createdAt != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Solicitado em: ",
+                      style: AppFonts.labelSmallRegular.copyWith(
+                        color: AppColors.primaryLight2,
+                      ),
+                    ),
+                    Text(
+                      testament.createdAt!.formatDateWithHour(),
+                      style: AppFonts.labelSmallBold.copyWith(
+                        color: AppColors.primaryLight2,
+                      ),
+                    ),
+                  ],
+                ),
+              if (testament.createdAt != null) const SizedBox(height: 8),
               if (testament.heirStatus != null)
                 Container(
                   padding: EdgeInsets.all(4),

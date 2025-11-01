@@ -8,6 +8,8 @@ class RequestInheritanceModel {
   String? name; // nome do cliente
   String? requestById; // userId do solicitante
   HeirStatus? heirStatus; // status da heranca
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   RequestInheritanceModel({
     this.id,
@@ -16,15 +18,21 @@ class RequestInheritanceModel {
     this.name,
     this.requestById,
     this.heirStatus,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory RequestInheritanceModel.fromMap(Map<String, dynamic> json) {
     return RequestInheritanceModel(
+      id: json['id'],
       userId: json['userId'],
       cpf: json['cpf'],
       name: json['name'],
       requestById: json['requestById'],
-      heirStatus: HeirStatus.toEnum(json['heirStatus'])
+      heirStatus: HeirStatus.toEnum(json['heirStatus']) ??
+          HeirStatus.consultaSaldoSolicitado,
+      createdAt: _parseDate(json['createdAt']),
+      updatedAt: _parseDate(json['updatedAt']),
     );
   }
 
@@ -34,7 +42,22 @@ class RequestInheritanceModel {
       'cpf': cpf,
       'name': name,
       'requestById': requestById,
-      'heirStatus': heirStatus?.value,
+      'heirStatus': (heirStatus ?? HeirStatus.consultaSaldoSolicitado).value,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
+  }
+}
+
+DateTime? _parseDate(dynamic value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+  try {
+    return DateTime.parse(value.toString());
+  } catch (_) {
+    return null;
   }
 }
