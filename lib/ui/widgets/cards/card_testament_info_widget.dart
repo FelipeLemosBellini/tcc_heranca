@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/helpers/datetime_extensions.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
+import 'package:tcc/core/helpers/extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
-import 'package:tcc/ui/helpers/extensions.dart';
 import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 
 class CardTestamentInfoWidget extends StatelessWidget {

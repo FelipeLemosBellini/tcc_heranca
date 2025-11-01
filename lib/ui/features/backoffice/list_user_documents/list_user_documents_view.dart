@@ -260,10 +260,18 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   }
                 }
 
-                _controller.updateKycStatus(
-                  hasInvalidDocument: hasInvalidDocuments,
-                  userId: widget.userId,
-                );
+                if (_controller.currentTestatorCpf != null) {
+                  await _controller.updateInheritanceStatus(
+                    hasInvalidDocuments: hasInvalidDocuments,
+                    requesterId: widget.userId,
+                    testatorCpf: _controller.currentTestatorCpf!,
+                  );
+                } else {
+                  await _controller.updateKycStatus(
+                    hasInvalidDocument: hasInvalidDocuments,
+                    userId: widget.userId,
+                  );
+                }
 
                 AlertHelper.showAlertSnackBar(
                   context: context,

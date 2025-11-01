@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/testator_summary.dart';
@@ -18,6 +19,12 @@ abstract class BackofficeFirestoreInterface {
 
   Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({
     required String requesterId,
+  });
+
+  Future<Either<ExceptionMessage, void>> updateInheritanceStatus({
+    required String requesterId,
+    required String testatorCpf,
+    required HeirStatus status,
   });
 
   Future<Either<ExceptionMessage, void>> changeStatusDocument({

@@ -29,6 +29,8 @@ class UserRepository {
 
   Future<Either<ExceptionMessage, void>> createProfile(UserModel data) async {
     try {
+      final now = DateTime.now();
+      data.createdAt = data.createdAt ?? now;
       await firestore.collection("users").doc(data.id).set(data.toMap());
       return Right(null);
     } catch (e) {

@@ -1,8 +1,11 @@
-enum  TypeDocument {
+enum TypeDocument {
   cpf,
   proofResidence,
   deathCertificate,
-  procuracaoAdvogado;
+  procuracaoAdvogado,
+  testamentDocument,
+  transferAssetsOrder,
+  inventoryProcess;
 
   static TypeDocument toEnum(String value) {
     switch (value) {
@@ -14,6 +17,12 @@ enum  TypeDocument {
         return TypeDocument.deathCertificate;
       case "procuracaoAdvogado":
         return TypeDocument.procuracaoAdvogado;
+      case "testamentDocument":
+        return TypeDocument.testamentDocument;
+      case "transferAssetsOrder":
+        return TypeDocument.transferAssetsOrder;
+      case "inventoryProcess":
+        return TypeDocument.inventoryProcess;
       default:
         return TypeDocument.cpf;
     }
@@ -24,11 +33,17 @@ enum  TypeDocument {
       case TypeDocument.cpf:
         return "CPF";
       case TypeDocument.proofResidence:
-        return "ComprovanteDeResidência";
+        return "ComprovanteDeResidencia";
       case TypeDocument.deathCertificate:
-        return "CertidãoDeÓbito";
+        return "CertidaoDeObito";
       case TypeDocument.procuracaoAdvogado:
-        return "ProcuraçãoDoAdvogado";
+        return "ProcuracaoDoAdvogado";
+      case TypeDocument.testamentDocument:
+        return "Testamento";
+      case TypeDocument.transferAssetsOrder:
+        return "OrdemDeTransferencia";
+      case TypeDocument.inventoryProcess:
+        return "ProcessoDeInventario";
       default:
         return "";
     }

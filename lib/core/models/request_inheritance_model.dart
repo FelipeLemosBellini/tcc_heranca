@@ -8,6 +8,7 @@ class RequestInheritanceModel {
   String? name; // nome do cliente
   String? requestById; // userId do solicitante
   HeirStatus? heirStatus; // status da heranca
+  String? rg;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -18,6 +19,7 @@ class RequestInheritanceModel {
     this.name,
     this.requestById,
     this.heirStatus,
+    this.rg,
     this.createdAt,
     this.updatedAt,
   });
@@ -31,6 +33,7 @@ class RequestInheritanceModel {
       requestById: json['requestById'],
       heirStatus: HeirStatus.toEnum(json['heirStatus']) ??
           HeirStatus.consultaSaldoSolicitado,
+      rg: json['rg'],
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
     );
@@ -43,6 +46,7 @@ class RequestInheritanceModel {
       'name': name,
       'requestById': requestById,
       'heirStatus': (heirStatus ?? HeirStatus.consultaSaldoSolicitado).value,
+      'rg': rg,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };

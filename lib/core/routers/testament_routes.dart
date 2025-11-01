@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/core/routers/transitions.dart';
+import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_view.dart';
 import 'package:tcc/ui/features/heir/request_vault/request_vault_view.dart';
 import 'package:tcc/ui/features/heir/see_details_inheritance/see_details_inheritance_view.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
+import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
 import 'package:tcc/ui/features/vault/vault_view.dart';
 
 abstract class TestamentRoutes {
@@ -13,8 +15,15 @@ abstract class TestamentRoutes {
     GoRoute(
       path: RouterApp.seeDetailsInheritance,
       pageBuilder: (BuildContext context, GoRouterState state) {
+        final params = state.extra as Map<String, dynamic>?
+            ?? <String, dynamic>{};
+        final testament = params['testament'] as RequestInheritanceModel;
+        final typeUser = params['typeUser'] as EnumTypeUser? ?? EnumTypeUser.heir;
         return Transitions.customTransitionPage(
-          SeeDetailsInheritanceView(),
+          SeeDetailsInheritanceView(
+            testament: testament,
+            typeUser: typeUser,
+          ),
           state,
         );
       },
@@ -22,8 +31,9 @@ abstract class TestamentRoutes {
     GoRoute(
       path: RouterApp.requestInheritance,
       pageBuilder: (BuildContext context, GoRouterState state) {
+        final inheritance = state.extra as RequestInheritanceModel;
         return Transitions.customTransitionPage(
-          RequestInheritanceView(),
+          RequestInheritanceView(inheritance: inheritance),
           state,
         );
       },

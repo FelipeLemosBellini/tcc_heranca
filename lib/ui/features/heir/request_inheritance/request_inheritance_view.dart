@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/section_card.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/upload_tile_simple.dart';
 import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
@@ -12,7 +13,9 @@ import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class RequestInheritanceView extends StatefulWidget {
-  const RequestInheritanceView({super.key});
+  final RequestInheritanceModel inheritance;
+
+  const RequestInheritanceView({super.key, required this.inheritance});
 
   @override
   State<RequestInheritanceView> createState() => _RequestInheritanceViewState();
@@ -42,6 +45,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
   @override
   void initState() {
     super.initState();
+    cpfController.text = widget.inheritance.cpf ?? '';
   }
 
   @override
@@ -130,6 +134,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             hasAttach: enderecoDoInventariante != null,
                             attach: () async {
                               enderecoDoInventariante = await getFile(context);
+                              setState(() {});
                             },
                           ),
                           SizedBox(height: 12),
@@ -160,8 +165,36 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                           Expanded(
                             child: ElevatedButtonWidget(
                               text: 'Enviar',
-                              onTap: () {
-
+                              onTap: () async {
+                                if (procuracaoDoInventariante == null ||
+                                    certidaoDeObito == null ||
+                                    documentoCpf == null ||
+                                    enderecoDoInventariante == null ||
+                                    testamento == null ||
+                                    transferenciaDeAtivos == null) {
+                                  AlertHelper.showAlertSnackBar(
+                                    context: context,
+                                    alertData: AlertData(
+                                      message: 'Anexe todos os documentos obrigatórios.',
+                                      errorType: ErrorType.warning,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                await _requestInheritanceController
+                                    .createRequestInheritance(
+                                      inheritance: widget.inheritance,
+                                      rg: rgController.text,
+                                      procuracaoDoInventariante:
+                                          procuracaoDoInventariante!,
+                                      certidaoDeObito: certidaoDeObito!,
+                                      documentoCpf: documentoCpf!,
+                                      enderecoDoInventariante:
+                                          enderecoDoInventariante!,
+                                      testamento: testamento!,
+                                      transferenciaDeAtivos:
+                                          transferenciaDeAtivos!,
+                                    );
                               },
                             ),
                           ),

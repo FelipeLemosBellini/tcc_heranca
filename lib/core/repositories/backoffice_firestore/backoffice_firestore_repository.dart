@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
@@ -213,6 +214,37 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       return Left(
         ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
       );
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, void>> updateInheritanceStatus({
+    required String requesterId,
+    required String testatorCpf,
+    required HeirStatus status,
+  }) async {
+    try {
+      final query = await _firestore
+          .collection('inheritance')
+          .where('requestById', isEqualTo: requesterId)
+          .where('cpf', isEqualTo: testatorCpf)
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        return left(
+          ExceptionMessage('Processo de herança não encontrado para atualização.'),
+        );
+      }
+
+      await query.docs.first.reference.update({
+        'heirStatus': status.value,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      return const Right(null);
+    } catch (e) {
+      return left(ExceptionMessage('Erro ao atualizar status da herança: $e'));
     }
   }
 }

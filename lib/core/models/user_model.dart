@@ -10,6 +10,7 @@ class UserModel {
   final bool? isAdmin;
   KycStatus kycStatus;
   bool hasVault;
+  DateTime? createdAt;
 
   UserModel({
     required this.name,
@@ -21,6 +22,7 @@ class UserModel {
     this.address,
     this.id,
     this.hasVault = false,
+    this.createdAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,6 +36,7 @@ class UserModel {
       "isAdmin": isAdmin,
       "id": id,
       "hasVault": hasVault,
+      "createdAt": createdAt?.toIso8601String(),
     };
   }
 
@@ -48,6 +51,20 @@ class UserModel {
       isAdmin: map['isAdmin'] ?? false,
       id: map['id'] ?? "",
       hasVault: map['hasVault'] ?? false,
+      createdAt: _parseDate(map['createdAt']),
     );
+  }
+}
+
+DateTime? _parseDate(dynamic value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+  try {
+    return DateTime.parse(value.toString());
+  } catch (_) {
+    return null;
   }
 }

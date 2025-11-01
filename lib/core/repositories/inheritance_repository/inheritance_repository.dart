@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
@@ -146,6 +147,23 @@ class InheritanceRepository {
       return Right(inheritances);
     } catch (e) {
       return Left(ExceptionMessage('Erro ao buscar heranças: ${e.toString()}'));
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> updateStatus({
+    required String inheritanceId,
+    required HeirStatus status,
+    Map<String, dynamic>? additionalData,
+  }) async {
+    try {
+      await firestore.collection('inheritance').doc(inheritanceId).update({
+        'heirStatus': status.value,
+        'updatedAt': FieldValue.serverTimestamp(),
+        if (additionalData != null) ...additionalData,
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao atualizar status: ${e.toString()}'));
     }
   }
 }

@@ -84,8 +84,6 @@ abstract class DI {
     getIt.registerFactory<RequestInheritanceController>(
       () => RequestInheritanceController(
         inheritanceRepository: getIt.get<InheritanceRepository>(),
-        userRepository: getIt.get<UserRepository>(),
-        storageRepository: getIt.get<StorageRepository>(),
       ),
     );
 

@@ -40,6 +40,7 @@ class CreateAccountController extends BaseController {
           name: name,
           email: email,
           kycStatus: KycStatus.waiting,
+          createdAt: DateTime.now(),
         );
 
         final profileResponse = await userRepository.createProfile(newUser);
