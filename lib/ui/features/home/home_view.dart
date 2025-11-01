@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/heir/heir/heir_view.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
-import 'package:tcc/ui/features/home/wallet/wallet_view.dart';
 import 'package:tcc/ui/features/home/widgets/drawer/drawer_home_widget.dart';
-import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_view.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
@@ -26,12 +24,11 @@ class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const WalletView(),
     const TestatorView(),
     const HeirView(),
   ];
 
-  final List<String> _titles = ['Carteira', 'Meu cofre', 'Heranças'];
+  final List<String> _titles = ['Meu cofre', 'Heranças'];
 
   late PageController _pageController;
 
@@ -99,10 +96,10 @@ class _HomeViewState extends State<HomeView> {
           onItemTapped: _onItemTapped,
         ),
         floatingActionButton:
-            _selectedIndex == 2
+            _selectedIndex == 1
                 ? FloatingActionButton(
                   onPressed: () {
-                    if (_selectedIndex == 2) {
+                    if (_selectedIndex == 1) {
                       context.push(RouterApp.requestVault);
                     }
                   },
@@ -111,7 +108,7 @@ class _HomeViewState extends State<HomeView> {
                 )
                 : null,
         floatingActionButtonLocation:
-            _selectedIndex == 2 ? FloatingActionButtonLocation.endFloat : null,
+            _selectedIndex == 1 ? FloatingActionButtonLocation.endFloat : null,
       ),
     );
   }

@@ -26,10 +26,10 @@ class BuyVaultPopUp extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("Compre seu cofre", style: AppFonts.bodyHeadBold),
+          Text("Adquira seu cofre", style: AppFonts.bodyHeadBold),
           SizedBox(height: 4),
           Text(
-            "Para começar a utilizar nosso serviço de armazenamento de Ethereum você precisa conectar sua carteira e pagar a taxa  de 0.1 ETH.",
+            "Conecte sua carteira e realize a confirmação da transação para habilitar o seu cofre",
             style: AppFonts.bodySmallRegular,
             textAlign: TextAlign.center,
           ),
