@@ -4,6 +4,7 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_view.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_testators_view.dart';
 import 'package:tcc/ui/features/backoffice/list_users/list_users_view.dart';
+import 'package:tcc/ui/features/backoffice/completed_processes/completed_processes_view.dart';
 import 'package:tcc/ui/features/home/about_us/about_us_view.dart';
 import 'package:tcc/ui/features/home/home_view.dart';
 
@@ -14,6 +15,12 @@ abstract class AdminRoutes {
       path: RouterApp.listUsers,
       builder: (BuildContext context, GoRouterState state) {
         return const ListUsersView();
+      },
+    ),
+    GoRoute(
+      path: RouterApp.completedProcesses,
+      builder: (BuildContext context, GoRouterState state) {
+        return const CompletedProcessesView();
       },
     ),
     GoRoute(

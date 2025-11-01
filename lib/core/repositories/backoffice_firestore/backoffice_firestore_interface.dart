@@ -4,6 +4,7 @@ import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/testator_summary.dart';
+import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/models/user_model.dart';
 
 abstract class BackofficeFirestoreInterface {
@@ -27,6 +28,8 @@ abstract class BackofficeFirestoreInterface {
     required String testatorCpf,
     required HeirStatus status,
   });
+
+  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>> getCompletedInheritances();
 
   Future<Either<ExceptionMessage, void>> changeStatusDocument({
     required String documentId,

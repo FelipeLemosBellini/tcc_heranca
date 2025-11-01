@@ -322,13 +322,19 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                 AlertHelper.showAlertSnackBar(
                   context: context,
                   alertData: AlertData(
-                    message: 'Documentos enviados com sucesso',
+                    message: hasInvalidDocuments
+                        ? 'Análise concluída: existem documentos reprovados.'
+                        : 'Documentos aprovados com sucesso!',
                     errorType: ErrorType.success,
                   ),
                 );
                 eventBus.fire(UpdateUsersEvent());
                 if (!mounted) return;
-                context.go(RouterApp.listUsers);
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(RouterApp.listUsers);
+                }
               },
               text: "Enviar",
             ),
