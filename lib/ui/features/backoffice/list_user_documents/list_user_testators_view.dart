@@ -48,15 +48,51 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
               title: title,
               onTap: () => context.pop(),
             ),
-            body: _controller.testators.isEmpty
-                ? const Center(
+            body: ListView(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    context.push(
+                      RouterApp.listDocuments,
+                      extra: {
+                        'userId': widget.requesterId,
+                      },
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 24, right: 24, top: 24),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const ListTile(
+                      iconColor: Colors.white,
+                      leading: Icon(Icons.person_outline),
+                      title: Text(
+                        'Documentos do solicitante',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        'Inclui KYC e outros documentos do usuário.',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                if (_controller.testators.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     child: Text('Nenhum processo de herança pendente.'),
                   )
-                : ListView.builder(
-                    itemCount: _controller.testators.length,
-                    padding: const EdgeInsets.only(top: 24),
-                    itemBuilder: (context, index) {
-                      final testator = _controller.testators[index];
+                else
+                  ..._controller.testators.map(
+                    (testator) {
                       return GestureDetector(
                         onTap: () {
                           context.push(
@@ -69,10 +105,10 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                           );
                         },
                         child: Container(
-                          margin: EdgeInsets.only(
+                          margin: const EdgeInsets.only(
                             left: 24,
                             right: 24,
-                            top: index == 0 ? 0 : 12,
+                            top: 12,
                           ),
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -100,6 +136,8 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                       );
                     },
                   ),
+              ],
+            ),
           ),
         );
       },
