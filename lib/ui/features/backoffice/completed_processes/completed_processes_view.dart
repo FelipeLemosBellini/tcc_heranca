@@ -66,6 +66,8 @@ class _CompletedProcessesViewState extends State<CompletedProcessesView> {
                       itemCount: _controller.processes.length,
                       itemBuilder: (context, index) {
                         final process = _controller.processes[index];
+                        final responsibleName =
+                            _controller.responsibleNameOf(process.requestById);
                         return Container(
                           margin: EdgeInsets.only(bottom: index == _controller.processes.length - 1 ? 32 : 16),
                           padding: const EdgeInsets.all(16),
@@ -84,7 +86,7 @@ class _CompletedProcessesViewState extends State<CompletedProcessesView> {
                               const SizedBox(height: 4),
                               Text('CPF: ${process.cpf?.formatCpf() ?? '---'}'),
                               const SizedBox(height: 4),
-                              Text('Advogado: ${process.requestById ?? '---'}'),
+                              Text('Responsável: $responsibleName'),
                               const SizedBox(height: 4),
                               Text('Finalizado em: ${process.updatedAt?.formatDateWithHour() ?? '---'}'),
                               const SizedBox(height: 12),

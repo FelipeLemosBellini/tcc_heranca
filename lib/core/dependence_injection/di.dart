@@ -156,6 +156,7 @@ abstract class DI {
     getIt.registerFactory(
       () => CompletedProcessesController(
         backofficeFirestoreInterface: getIt.get<BackofficeFirestoreRepository>(),
+        userRepository: getIt.get<UserRepository>(),
       ),
     );
 
