@@ -166,4 +166,33 @@ class InheritanceRepository {
       return Left(ExceptionMessage('Erro ao atualizar status: ${e.toString()}'));
     }
   }
+
+  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByInheritance({
+    required String requesterId,
+    required String testatorCpf,
+  }) async {
+    try {
+      final snapshot = await firestore
+          .collection('documents')
+          .where('idDocument', isEqualTo: requesterId)
+          .where('content', isEqualTo: testatorCpf)
+          .get();
+
+      final documents = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return Document.fromMap(data)
+          ..id = doc.id
+          ..idDocument = doc.id
+          ..pathStorage = data['pathStorage'];
+      }).toList();
+
+      documents.sort(
+        (a, b) => b.uploadedAt.compareTo(a.uploadedAt),
+      );
+
+      return Right(documents);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao buscar documentos: ${e.toString()}'));
+    }
+  }
 }

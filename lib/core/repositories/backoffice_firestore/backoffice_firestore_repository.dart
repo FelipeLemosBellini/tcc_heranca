@@ -79,12 +79,18 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     required String userId,
     String? testatorCpf,
     EnumDocumentsFrom? from,
+    bool onlyPending = true,
   }) async {
     try {
-      var query = _firestore
-          .collection('documents')
-          .where('idDocument', isEqualTo: userId)
-          .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name);
+      var query =
+          _firestore.collection('documents').where('idDocument', isEqualTo: userId);
+
+      if (onlyPending) {
+        query = query.where(
+          'reviewStatus',
+          isEqualTo: ReviewStatusDocument.pending.name,
+        );
+      }
 
       if (from != null) {
         query = query.where('from', isEqualTo: from.name);

@@ -7,7 +7,6 @@ import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/heir/heir/heir_controller.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
-import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 import 'package:tcc/ui/widgets/cards/card_testament_info_widget.dart';
 import 'package:tcc/ui/widgets/empty_list_widgets/empty_list_testament_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -84,38 +83,81 @@ class _HeirViewState extends State<HeirView>
                         ),
                         if (canRequestInheritance) ...[
                           const SizedBox(height: 12),
-                          PillButtonWidget(
-                            text: 'Enviar documentos da herança',
-                            showArrow: true,
-                            onTap: () {
-                              context.push(
-                                RouterApp.requestInheritance,
-                                extra: testament,
-                              );
-                            },
-                          ),
-                        ] else if (isFinished) ...[
-                          const SizedBox(height: 12),
                           Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.info_outline, color: Colors.blue.shade700),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Consulta aprovada. Acesse os detalhes para enviar os documentos da herança.',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.blue.shade700),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else if (status == HeirStatus.transferenciaSaldoSolicitado) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.watch_later_outlined, color: Colors.orange.shade800),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Documentos complementares aguardando aprovação do backoffice',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.orange.shade800),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else if (isFinished) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.check_circle, color: Colors.green.shade700),
                                 const SizedBox(width: 8),
-                                Text(
-                                  'Processo finalizado',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge
-                                      ?.copyWith(color: Colors.green.shade700),
+                                Expanded(
+                                  child: Text(
+                                    'Processo finalizado',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.green.shade700),
+                                  ),
                                 ),
                               ],
                             ),
@@ -123,25 +165,24 @@ class _HeirViewState extends State<HeirView>
                         ] else if (status == HeirStatus.transferenciaSaldoRecusado) ...[
                           const SizedBox(height: 12),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.error_outline, color: Colors.red.shade700),
                                 const SizedBox(width: 8),
-                                Text(
-                                  'Transferência recusada',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge
-                                      ?.copyWith(color: Colors.red.shade700),
+                                Expanded(
+                                  child: Text(
+                                    'Transferência recusada',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(color: Colors.red.shade700),
+                                  ),
                                 ),
                               ],
                             ),

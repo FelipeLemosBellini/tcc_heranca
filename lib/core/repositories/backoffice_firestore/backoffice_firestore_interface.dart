@@ -15,6 +15,7 @@ abstract class BackofficeFirestoreInterface {
     required String userId,
     String? testatorCpf,
     EnumDocumentsFrom? from,
+    bool onlyPending = true,
   });
 
   Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({

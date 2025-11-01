@@ -154,7 +154,10 @@ abstract class DI {
 
     getIt.registerFactory<VaultController>(() => VaultController());
     getIt.registerFactory<SeeDetailsInheritanceController>(
-      () => SeeDetailsInheritanceController(),
+      () => SeeDetailsInheritanceController(
+        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        storageRepository: getIt.get<StorageRepository>(),
+      ),
     );
   }
 }

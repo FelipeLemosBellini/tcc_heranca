@@ -6,7 +6,6 @@ import 'package:tcc/core/helpers/extensions.dart';
 import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
-import 'package:tcc/ui/widgets/buttons/pill_button_widget.dart';
 
 class CardTestamentInfoWidget extends StatelessWidget {
   final RequestInheritanceModel testament;
@@ -22,16 +21,18 @@ class CardTestamentInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: seeDetails,
-      child: Card(
-        color: AppColors.primary6,
-        shadowColor: AppColors.primaryLight5,
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      child: SizedBox(
+        width: double.infinity,
+        child: Card(
+          color: AppColors.primary6,
+          shadowColor: AppColors.primaryLight5,
+          elevation: 8,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -107,7 +108,8 @@ class CardTestamentInfoWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

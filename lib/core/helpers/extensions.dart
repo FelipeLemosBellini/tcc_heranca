@@ -9,5 +9,3 @@ extension StringExtensions on String {
     return '${substring(0, 3)}.${substring(3, 6)}.${substring(6, 9)}-${substring(9, 11)}';
   }
 }
-
-extension DateTimeExtension on DateTime {}

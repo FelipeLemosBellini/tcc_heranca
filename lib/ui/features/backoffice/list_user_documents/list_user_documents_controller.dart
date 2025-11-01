@@ -52,6 +52,7 @@ class ListUserDocumentsController extends BaseController {
     EnumDocumentsFrom? from,
   }) async {
     _currentTestatorCpf = testatorCpf;
+    _hasFinalDocuments = false;
 
     for (final controller in reasonControllers) {
       controller.dispose();
@@ -69,6 +70,7 @@ class ListUserDocumentsController extends BaseController {
       userId: userId,
       testatorCpf: testatorCpf,
       from: from,
+      onlyPending: testatorCpf != null,
     );
 
     response.fold((error) {
