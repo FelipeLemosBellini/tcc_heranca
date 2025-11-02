@@ -19,9 +19,9 @@ class BottomNavigationBarHomeWidget extends StatelessWidget {
       onDestinationSelected: onItemTapped,
       destinations: [
         NavigationDestination(
-          icon: Icon(CupertinoIcons.doc_text),
-          selectedIcon: Icon(CupertinoIcons.doc_text_fill),
-          label: 'Testador',
+          icon: Icon(CupertinoIcons.money_dollar),
+          selectedIcon: Icon(CupertinoIcons.money_dollar),
+          label: 'Cofre',
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
