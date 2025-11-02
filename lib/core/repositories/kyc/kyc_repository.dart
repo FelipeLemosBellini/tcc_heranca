@@ -89,6 +89,40 @@ class KycRepository implements KycRepositoryInterface {
   }) async {
     try {
       final uid = firebaseAuth.currentUser?.uid;
+      if (uid == null) {
+        return Left(ExceptionMessage("Erro ao buscar usuário"));
+      }
+
+      final cleanCpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+      final cleanRg = rg.trim();
+
+      if (cleanCpf.isEmpty || cleanRg.isEmpty) {
+        return Left(ExceptionMessage("CPF e RG são obrigatórios."));
+      }
+
+      final cpfQuery = await firestore
+          .collection('users')
+          .where('cpf', isEqualTo: cleanCpf)
+          .get();
+
+      final cpfAlreadyUsed =
+          cpfQuery.docs.any((doc) => doc.id != uid && (doc.data()['cpf'] ?? '') == cleanCpf);
+
+      if (cpfAlreadyUsed) {
+        return Left(ExceptionMessage('Este CPF já está em uso por outra conta.'));
+      }
+
+      final rgQuery = await firestore
+          .collection('users')
+          .where('rg', isEqualTo: cleanRg)
+          .get();
+
+      final rgAlreadyUsed =
+          rgQuery.docs.any((doc) => doc.id != uid && (doc.data()['rg'] ?? '') == cleanRg);
+
+      if (rgAlreadyUsed) {
+        return Left(ExceptionMessage('Este RG já está em uso por outra conta.'));
+      }
       DocumentSnapshot<Map<String, dynamic>>? response =
           await firestore.collection("users").doc(uid).get();
       late UserModel userModel;
@@ -96,8 +130,8 @@ class KycRepository implements KycRepositoryInterface {
         userModel = UserModel.fromMap(response.data()!);
       }
       userModel.kycStatus = kycStatus;
-      userModel.cpf = cpf;
-      userModel.rg = rg;
+      userModel.cpf = cleanCpf;
+      userModel.rg = cleanRg;
       await firestore.collection('users').doc(uid).update(userModel.toMap());
 
       return Right(userModel.kycStatus);

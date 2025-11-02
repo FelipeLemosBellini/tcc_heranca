@@ -11,6 +11,7 @@ import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
+import 'package:tcc/ui/widgets/input_formatters/cpf_input_formatter.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
 
 class KycView extends StatefulWidget {
@@ -111,6 +112,7 @@ class _KycViewState extends State<KycView> {
                           controller: cpfController,
                           keyboardType: TextInputType.number,
                           focusNode: cpfFocus,
+                          inputFormatters: [CpfInputFormatter()],
                         ),
                         const SizedBox(height: 16),
                         TextFieldWidget(

@@ -11,6 +11,7 @@ import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
+import 'package:tcc/ui/widgets/input_formatters/cpf_input_formatter.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class RequestVaultView extends StatefulWidget {
@@ -70,8 +71,8 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             controller:
                                 _requestVaultController.cpfTestatorController,
                             keyboardType: TextInputType.number,
-                            onlyNumber: true,
                             focusNode: _requestVaultController.cpfTestatorFocus,
+                            inputFormatters: [CpfInputFormatter()],
                           ),
                         ],
                       ),

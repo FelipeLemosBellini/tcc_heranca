@@ -13,6 +13,7 @@ class TextFieldWidget extends StatefulWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final bool onlyNumber;
+  final List<TextInputFormatter>? inputFormatters;
 
   const TextFieldWidget({
     super.key,
@@ -25,6 +26,7 @@ class TextFieldWidget extends StatefulWidget {
     this.obscureText = false,
     this.onlyNumber = false,
     this.keyboardType = TextInputType.text,
+    this.inputFormatters,
   });
 
   @override
@@ -77,7 +79,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
           style: AppFonts.labelSmallLight,
           inputFormatters: [
-            if (widget.onlyNumber) FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*$')),
+            ...?widget.inputFormatters,
+            if (widget.onlyNumber)
+              FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*$')),
           ],
           decoration: InputDecoration(
             fillColor: AppColors.primary7,

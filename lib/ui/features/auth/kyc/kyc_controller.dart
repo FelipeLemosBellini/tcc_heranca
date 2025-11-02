@@ -158,10 +158,22 @@ class KycController extends BaseController {
       cpf: cpf,
       rg: rg,
     );
-
-    responseUpdateKycStatus.fold((error) {}, (success) {});
+    var statusOk = false;
+    responseUpdateKycStatus.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message: error.errorMessage,
+            errorType: ErrorType.error,
+          ),
+        );
+      },
+      (_) {
+        statusOk = true;
+      },
+    );
 
     setLoading(false);
-    return cpfOk && proofOk;
+    return cpfOk && proofOk && statusOk;
   }
 }

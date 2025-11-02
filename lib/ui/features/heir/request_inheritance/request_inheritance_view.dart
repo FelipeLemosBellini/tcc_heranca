@@ -11,6 +11,7 @@ import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
+import 'package:tcc/ui/widgets/input_formatters/cpf_input_formatter.dart';
 
 class RequestInheritanceView extends StatefulWidget {
   final RequestInheritanceModel inheritance;
@@ -83,8 +84,8 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             hintText: 'CPF (somente números)',
                             controller: cpfController,
                             keyboardType: TextInputType.number,
-                            onlyNumber: true,
                             focusNode: cpfFocus,
+                            inputFormatters: [CpfInputFormatter()],
                           ),
                           const SizedBox(height: 16),
                           TextFieldWidget(
