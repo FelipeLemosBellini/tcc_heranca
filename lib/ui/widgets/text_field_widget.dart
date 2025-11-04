@@ -14,6 +14,7 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType keyboardType;
   final bool onlyNumber;
   final List<TextInputFormatter>? inputFormatters;
+  final bool enabled;
 
   const TextFieldWidget({
     super.key,
@@ -27,6 +28,7 @@ class TextFieldWidget extends StatefulWidget {
     this.onlyNumber = false,
     this.keyboardType = TextInputType.text,
     this.inputFormatters,
+    this.enabled = true,
   });
 
   @override
@@ -72,6 +74,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   ],
         ),
         child: TextField(
+          enabled: widget.enabled,
           controller: widget.controller,
           focusNode: widget.focusNode,
           keyboardType: widget.keyboardType,

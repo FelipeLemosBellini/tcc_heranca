@@ -106,7 +106,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                           Expanded(
                             child: ElevatedButtonWidget(
                               text: 'Enviar',
-                              onTap: () {
+                              onTap: () async {
                                 if (procuracaoDoInventariante == null ||
                                     certidaoDeObito == null) {
                                   _requestVaultController.setMessage(
@@ -118,16 +118,21 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                                   return;
                                 }
 
-                                _requestVaultController
-                                    .createRequestInheritance(
-                                      certificadoDeObito: certidaoDeObito!,
-                                      procuracaoAdvogado:
-                                          procuracaoDoInventariante!,
-                                      cpfTestator:
-                                          _requestVaultController
-                                              .cpfTestatorController
-                                              .text,
-                                    );
+                                final success =
+                                    await _requestVaultController
+                                        .createRequestInheritance(
+                                          certificadoDeObito: certidaoDeObito!,
+                                          procuracaoAdvogado:
+                                              procuracaoDoInventariante!,
+                                          cpfTestator:
+                                              _requestVaultController
+                                                  .cpfTestatorController
+                                                  .text,
+                                        );
+                                if (!mounted) return;
+                                if (success) {
+                                  context.pop();
+                                }
                               },
                             ),
                           ),

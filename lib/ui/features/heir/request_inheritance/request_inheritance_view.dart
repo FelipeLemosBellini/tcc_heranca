@@ -47,6 +47,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
   void initState() {
     super.initState();
     cpfController.text = widget.inheritance.cpf ?? '';
+    rgController.text = widget.inheritance.rg ?? '';
   }
 
   @override
@@ -86,6 +87,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             keyboardType: TextInputType.number,
                             focusNode: cpfFocus,
                             inputFormatters: [CpfInputFormatter()],
+                            enabled: false,
                           ),
                           const SizedBox(height: 16),
                           TextFieldWidget(
@@ -93,6 +95,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                             controller: rgController,
                             focusNode: rgFocus,
                             onlyNumber: true,
+                            enabled: false,
                           ),
                         ],
                       ),
@@ -182,7 +185,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                                   );
                                   return;
                                 }
-                                await _requestInheritanceController
+                                final success = await _requestInheritanceController
                                     .createRequestInheritance(
                                       inheritance: widget.inheritance,
                                       rg: rgController.text,
@@ -196,6 +199,10 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                                       transferenciaDeAtivos:
                                           transferenciaDeAtivos!,
                                     );
+                                if (!mounted) return;
+                                if (success) {
+                                  context.pop();
+                                }
                               },
                             ),
                           ),

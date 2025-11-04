@@ -20,7 +20,7 @@ class RequestInheritanceController extends BaseController {
     required this.inheritanceRepository,
   });
 
-  Future<void> createRequestInheritance({
+  Future<bool> createRequestInheritance({
     required RequestInheritanceModel inheritance,
     required String rg,
     required XFile procuracaoDoInventariante,
@@ -42,7 +42,7 @@ class RequestInheritanceController extends BaseController {
           errorType: ErrorType.error,
         ),
       );
-      return;
+      return false;
     }
 
     if (rg.isEmpty) {
@@ -52,7 +52,7 @@ class RequestInheritanceController extends BaseController {
           errorType: ErrorType.warning,
         ),
       );
-      return;
+      return false;
     }
 
     if (!_hasAllFiles([
@@ -69,7 +69,7 @@ class RequestInheritanceController extends BaseController {
           errorType: ErrorType.warning,
         ),
       );
-      return;
+      return false;
     }
 
     setLoading(true);
@@ -158,6 +158,8 @@ class RequestInheritanceController extends BaseController {
       if (hasError) break;
     }
 
+    var completed = false;
+
     if (!hasError) {
       inheritance.rg = rg;
       inheritance.heirStatus = HeirStatus.transferenciaSaldoSolicitado;
@@ -185,11 +187,13 @@ class RequestInheritanceController extends BaseController {
             ),
           );
           eventBus.fire(TestamentEvent());
+          completed = true;
         },
       );
     }
 
     setLoading(false);
+    return !hasError && completed;
   }
 
   bool _hasAllFiles(List<XFile?> files) {
