@@ -47,9 +47,9 @@ abstract class DI {
     await getIt.allReady();
     //Repositories
     getIt.registerSingleton<RpcRepository>(RpcRepository());
-    getIt.registerSingleton<UserRepositoryInterface>(UserRepository());
-    getIt.registerLazySingleton<StorageRepositoryInterface>(() => StorageRepository());
-    getIt.registerLazySingleton<KycRepositoryInterface>(
+    getIt.registerSingleton<UserRepository>(UserRepository());
+    getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
+    getIt.registerLazySingleton<KycRepository>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
     getIt.registerLazySingleton<FirebaseAuthRepository>(
