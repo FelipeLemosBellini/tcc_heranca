@@ -31,14 +31,11 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> createProfile(UserModel data) async {
+  Future<Either<ExceptionMessage, void>> createProfile(UserModel data, String id) async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) throw Exception('Sem usuário autenticado');
-
       final now = DateTime.now();
       data.createdAt = data.createdAt ?? now;
-      data.id = user.id;
+      data.id = id;
       await _supabase
           .from(DbTables.users)
           .upsert(data.toMap(), onConflict: 'id');

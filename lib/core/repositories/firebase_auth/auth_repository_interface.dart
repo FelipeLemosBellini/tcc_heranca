@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 
-abstract class FirebaseAuthRepositoryInterface {
+abstract class AuthRepositoryInterface {
   Future<Either<ExceptionMessage, String>> createAccount({
     required String email,
     required String password,

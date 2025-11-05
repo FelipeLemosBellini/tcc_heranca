@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
+import 'package:tcc/core/repositories/firebase_auth/auth_repository_interface.dart';
 
-class FirebaseAuthRepository implements FirebaseAuthRepositoryInterface {
+class AuthRepository implements AuthRepositoryInterface {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
 
   @override

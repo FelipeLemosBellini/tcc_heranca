@@ -4,17 +4,14 @@ import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_repository.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
+import 'package:tcc/core/repositories/firebase_auth/auth_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/rpc_repository/rpc_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
-import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
 import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.dart';
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
@@ -55,8 +52,8 @@ abstract class DI {
     getIt.registerLazySingleton<KycRepository>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
-    getIt.registerLazySingleton<FirebaseAuthRepository>(
-      () => FirebaseAuthRepository(),
+    getIt.registerLazySingleton<AuthRepository>(
+      () => AuthRepository(),
     );
     getIt.registerLazySingleton<KycRepositoryInterface>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
@@ -76,18 +73,18 @@ abstract class DI {
     );
     getIt.registerFactory<ForgotPasswordController>(
       () => ForgotPasswordController(
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
+        firebaseAuthRepository: getIt.get<AuthRepository>(),
       ),
     );
     getIt.registerFactory<CreateAccountController>(
       () => CreateAccountController(
         userRepository: getIt.get<UserRepository>(),
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
+        authRepository: getIt.get<AuthRepository>(),
       ),
     );
     getIt.registerFactory(
       () => LoginController(
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
+        firebaseAuthRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
         kycRepository: getIt.get<KycRepository>(),
@@ -115,7 +112,7 @@ abstract class DI {
     //Controllers LazySingletons
     getIt.registerLazySingleton(
       () => HomeController(
-        authRepository: getIt.get<FirebaseAuthRepository>(),
+        authRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
       ),

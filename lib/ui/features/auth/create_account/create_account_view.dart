@@ -123,7 +123,8 @@ class _CreateAccountViewState extends State<CreateAccountView> {
         password: passwordController.text,
       );
       if (successCreateAccount) {
-        context.go(RouterApp.kycStep);
+        print("successCreateAccount");
+        // context.go(RouterApp.kycStep);
       }
     } else {
       controller.setMessage(
