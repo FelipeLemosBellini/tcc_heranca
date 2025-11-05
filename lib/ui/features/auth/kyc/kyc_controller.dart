@@ -10,10 +10,11 @@ import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
+import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class KycController extends BaseController {
-  final KycRepository kycRepository;
+  final KycRepositoryInterface kycRepository;
 
   KycController({required this.kycRepository});
 

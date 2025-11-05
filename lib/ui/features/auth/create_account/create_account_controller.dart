@@ -3,14 +3,16 @@ import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
+import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 import '../../../../core/exceptions/exception_message.dart';
 
 class CreateAccountController extends BaseController {
-  final FirebaseAuthRepository firebaseAuthRepository;
-  final UserRepository userRepository;
+  final FirebaseAuthRepositoryInterface firebaseAuthRepository;
+  final UserRepositoryInterface userRepository;
 
   CreateAccountController({
     required this.firebaseAuthRepository,

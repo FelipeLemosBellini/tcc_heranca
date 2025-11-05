@@ -7,11 +7,13 @@ import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 
-class StorageRepository {
+class StorageRepository implements StorageRepositoryInterface {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  @override
   Future<Either<ExceptionMessage, void>> saveFile({
     required XFile xFile,
     required String namePath,
@@ -32,6 +34,7 @@ class StorageRepository {
     }
   }
 
+  @override
   Future<File?> getFile({required String path}) async {
     final ref = FirebaseStorage.instance.ref(path);
     final tempDir = await getTemporaryDirectory();

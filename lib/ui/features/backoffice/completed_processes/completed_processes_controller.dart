@@ -2,11 +2,12 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class CompletedProcessesController extends BaseController {
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
-  final UserRepository userRepository;
+  final UserRepositoryInterface userRepository;
 
   CompletedProcessesController({
     required this.backofficeFirestoreInterface,

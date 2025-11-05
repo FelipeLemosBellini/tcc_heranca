@@ -10,6 +10,8 @@ import 'package:tcc/core/events/testament_event.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
+import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 // Reaproveitando os seus modelos/enums:
@@ -21,8 +23,8 @@ import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 
 class RequestVaultController extends BaseController {
-  final UserRepository userRepository;
-  final InheritanceRepository inheritanceRepository;
+  final UserRepositoryInterface userRepository;
+  final InheritanceRepositoryInterface inheritanceRepository;
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
   RequestVaultController({

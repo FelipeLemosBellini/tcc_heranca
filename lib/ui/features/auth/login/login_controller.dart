@@ -8,13 +8,15 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
+import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class LoginController extends BaseController {
   final FirebaseAuthRepositoryInterface firebaseAuthRepository;
-  final UserRepository userRepository;
-  final KycRepository kycRepository;
+  final UserRepositoryInterface userRepository;
+  final KycRepositoryInterface kycRepository;
   final LocalStorageService localStorageService;
 
   LoginController({

@@ -3,10 +3,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
+import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ForgotPasswordController extends BaseController {
-  final FirebaseAuthRepository firebaseAuthRepository;
+  final FirebaseAuthRepositoryInterface firebaseAuthRepository;
 
   ForgotPasswordController({required this.firebaseAuthRepository});
 

@@ -10,12 +10,13 @@ import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 
 class KycRepository implements KycRepositoryInterface {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  final StorageRepository storageRepository;
+  final StorageRepositoryInterface storageRepository;
 
   KycRepository({required this.storageRepository});
 
@@ -66,6 +67,7 @@ class KycRepository implements KycRepositoryInterface {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, KycStatus>> getStatusKyc() async {
     try {
       final uid = firebaseAuth.currentUser?.uid;
@@ -82,6 +84,7 @@ class KycRepository implements KycRepositoryInterface {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> setStatusKyc({
     required KycStatus kycStatus,
     required String cpf,
@@ -100,28 +103,36 @@ class KycRepository implements KycRepositoryInterface {
         return Left(ExceptionMessage("CPF e RG são obrigatórios."));
       }
 
-      final cpfQuery = await firestore
-          .collection('users')
-          .where('cpf', isEqualTo: cleanCpf)
-          .get();
+      final cpfQuery =
+          await firestore
+              .collection('users')
+              .where('cpf', isEqualTo: cleanCpf)
+              .get();
 
-      final cpfAlreadyUsed =
-          cpfQuery.docs.any((doc) => doc.id != uid && (doc.data()['cpf'] ?? '') == cleanCpf);
+      final cpfAlreadyUsed = cpfQuery.docs.any(
+        (doc) => doc.id != uid && (doc.data()['cpf'] ?? '') == cleanCpf,
+      );
 
       if (cpfAlreadyUsed) {
-        return Left(ExceptionMessage('Este CPF já está em uso por outra conta.'));
+        return Left(
+          ExceptionMessage('Este CPF já está em uso por outra conta.'),
+        );
       }
 
-      final rgQuery = await firestore
-          .collection('users')
-          .where('rg', isEqualTo: cleanRg)
-          .get();
+      final rgQuery =
+          await firestore
+              .collection('users')
+              .where('rg', isEqualTo: cleanRg)
+              .get();
 
-      final rgAlreadyUsed =
-          rgQuery.docs.any((doc) => doc.id != uid && (doc.data()['rg'] ?? '') == cleanRg);
+      final rgAlreadyUsed = rgQuery.docs.any(
+        (doc) => doc.id != uid && (doc.data()['rg'] ?? '') == cleanRg,
+      );
 
       if (rgAlreadyUsed) {
-        return Left(ExceptionMessage('Este RG já está em uso por outra conta.'));
+        return Left(
+          ExceptionMessage('Este RG já está em uso por outra conta.'),
+        );
       }
       DocumentSnapshot<Map<String, dynamic>>? response =
           await firestore.collection("users").doc(uid).get();
@@ -149,7 +160,10 @@ class KycRepository implements KycRepositoryInterface {
           await firestore
               .collection('documents')
               .where('idDocument', isEqualTo: userId)
-              .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
+              .where(
+                'reviewStatus',
+                isEqualTo: ReviewStatusDocument.pending.name,
+              )
               .get();
       final docs =
           response.docs.map((doc) {

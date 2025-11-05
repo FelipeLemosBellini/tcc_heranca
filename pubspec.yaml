@@ -22,7 +22,6 @@ dependencies:
   url_launcher: ^6.2.4
   walletconnect_dart: ^0.0.11
   google_fonts: 6.0.0
-#  device_preview: ^1.2.0
   flutter_svg: ^2.0.17
   web3dart: ^2.7.1
   intl: ^0.19.0
@@ -33,6 +32,8 @@ dependencies:
   open_filex: ^4.7.0
   path_provider: ^2.1.5
   http: ^1.5.0
+  supabase_flutter: ^2.10.3
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +46,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - tcc_heranca.env
     - assets/
     - assets/backgrounds/background.png
     - assets/images/

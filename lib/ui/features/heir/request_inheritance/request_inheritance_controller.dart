@@ -10,10 +10,11 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
+import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class RequestInheritanceController extends BaseController {
-  final InheritanceRepository inheritanceRepository;
+  final InheritanceRepositoryInterface inheritanceRepository;
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
   RequestInheritanceController({

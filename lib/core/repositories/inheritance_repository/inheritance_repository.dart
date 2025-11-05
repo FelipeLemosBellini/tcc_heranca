@@ -7,7 +7,9 @@ import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/models/user_model.dart';
+import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 
 class InheritanceCreationResult {
   final String inheritanceId;
@@ -21,14 +23,15 @@ class InheritanceCreationResult {
   });
 }
 
-class InheritanceRepository {
+class InheritanceRepository implements InheritanceRepositoryInterface {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  final StorageRepository storageRepository;
+  final StorageRepositoryInterface storageRepository;
 
   InheritanceRepository({required this.storageRepository});
 
+  @override
   Future<Either<ExceptionMessage, InheritanceCreationResult>> createInheritance(
     RequestInheritanceModel requestInheritanceModel,
   ) async {
@@ -80,6 +83,7 @@ class InheritanceRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> submit({
     required Document document,
     required XFile xFile,
@@ -111,6 +115,7 @@ class InheritanceRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, List<RequestInheritanceModel>>>
   getInheritancesByUserId() async {
     try {
@@ -126,17 +131,15 @@ class InheritanceRepository {
               .get();
 
       var inheritances =
-          response.docs
-              .map((doc) {
-                final data = doc.data();
-                return RequestInheritanceModel.fromMap({
-                  ...data,
-                  'id': doc.id,
-                  'createdAt': (data['createdAt'] as Timestamp?)?.toDate(),
-                  'updatedAt': (data['updatedAt'] as Timestamp?)?.toDate(),
-                });
-              })
-              .toList();
+          response.docs.map((doc) {
+            final data = doc.data();
+            return RequestInheritanceModel.fromMap({
+              ...data,
+              'id': doc.id,
+              'createdAt': (data['createdAt'] as Timestamp?)?.toDate(),
+              'updatedAt': (data['updatedAt'] as Timestamp?)?.toDate(),
+            });
+          }).toList();
 
       inheritances.sort((a, b) {
         final dateA = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
@@ -150,6 +153,7 @@ class InheritanceRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> updateStatus({
     required String inheritanceId,
     required HeirStatus status,
@@ -163,36 +167,41 @@ class InheritanceRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ExceptionMessage('Erro ao atualizar status: ${e.toString()}'));
+      return Left(
+        ExceptionMessage('Erro ao atualizar status: ${e.toString()}'),
+      );
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByInheritance({
     required String requesterId,
     required String testatorCpf,
   }) async {
     try {
-      final snapshot = await firestore
-          .collection('documents')
-          .where('idDocument', isEqualTo: requesterId)
-          .where('content', isEqualTo: testatorCpf)
-          .get();
+      final snapshot =
+          await firestore
+              .collection('documents')
+              .where('idDocument', isEqualTo: requesterId)
+              .where('content', isEqualTo: testatorCpf)
+              .get();
 
-      final documents = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return Document.fromMap(data)
-          ..id = doc.id
-          ..idDocument = doc.id
-          ..pathStorage = data['pathStorage'];
-      }).toList();
+      final documents =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return Document.fromMap(data)
+              ..id = doc.id
+              ..idDocument = doc.id
+              ..pathStorage = data['pathStorage'];
+          }).toList();
 
-      documents.sort(
-        (a, b) => b.uploadedAt.compareTo(a.uploadedAt),
-      );
+      documents.sort((a, b) => b.uploadedAt.compareTo(a.uploadedAt));
 
       return Right(documents);
     } catch (e) {
-      return Left(ExceptionMessage('Erro ao buscar documentos: ${e.toString()}'));
+      return Left(
+        ExceptionMessage('Erro ao buscar documentos: ${e.toString()}'),
+      );
     }
   }
 }

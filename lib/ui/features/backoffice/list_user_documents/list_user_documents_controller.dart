@@ -11,11 +11,12 @@ import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ListUserDocumentsController extends BaseController {
   final KycRepositoryInterface kycRepositoryInterface;
-  final StorageRepository storageRepository;
+  final StorageRepositoryInterface storageRepository;
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
 
   ListUserDocumentsController({

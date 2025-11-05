@@ -6,9 +6,12 @@ import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_
 import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
+import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/rpc_repository/rpc_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
 import 'package:tcc/ui/features/auth/forgot_password/forgot_password_controller.dart';
 import 'package:tcc/ui/features/auth/login/login_controller.dart';
@@ -30,7 +33,7 @@ import 'package:tcc/ui/widgets/material_widgets/material_design_controller.dart'
 abstract class DI {
   static final GetIt getIt = GetIt.instance;
 
-  static void setDependencies() async {
+  static Future<void> setDependencies() async {
     getIt.registerLazySingleton<EventBus>(() => EventBus());
 
     //Controllers Notifiers
@@ -44,9 +47,9 @@ abstract class DI {
     await getIt.allReady();
     //Repositories
     getIt.registerSingleton<RpcRepository>(RpcRepository());
-    getIt.registerSingleton<UserRepository>(UserRepository());
-    getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
-    getIt.registerLazySingleton<KycRepository>(
+    getIt.registerSingleton<UserRepositoryInterface>(UserRepository());
+    getIt.registerLazySingleton<StorageRepositoryInterface>(() => StorageRepository());
+    getIt.registerLazySingleton<KycRepositoryInterface>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
     getIt.registerLazySingleton<FirebaseAuthRepository>(

@@ -1,19 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/user_model.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 
-class UserRepository {
+class UserRepository implements UserRepositoryInterface {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
+  @override
   Future<Either<ExceptionMessage, UserModel>> getUser() async {
     try {
       final doc =
           await firestore
               .collection("users")
-              .doc(firebaseAuth.currentUser?.uid)
+              .doc(_supabase.auth.currentSession?.user.id)
               .get();
 
       if (doc.exists && doc.data() != null) {
@@ -27,6 +30,7 @@ class UserRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> createProfile(UserModel data) async {
     try {
       final now = DateTime.now();
@@ -38,6 +42,7 @@ class UserRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, String>> getUserName(String userId) async {
     try {
       final doc = await firestore.collection("users").doc(userId).get();
