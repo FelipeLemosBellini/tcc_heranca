@@ -76,54 +76,54 @@ abstract class DI {
     );
     getIt.registerFactory<ForgotPasswordController>(
       () => ForgotPasswordController(
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepositoryInterface>(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
       ),
     );
     getIt.registerFactory<CreateAccountController>(
       () => CreateAccountController(
-        userRepository: getIt.get<UserRepositoryInterface>(),
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepositoryInterface>(),
+        userRepository: getIt.get<UserRepository>(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
       ),
     );
     getIt.registerFactory(
       () => LoginController(
-        firebaseAuthRepository: getIt.get<FirebaseAuthRepositoryInterface>(),
-        userRepository: getIt.get<UserRepositoryInterface>(),
+        firebaseAuthRepository: getIt.get<FirebaseAuthRepository>(),
+        userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
-        kycRepository: getIt.get<KycRepositoryInterface>(),
+        kycRepository: getIt.get<KycRepository>(),
       ),
     );
     getIt.registerFactory(() => LoginWalletController());
 
     getIt.registerFactory<RequestInheritanceController>(
       () => RequestInheritanceController(
-        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
+        inheritanceRepository: getIt.get<InheritanceRepository>(),
       ),
     );
 
     getIt.registerFactory<RequestVaultController>(
       () => RequestVaultController(
-        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
-        userRepository: getIt.get<UserRepositoryInterface>(),
+        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        userRepository: getIt.get<UserRepository>(),
       ),
     );
 
     getIt.registerFactory<KycController>(
-      () => KycController(kycRepository: getIt.get<KycRepositoryInterface>()),
+      () => KycController(kycRepository: getIt.get<KycRepository>()),
     );
 
     //Controllers LazySingletons
     getIt.registerLazySingleton(
       () => HomeController(
-        authRepository: getIt.get<FirebaseAuthRepositoryInterface>(),
-        userRepository: getIt.get<UserRepositoryInterface>(),
+        authRepository: getIt.get<FirebaseAuthRepository>(),
+        userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
       ),
     );
     getIt.registerLazySingleton(
       () => TestatorController(
         rpcRepository: getIt.get<RpcRepository>(),
-        userRepository: getIt.get<UserRepositoryInterface>(),
+        userRepository: getIt.get<UserRepository>(),
       ),
     );
     getIt.registerLazySingleton(
