@@ -1,3 +1,4 @@
+import 'package:tcc/core/constants/db_mappings.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 
 class RequestInheritanceModel {
@@ -27,12 +28,12 @@ class RequestInheritanceModel {
   factory RequestInheritanceModel.fromMap(Map<String, dynamic> json) {
     return RequestInheritanceModel(
       id: json['id'],
-      userId: json['userId'],
+      userId: json['userId'] ?? json['testatorId'],
       cpf: json['cpf'],
       name: json['name'],
-      requestById: json['requestById'],
-      heirStatus: HeirStatus.toEnum(json['heirStatus']) ??
-          HeirStatus.consultaSaldoSolicitado,
+      requestById: json['requestById'] ?? json['requestBy'],
+      heirStatus: DbMappings.heirStatusFromId(_tryParseInt(json['status']) ??
+              _tryParseInt(json['heirStatus'])),
       rg: json['rg'],
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
@@ -42,13 +43,16 @@ class RequestInheritanceModel {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
+      'testatorId': userId,
       'cpf': cpf,
       'name': name,
       'requestById': requestById,
-      'heirStatus': (heirStatus ?? HeirStatus.consultaSaldoSolicitado).value,
+      'requestBy': requestById,
+      'status':
+          DbMappings.heirStatusToId(heirStatus ?? HeirStatus.consultaSaldoSolicitado),
       'rg': rg,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }
@@ -64,4 +68,12 @@ DateTime? _parseDate(dynamic value) {
   } catch (_) {
     return null;
   }
+}
+
+int? _tryParseInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is String) return int.tryParse(value);
+  return null;
 }

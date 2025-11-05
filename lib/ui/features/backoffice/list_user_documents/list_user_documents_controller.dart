@@ -10,7 +10,6 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
@@ -99,12 +98,17 @@ class ListUserDocumentsController extends BaseController {
 
   Future<void> submit({required Document documents}) async {
     setLoading(true);
-    final decision = decisions[documents.idDocument]!;
+    final docId = documents.id;
+    if (docId == null) {
+      setLoading(false);
+      return;
+    }
+    final decision = decisions[docId]!;
     final status =
         decision ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
 
     final result = await kycRepositoryInterface.updateDocument(
-      docId: documents.idDocument!,
+      docId: docId,
       reviewStatus: status,
       reason: documents.reviewMessage,
     );

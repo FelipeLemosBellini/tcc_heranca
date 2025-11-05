@@ -1,38 +1,43 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:tcc/core/constants/db_mappings.dart';
+import 'package:tcc/core/constants/db_tables.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
-import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 
 class KycRepository implements KycRepositoryInterface {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SupabaseClient _client = Supabase.instance.client;
 
   final StorageRepositoryInterface storageRepository;
 
   KycRepository({required this.storageRepository});
 
-  DocumentReference<Map<String, dynamic>> _docRef() {
-    final uid = firebaseAuth.currentUser?.uid;
-    return firestore.collection('documents').doc(uid);
-  }
-
   @override
   Future<Either<ExceptionMessage, Document?>> getCurrent() async {
     try {
-      final doc = await _docRef().get();
-      if (!doc.exists) return const Right(null);
-      final data = doc.data();
-      if (data == null) return const Right(null);
-      return Right(Document.fromMap(data));
+      final uid = _client.auth.currentUser?.id;
+      if (uid == null) return const Right(null);
+
+      final fluxId = DbMappings.fluxToId(EnumDocumentsFrom.kyc)!;
+
+      final response =
+          await _client
+              .from(DbTables.documents)
+              .select()
+              .eq('idUser', uid)
+              .eq('numFlux', fluxId)
+              .order('created_at', ascending: false)
+              .limit(1);
+
+      if (response == null || response.isEmpty) return const Right(null);
+
+      return Right(Document.fromMap(response.first));
     } catch (e) {
       return Left(ExceptionMessage('Erro ao carregar KYC: ${e.toString()}'));
     }
@@ -44,24 +49,38 @@ class KycRepository implements KycRepositoryInterface {
     required XFile xFile,
   }) async {
     try {
-      final uid = firebaseAuth.currentUser?.uid;
+      final uid = _client.auth.currentUser?.id;
       if (uid == null) {
         return Left(ExceptionMessage("Erro ao buscar usuário"));
       }
-      userDocument.id = uid;
-      userDocument.idDocument = uid;
+      final now = DateTime.now();
+      final extension = xFile.path.split('.').last;
+      final storagePath =
+          'users/$uid/documents/${userDocument.typeDocument.name}_${now.millisecondsSinceEpoch}.$extension';
 
-      String typeImage = xFile.path.split('.').last;
-      userDocument.pathStorage =
-          'users/$uid/documents/${userDocument.typeDocument.name}.$typeImage';
-      await storageRepository.saveFile(
+      userDocument
+        ..ownerId = uid
+        ..idDocument = null
+        ..pathStorage = storagePath
+        ..from = userDocument.from ?? EnumDocumentsFrom.kyc;
+
+      final saveResult = await storageRepository.saveFile(
         xFile: xFile,
-        namePath: userDocument.pathStorage ?? "",
+        namePath: storagePath,
       );
 
-      await firestore.collection("documents").doc().set(userDocument.toMap());
+      return await saveResult.fold(
+        (error) async => Left(error),
+        (_) async {
+          final payload = userDocument.toMap()
+            ..remove('id')
+            ..putIfAbsent('created_at', () => now.toIso8601String());
 
-      return const Right(null);
+          await _client.from(DbTables.documents).insert(payload);
+          return const Right(null);
+        },
+      );
+
     } catch (e) {
       return Left(ExceptionMessage('Erro ao enviar KYC: ${e.toString()}'));
     }
@@ -70,15 +89,20 @@ class KycRepository implements KycRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, KycStatus>> getStatusKyc() async {
     try {
-      final uid = firebaseAuth.currentUser?.uid;
-      DocumentSnapshot<Map<String, dynamic>>? response =
-          await firestore.collection("users").doc(uid).get();
-      late UserModel userModel;
-      if (response.exists) {
-        userModel = UserModel.fromMap(response.data()!);
+      final uid = _client.auth.currentUser?.id;
+      if (uid == null) {
+        return Left(ExceptionMessage("Erro ao buscar usuário"));
       }
 
-      return Right(userModel.kycStatus);
+      final response =
+          await _client
+              .from(DbTables.users)
+              .select('numKycStatus')
+              .eq('id', uid)
+              .maybeSingle();
+
+      final status = DbMappings.kycStatusFromId(response?['numKycStatus'] as int?);
+      return Right(status);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o status do Kyc."));
     }
@@ -91,7 +115,7 @@ class KycRepository implements KycRepositoryInterface {
     required String rg,
   }) async {
     try {
-      final uid = firebaseAuth.currentUser?.uid;
+      final uid = _client.auth.currentUser?.id;
       if (uid == null) {
         return Left(ExceptionMessage("Erro ao buscar usuário"));
       }
@@ -104,14 +128,13 @@ class KycRepository implements KycRepositoryInterface {
       }
 
       final cpfQuery =
-          await firestore
-              .collection('users')
-              .where('cpf', isEqualTo: cleanCpf)
-              .get();
+          await _client
+              .from(DbTables.users)
+              .select('id')
+              .eq('cpf', cleanCpf)
+              .neq('id', uid);
 
-      final cpfAlreadyUsed = cpfQuery.docs.any(
-        (doc) => doc.id != uid && (doc.data()['cpf'] ?? '') == cleanCpf,
-      );
+      final cpfAlreadyUsed = cpfQuery.isNotEmpty;
 
       if (cpfAlreadyUsed) {
         return Left(
@@ -120,32 +143,31 @@ class KycRepository implements KycRepositoryInterface {
       }
 
       final rgQuery =
-          await firestore
-              .collection('users')
-              .where('rg', isEqualTo: cleanRg)
-              .get();
+          await _client
+              .from(DbTables.users)
+              .select('id')
+              .eq('rg', cleanRg)
+              .neq('id', uid);
 
-      final rgAlreadyUsed = rgQuery.docs.any(
-        (doc) => doc.id != uid && (doc.data()['rg'] ?? '') == cleanRg,
-      );
+      final rgAlreadyUsed = rgQuery.isNotEmpty;
 
       if (rgAlreadyUsed) {
         return Left(
           ExceptionMessage('Este RG já está em uso por outra conta.'),
         );
       }
-      DocumentSnapshot<Map<String, dynamic>>? response =
-          await firestore.collection("users").doc(uid).get();
-      late UserModel userModel;
-      if (response.exists) {
-        userModel = UserModel.fromMap(response.data()!);
-      }
-      userModel.kycStatus = kycStatus;
-      userModel.cpf = cleanCpf;
-      userModel.rg = cleanRg;
-      await firestore.collection('users').doc(uid).update(userModel.toMap());
 
-      return Right(userModel.kycStatus);
+      await _client
+          .from(DbTables.users)
+          .update({
+            'numKycStatus': DbMappings.kycStatusToId(kycStatus),
+            'cpf': cleanCpf,
+            'rg': cleanRg,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', uid);
+
+      return Right(kycStatus);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o status do Kyc."));
     }
@@ -157,18 +179,13 @@ class KycRepository implements KycRepositoryInterface {
   }) async {
     try {
       final response =
-          await firestore
-              .collection('documents')
-              .where('idDocument', isEqualTo: userId)
-              .where(
-                'reviewStatus',
-                isEqualTo: ReviewStatusDocument.pending.name,
-              )
-              .get();
-      final docs =
-          response.docs.map((doc) {
-            return Document.fromMap(doc.data())..idDocument = doc.id;
-          }).toList();
+          await _client
+              .from(DbTables.documents)
+              .select()
+              .eq('idUser', userId)
+              .eq('numStatus', DbMappings.documentStatusToId(ReviewStatusDocument.pending));
+
+      final docs = response.map((doc) => Document.fromMap(doc)).toList();
 
       return Right(docs);
     } catch (e) {
@@ -181,8 +198,16 @@ class KycRepository implements KycRepositoryInterface {
     required String docId,
   }) async {
     try {
-      final response = await firestore.collection('documents').doc(docId).get();
-      final doc = Document.fromMap(response.data()!);
+      final response =
+          await _client
+              .from(DbTables.documents)
+              .select()
+              .eq('id', docId)
+              .maybeSingle();
+      if (response == null) {
+        return Left(ExceptionMessage("Documento não encontrado"));
+      }
+      final doc = Document.fromMap(response);
       return Right(doc);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o documento"));
@@ -196,11 +221,14 @@ class KycRepository implements KycRepositoryInterface {
     String? reason,
   }) async {
     try {
-      await firestore.collection('documents').doc(docId).update({
-        'reviewStatus': reviewStatus.name,
-        'updatedAt': DateTime.now(),
-        'reason': reason,
-      });
+      await _client
+          .from(DbTables.documents)
+          .update({
+            'numStatus': DbMappings.documentStatusToId(reviewStatus),
+            'reviewMessage': reason,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', docId);
       return const Right(null);
     } catch (e) {
       return Left(

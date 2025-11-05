@@ -1,17 +1,15 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:tcc/core/constants/db_tables.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 
 class StorageRepository implements StorageRepositoryInterface {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final SupabaseClient _client = Supabase.instance.client;
 
   @override
   Future<Either<ExceptionMessage, void>> saveFile({
@@ -19,27 +17,41 @@ class StorageRepository implements StorageRepositoryInterface {
     required String namePath,
   }) async {
     try {
-      final uid = firebaseAuth.currentUser?.uid;
-      if (uid == null) {
+      if (_client.auth.currentUser == null) {
         return Left(ExceptionMessage("Erro ao salvar imagem"));
       }
-      final ref = FirebaseStorage.instance.ref(namePath);
 
-      File file = File(xFile.path);
-      String typeImage = xFile.path.split('.').last;
-      ref.putFile(file, SettableMetadata(contentType: 'image/$typeImage'));
-      return Right(null);
+      final bytes = await xFile.readAsBytes();
+      final typeImage = xFile.path.split('.').last;
+
+      await _client.storage
+          .from(DbStorageBuckets.documents)
+          .uploadBinary(
+            namePath,
+            bytes,
+            fileOptions: FileOptions(
+              contentType: 'image/$typeImage',
+              upsert: true,
+            ),
+          );
+      return const Right(null);
     } catch (e) {
-      return Left(ExceptionMessage("Erro ao salvar imagem"));
+      return Left(ExceptionMessage("Erro ao salvar imagem: ${e.toString()}"));
     }
   }
 
   @override
   Future<File?> getFile({required String path}) async {
-    final ref = FirebaseStorage.instance.ref(path);
-    final tempDir = await getTemporaryDirectory();
-    final localFile = File('${tempDir.path}/${ref.name}');
-    await ref.writeToFile(localFile);
-    return (localFile);
+    try {
+      final bytes =
+          await _client.storage.from(DbStorageBuckets.documents).download(path);
+      final tempDir = await getTemporaryDirectory();
+      final fileName = path.split('/').last;
+      final localFile = File('${tempDir.path}/$fileName');
+      await localFile.writeAsBytes(bytes);
+      return localFile;
+    } catch (_) {
+      return null;
+    }
   }
 }
