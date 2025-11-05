@@ -59,9 +59,7 @@ abstract class DI {
       () => FirebaseAuthRepository(),
     );
     getIt.registerLazySingleton<KycRepositoryInterface>(
-      () => KycRepository(
-        storageRepository: getIt.get<StorageRepository(),
-      ),
+      () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
     getIt.registerLazySingleton<BackofficeFirestoreInterface>(
       () => BackofficeFirestoreRepository(),
@@ -111,9 +109,7 @@ abstract class DI {
     );
 
     getIt.registerFactory<KycController>(
-      () => KycController(
-        kycRepository: getIt.get<KycRepositoryInterface>(),
-      ),
+      () => KycController(kycRepository: getIt.get<KycRepositoryInterface>()),
     );
 
     //Controllers LazySingletons
@@ -161,7 +157,8 @@ abstract class DI {
 
     getIt.registerFactory(
       () => CompletedProcessesController(
-        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreRepository>(),
+        backofficeFirestoreInterface:
+            getIt.get<BackofficeFirestoreRepository>(),
         userRepository: getIt.get<UserRepository>(),
       ),
     );

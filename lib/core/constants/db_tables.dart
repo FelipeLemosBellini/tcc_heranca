@@ -12,5 +12,5 @@ class DbTables {
 class DbStorageBuckets {
   DbStorageBuckets._();
 
-  static const documents = 'documents';
+  static const documents = 'bucket';
 }
