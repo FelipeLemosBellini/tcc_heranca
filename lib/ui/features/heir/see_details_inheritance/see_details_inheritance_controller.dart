@@ -1,9 +1,7 @@
 import 'package:open_filex/open_filex.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
-import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 

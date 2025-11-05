@@ -77,7 +77,7 @@ class RequestInheritanceController extends BaseController {
 
     final docs = <Document, XFile>{
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.procuracaoAdvogado,
         reviewStatus: ReviewStatusDocument.pending,
@@ -86,7 +86,7 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): procuracaoDoInventariante,
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.deathCertificate,
         reviewStatus: ReviewStatusDocument.pending,
@@ -95,7 +95,7 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): certidaoDeObito,
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.cpf,
         reviewStatus: ReviewStatusDocument.pending,
@@ -104,7 +104,7 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): documentoCpf,
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.proofResidence,
         reviewStatus: ReviewStatusDocument.pending,
@@ -113,7 +113,7 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): enderecoDoInventariante,
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.testamentDocument,
         reviewStatus: ReviewStatusDocument.pending,
@@ -122,7 +122,7 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): testamento,
       Document(
-        idDocument: requesterId,
+        ownerId: requesterId,
         content: testatorCpf,
         typeDocument: TypeDocument.transferAssetsOrder,
         reviewStatus: ReviewStatusDocument.pending,

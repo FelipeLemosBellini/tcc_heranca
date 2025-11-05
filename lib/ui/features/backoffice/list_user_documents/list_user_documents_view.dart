@@ -103,7 +103,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                             final isPending =
                                 doc.reviewStatus == ReviewStatusDocument.pending;
                             final selected = isPending
-                                ? _controller.decisions[doc.idDocument]
+                                ? _controller.decisions[doc.id]
                                 : null;
                             return Column(
                               children: [
@@ -149,7 +149,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                                                   onChanged: (value) {
                                                     setState(() {
                                                       _controller.decisions[
-                                                        doc.idDocument!
+                                                        doc.id!
                                                       ] = value;
                                                     });
                                                   },
@@ -163,7 +163,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                                                   onChanged: (value) {
                                                     setState(() {
                                                       _controller.decisions[
-                                                        doc.idDocument!
+                                                        doc.id!
                                                       ] = value;
                                                     });
                                                   },
@@ -252,7 +252,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                     continue;
                   }
                   if (_controller.reasonControllers[index].text.isEmpty &&
-                      _controller.decisions[doc.idDocument] ==
+                      _controller.decisions[doc.id] ==
                           false) {
                     AlertHelper.showAlertSnackBar(
                       context: context,
@@ -264,7 +264,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                     return;
                   }
 
-                  if (_controller.decisions[doc.idDocument] == null) {
+                  if (_controller.decisions[doc.id] == null) {
                     AlertHelper.showAlertSnackBar(
                       context: context,
                       alertData: AlertData(
@@ -300,7 +300,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   if (doc.reviewStatus != ReviewStatusDocument.pending) {
                     continue;
                   }
-                  if (_controller.decisions[doc.idDocument] == false) {
+                  if (_controller.decisions[doc.id] == false) {
                     hasInvalidDocuments = true;
                     break;
                   }

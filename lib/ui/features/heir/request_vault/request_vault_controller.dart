@@ -142,7 +142,7 @@ class RequestVaultController extends BaseController {
     }
 
     final obitoDocument = Document(
-      idDocument: requesterId,
+      ownerId: requesterId,
       content: testatorCpf,
       typeDocument: TypeDocument.deathCertificate,
       reviewStatus: ReviewStatusDocument.pending,
@@ -152,7 +152,7 @@ class RequestVaultController extends BaseController {
     );
 
     final procuracaoAdvogadoDocument = Document(
-      idDocument: requesterId,
+      ownerId: requesterId,
       content: testatorCpf,
       typeDocument: TypeDocument.procuracaoAdvogado,
       reviewStatus: ReviewStatusDocument.pending,
