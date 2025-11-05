@@ -13,18 +13,16 @@ class UserRepository implements UserRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, UserModel>> getUser() async {
     try {
-      final doc =
-          await firestore
-              .collection("users")
-              .doc(_supabase.auth.currentSession?.user.id)
-              .get();
+      final user = _supabase.auth.currentUser;
+      if (user == null) return Left(ExceptionMessage("User not found"));
+      final details =
+          await _supabase
+              .from('users')
+              .select()
+              .eq('id', user.id)
+              .maybeSingle();
 
-      if (doc.exists && doc.data() != null) {
-        final user = UserModel.fromMap(doc.data()!);
-        return Right(user);
-      } else {
-        return Left(ExceptionMessage("Usuário não encontrado."));
-      }
+      return Right(UserModel.fromMap(details!));
     } catch (e) {
       return Left(ExceptionMessage("Erro ao buscar usuário: ${e.toString()}"));
     }
@@ -33,9 +31,14 @@ class UserRepository implements UserRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, void>> createProfile(UserModel data) async {
     try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('Sem usuário autenticado');
+
       final now = DateTime.now();
       data.createdAt = data.createdAt ?? now;
-      await firestore.collection("users").doc(data.id).set(data.toMap());
+      data.id = user.id;
+      await _supabase.from('users').upsert(data.toMap(), onConflict: 'id');
+
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao criar perfil: ${e.toString()}"));
@@ -45,14 +48,13 @@ class UserRepository implements UserRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, String>> getUserName(String userId) async {
     try {
-      final doc = await firestore.collection("users").doc(userId).get();
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('Sem usuário autenticado');
 
-      if (doc.exists && doc.data() != null) {
-        final user = UserModel.fromMap(doc.data()!);
-        return Right(user.name ?? "Usuário");
-      } else {
-        return Left(ExceptionMessage("Usuário não encontrado."));
-      }
+      var response =
+          await _supabase.from('users').select('name').eq('id', userId).single();
+
+      return Right(response['name']);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao buscar usuário: ${e.toString()}"));
     }
