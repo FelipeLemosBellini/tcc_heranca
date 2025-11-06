@@ -153,17 +153,18 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
         }
       }
 
-      final summaries = orderedIds.map((id) {
-        final user = usersById[id];
-        if (user != null) {
-          return TestatorSummary(
-            cpf: user.cpf ?? '',
-            name: user.name,
-            userId: user.id,
-          );
-        }
-        return TestatorSummary(cpf: '', name: id, userId: id);
-      }).toList();
+      final summaries =
+          orderedIds.map((id) {
+            final user = usersById[id];
+            if (user != null) {
+              return TestatorSummary(
+                cpf: user.cpf ?? '',
+                name: user.name,
+                userId: user.id,
+              );
+            }
+            return TestatorSummary(cpf: '', name: id, userId: id);
+          }).toList();
 
       return right(summaries);
     } catch (e) {
@@ -288,7 +289,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       final inheritances = snapshot.map((row) {
         return RequestInheritanceModel.fromMap({
           ...row,
-          'createdAt': row['created_at'],
+          'createdAt': row['createdAt'],
           'updatedAt': row['updated_at'],
         });
       }).toList();

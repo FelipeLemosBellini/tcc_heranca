@@ -36,7 +36,7 @@ class Document {
       'reviewMessage': reviewMessage,
       'numStatus': DbMappings.documentStatusToId(reviewStatus),
       'type': DbMappings.documentTypeToId(typeDocument),
-      'created_at': uploadedAt.toIso8601String(),
+      'createdAt': uploadedAt.toIso8601String(),
       'numFlux': DbMappings.fluxToId(from),
       'testatorId': testatorId,
     };
@@ -44,23 +44,31 @@ class Document {
 
   factory Document.fromMap(Map<String, dynamic> map) {
     final createdAt =
-        _parseDate(map['created_at']) ?? _parseDate(map['uploadedAt']) ?? DateTime.now();
-    final docId = map['id'] as String? ?? map['documentId'] as String?;
+        _parseDate(map['createdAt']) ?? _parseDate(map['uploadedAt']) ?? DateTime.now();
+    final docId = _tryParseString(map['id']) ?? _tryParseString(map['documentId']);
     final ownerId =
-        map['idUser'] as String? ?? map['ownerId'] as String? ?? map['uid'] as String?;
+        _tryParseString(map['idUser']) ??
+        _tryParseString(map['ownerId']) ??
+        _tryParseString(map['uid']);
     return Document(
       id: docId,
       idDocument: docId,
-      ownerId: ownerId ?? map['userId'] as String?,
+      ownerId: ownerId ?? _tryParseString(map['userId']),
       pathStorage: map['arquivo'] as String? ?? map['pathStorage'] as String?,
       reviewStatus: DbMappings.documentStatusFromId(_tryParseInt(map['numStatus'])),
       typeDocument: DbMappings.documentTypeFromId(_tryParseInt(map['type'])),
       reviewMessage: map['reviewMessage'] as String?,
       uploadedAt: createdAt,
       from: DbMappings.fluxFromId(_tryParseInt(map['numFlux'])),
-      testatorId: map['testatorId'] as String? ?? map['testator_id'] as String?,
+      testatorId: _tryParseString(map['testatorId']) ?? _tryParseString(map['testator_id']),
     );
   }
+}
+
+String? _tryParseString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  return value.toString();
 }
 
 int? _tryParseInt(dynamic value) {

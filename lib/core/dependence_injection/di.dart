@@ -49,14 +49,11 @@ abstract class DI {
     getIt.registerSingleton<RpcRepository>(RpcRepository());
     getIt.registerSingleton<UserRepository>(UserRepository());
     getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
-    getIt.registerLazySingleton<KycRepository>(
+    getIt.registerLazySingleton<KycRepositoryInterface>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
     getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepository(),
-    );
-    getIt.registerLazySingleton<KycRepositoryInterface>(
-      () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
     getIt.registerLazySingleton<BackofficeFirestoreInterface>(
       () => BackofficeFirestoreRepository(),
@@ -87,26 +84,26 @@ abstract class DI {
         firebaseAuthRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
         localStorageService: getIt.get<LocalStorageService>(),
-        kycRepository: getIt.get<KycRepository>(),
+        kycRepository: getIt.get<KycRepositoryInterface>(),
       ),
     );
     getIt.registerFactory(() => LoginWalletController());
 
     getIt.registerFactory<RequestInheritanceController>(
       () => RequestInheritanceController(
-        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
       ),
     );
 
     getIt.registerFactory<RequestVaultController>(
       () => RequestVaultController(
-        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
         userRepository: getIt.get<UserRepository>(),
       ),
     );
 
     getIt.registerFactory<KycController>(
-      () => KycController(kycRepository: getIt.get<KycRepository>()),
+      () => KycController(kycRepository: getIt.get<KycRepositoryInterface>()),
     );
 
     //Controllers LazySingletons
@@ -125,37 +122,37 @@ abstract class DI {
     );
     getIt.registerLazySingleton(
       () => HeirController(
-        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => ListUsersController(
         backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreRepository>(),
+            getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => ListUserTestatorsController(
         backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreRepository>(),
+            getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => ListUserDocumentsController(
-        kycRepositoryInterface: getIt.get<KycRepository>(),
+        kycRepositoryInterface: getIt.get<KycRepositoryInterface>(),
         storageRepository: getIt.get<StorageRepository>(),
         backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreRepository>(),
+            getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => CompletedProcessesController(
         backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreRepository>(),
+            getIt.get<BackofficeFirestoreInterface>(),
         userRepository: getIt.get<UserRepository>(),
       ),
     );
@@ -163,7 +160,7 @@ abstract class DI {
     getIt.registerFactory<VaultController>(() => VaultController());
     getIt.registerFactory<SeeDetailsInheritanceController>(
       () => SeeDetailsInheritanceController(
-        inheritanceRepository: getIt.get<InheritanceRepository>(),
+        inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
         storageRepository: getIt.get<StorageRepository>(),
       ),
     );

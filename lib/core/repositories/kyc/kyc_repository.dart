@@ -32,7 +32,7 @@ class KycRepository implements KycRepositoryInterface {
               .select()
               .eq('idUser', uid)
               .eq('numFlux', fluxId)
-              .order('created_at', ascending: false)
+              .order('createdAt', ascending: false)
               .limit(1);
 
       if (response == null || response.isEmpty) return const Right(null);
@@ -74,7 +74,7 @@ class KycRepository implements KycRepositoryInterface {
         (_) async {
           final payload = userDocument.toMap()
             ..remove('id')
-            ..putIfAbsent('created_at', () => now.toIso8601String());
+            ..putIfAbsent('createdAt', () => now.toIso8601String());
 
           await _client.from(DbTables.documents).insert(payload);
           return const Right(null);
@@ -163,7 +163,7 @@ class KycRepository implements KycRepositoryInterface {
             'numKycStatus': DbMappings.kycStatusToId(kycStatus),
             'cpf': cleanCpf,
             'rg': cleanRg,
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', uid);
 

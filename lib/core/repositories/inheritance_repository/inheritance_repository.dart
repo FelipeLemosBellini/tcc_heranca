@@ -83,8 +83,8 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         ..remove('createdAt')
         ..remove('updatedAt')
         ..putIfAbsent('cpf', () => cleanCpf)
-        ..putIfAbsent('created_at', () => now.toIso8601String())
-        ..putIfAbsent('updated_at', () => now.toIso8601String());
+        ..putIfAbsent('createdAt', () => now.toIso8601String())
+        ..putIfAbsent('updatedAt', () => now.toIso8601String());
 
       final insertResponse =
           await _client
@@ -139,15 +139,14 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
           final payload = document.toMap()
             ..remove('id')
             ..putIfAbsent('idUser', () => requesterId)
-            ..remove('created_at')
             ..remove('createdAt')
-            ..putIfAbsent('created_at', () => now.toIso8601String());
+            ..putIfAbsent('createdAt', () => now.toIso8601String());
 
           await _client.from(DbTables.documents).insert(payload);
 
           await _client
               .from(DbTables.inheritance)
-              .update({'updated_at': now.toIso8601String()})
+              .update({'updatedAt': now.toIso8601String()})
               .eq('id', inheritanceId);
 
           return const Right(null);
@@ -178,8 +177,8 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
             return RequestInheritanceModel.fromMap({
               ...row,
               'id': row['id'],
-              'createdAt': row['created_at'],
-              'updatedAt': row['updated_at'],
+              'createdAt': row['createdAt'],
+              'updatedAt': row['updatedAt'],
             });
           }).toList();
 
