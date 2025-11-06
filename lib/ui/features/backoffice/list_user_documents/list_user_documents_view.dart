@@ -16,12 +16,14 @@ import 'package:tcc/ui/widgets/text_field_widget.dart';
 class ListUserDocumentsView extends StatefulWidget {
   final String userId;
   final String? testatorCpf;
+  final String? testatorId;
   final String? testatorName;
 
   const ListUserDocumentsView({
     super.key,
     required this.userId,
     this.testatorCpf,
+    this.testatorId,
     this.testatorName,
   });
 
@@ -45,8 +47,8 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _controller.getDocumentsByUserId(
         userId: widget.userId,
-        testatorCpf: widget.testatorCpf,
-        from: widget.testatorCpf != null
+        testatorId: widget.testatorId,
+        from: widget.testatorId != null
             ? EnumDocumentsFrom.inheritanceRequest
             : EnumDocumentsFrom.kyc,
       );
@@ -100,10 +102,11 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                           itemCount: _controller.listDocuments.length,
                           itemBuilder: (context, index) {
                             final doc = _controller.listDocuments[index];
+                            final docId = doc.id;
                             final isPending =
                                 doc.reviewStatus == ReviewStatusDocument.pending;
-                            final selected = isPending
-                                ? _controller.decisions[doc.id]
+                            final selected = (isPending && docId != null)
+                                ? _controller.decisions[docId]
                                 : null;
                             return Column(
                               children: [
@@ -148,9 +151,10 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                                                   groupValue: selected,
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      _controller.decisions[
-                                                        doc.id!
-                                                      ] = value;
+                                                      if (docId != null) {
+                                                        _controller.decisions[docId] =
+                                                            value;
+                                                      }
                                                     });
                                                   },
                                                 ),
@@ -162,9 +166,10 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                                                   groupValue: selected,
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      _controller.decisions[
-                                                        doc.id!
-                                                      ] = value;
+                                                      if (docId != null) {
+                                                        _controller.decisions[docId] =
+                                                            value;
+                                                      }
                                                     });
                                                   },
                                                 ),
@@ -248,11 +253,13 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   index++
                 ) {
                   final doc = _controller.listDocuments[index];
+                  final docId = doc.id;
                   if (doc.reviewStatus != ReviewStatusDocument.pending) {
                     continue;
                   }
                   if (_controller.reasonControllers[index].text.isEmpty &&
-                      _controller.decisions[doc.id] ==
+                      docId != null &&
+                      _controller.decisions[docId] ==
                           false) {
                     AlertHelper.showAlertSnackBar(
                       context: context,
@@ -264,7 +271,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                     return;
                   }
 
-                  if (_controller.decisions[doc.id] == null) {
+                  if (docId == null || _controller.decisions[docId] == null) {
                     AlertHelper.showAlertSnackBar(
                       context: context,
                       alertData: AlertData(
@@ -297,20 +304,20 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   index++
                 ) {
                   final doc = _controller.listDocuments[index];
+                  final docId = doc.id;
                   if (doc.reviewStatus != ReviewStatusDocument.pending) {
                     continue;
                   }
-                  if (_controller.decisions[doc.id] == false) {
+                  if (docId != null && _controller.decisions[docId] == false) {
                     hasInvalidDocuments = true;
                     break;
                   }
                 }
 
-                if (_controller.currentTestatorCpf != null) {
+                if ((_controller.currentTestatorId ?? '').isNotEmpty) {
                   await _controller.updateInheritanceStatus(
                     hasInvalidDocuments: hasInvalidDocuments,
                     requesterId: widget.userId,
-                    testatorCpf: _controller.currentTestatorCpf!,
                   );
                 } else {
                   await _controller.updateKycStatus(

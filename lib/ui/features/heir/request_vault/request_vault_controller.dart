@@ -20,7 +20,6 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 
-import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 
 class RequestVaultController extends BaseController {
   final UserRepositoryInterface userRepository;
@@ -106,7 +105,7 @@ class RequestVaultController extends BaseController {
           procuracaoAdvogado: procuracaoAdvogado,
           inheritanceId: creation.inheritanceId,
           requesterId: creation.requesterId,
-          testatorCpf: creation.testatorCpf,
+          testatorId: creation.testatorId,
         );
 
         if (created) {
@@ -131,7 +130,7 @@ class RequestVaultController extends BaseController {
     required XFile procuracaoAdvogado,
     required String inheritanceId,
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   }) async {
     if (!_validateInputs(
       cpfTestator: cpfTestator,
@@ -143,7 +142,7 @@ class RequestVaultController extends BaseController {
 
     final obitoDocument = Document(
       ownerId: requesterId,
-      content: testatorCpf,
+      testatorId: testatorId,
       typeDocument: TypeDocument.deathCertificate,
       reviewStatus: ReviewStatusDocument.pending,
       reviewMessage: '',
@@ -153,7 +152,7 @@ class RequestVaultController extends BaseController {
 
     final procuracaoAdvogadoDocument = Document(
       ownerId: requesterId,
-      content: testatorCpf,
+      testatorId: testatorId,
       typeDocument: TypeDocument.procuracaoAdvogado,
       reviewStatus: ReviewStatusDocument.pending,
       reviewMessage: '',
@@ -166,7 +165,7 @@ class RequestVaultController extends BaseController {
       xFile: certificadoDeObito,
       inheritanceId: inheritanceId,
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
     );
 
     var resultProcuracao = await inheritanceRepository.submit(
@@ -174,7 +173,7 @@ class RequestVaultController extends BaseController {
       xFile: procuracaoAdvogado,
       inheritanceId: inheritanceId,
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
     );
 
     bool success = true;

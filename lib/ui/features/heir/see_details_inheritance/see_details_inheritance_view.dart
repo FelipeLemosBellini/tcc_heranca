@@ -37,12 +37,12 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
   void initState() {
     super.initState();
     final requesterId = widget.testament.requestById ?? '';
-    final testatorCpf = widget.testament.cpf ?? '';
-    if (requesterId.isNotEmpty && testatorCpf.isNotEmpty) {
+    final testatorId = widget.testament.userId ?? '';
+    if (requesterId.isNotEmpty && testatorId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _controller.loadDocuments(
           requesterId: requesterId,
-          testatorCpf: testatorCpf,
+          testatorId: testatorId,
         );
       });
     }

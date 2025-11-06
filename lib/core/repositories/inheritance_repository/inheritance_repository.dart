@@ -15,12 +15,12 @@ import 'package:tcc/core/repositories/storage_repository/storage_repository_inte
 class InheritanceCreationResult {
   final String inheritanceId;
   final String requesterId;
-  final String testatorCpf;
+  final String testatorId;
 
   InheritanceCreationResult({
     required this.inheritanceId,
     required this.requesterId,
-    required this.testatorCpf,
+    required this.testatorId,
   });
 }
 
@@ -64,10 +64,14 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         );
       }
 
-      final user = UserModel.fromMap(userResponse);
+      final testatorId = (userResponse['id'] as String?) ?? '';
+      final user = UserModel.fromMap({
+        ...userResponse,
+        'id': testatorId,
+      });
 
       requestInheritanceModel
-        ..userId = user.id
+        ..userId = testatorId
         ..name = user.name
         ..cpf = cleanCpf
         ..rg = user.rg
@@ -95,7 +99,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         InheritanceCreationResult(
           inheritanceId: inheritanceId,
           requesterId: uid,
-          testatorCpf: cleanCpf,
+          testatorId: testatorId,
         ),
       );
     } catch (e) {
@@ -109,7 +113,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
     required XFile xFile,
     required String inheritanceId,
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   }) async {
     try {
       final now = DateTime.now();
@@ -120,7 +124,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
       document
         ..ownerId = requesterId
         ..idDocument = null
-        ..content = testatorCpf
+        ..testatorId = testatorId
         ..pathStorage = storagePath
         ..from = EnumDocumentsFrom.inheritanceRequest;
 
@@ -135,7 +139,6 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
           final payload = document.toMap()
             ..remove('id')
             ..putIfAbsent('idUser', () => requesterId)
-            ..putIfAbsent('content', () => testatorCpf)
             ..remove('created_at')
             ..remove('createdAt')
             ..putIfAbsent('created_at', () => now.toIso8601String());
@@ -221,7 +224,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
   @override
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByInheritance({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   }) async {
     try {
       final response =
@@ -229,7 +232,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
               .from(DbTables.documents)
               .select()
               .eq('idUser', requesterId)
-              .eq('content', testatorCpf)
+              .eq('testatorId', testatorId)
               .eq('numFlux', DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!);
 
       final documents =

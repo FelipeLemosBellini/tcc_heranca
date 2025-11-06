@@ -67,7 +67,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   @override
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
-    String? testatorCpf,
+    String? testatorId,
     EnumDocumentsFrom? from,
     bool onlyPending = true,
   }) async {
@@ -86,12 +86,12 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
         query = query.eq('numFlux', DbMappings.fluxToId(from)!);
       }
 
+      if (testatorId != null && testatorId.isNotEmpty) {
+        query = query.eq('testatorId', testatorId);
+      }
+
       final response = await query;
       var docs = response.map((row) => Document.fromMap(row)).toList();
-
-      if (testatorCpf != null && testatorCpf.isNotEmpty) {
-        docs = docs.where((doc) => doc.content == testatorCpf).toList();
-      }
 
       return Right(docs);
     } catch (e) {
@@ -112,47 +112,57 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       final docs =
           await _client
               .from(DbTables.documents)
-              .select('content')
+              .select('testatorId')
               .eq('idUser', requesterId)
               .eq('numStatus', pendingStatusId)
               .eq('numFlux', inheritanceFluxId);
 
-      final cpfs =
-          docs
-              .map((doc) => (doc['content'] as String?)?.trim())
-              .whereType<String>()
-              .where((value) => value.isNotEmpty)
-              .toSet()
-              .toList();
+      final testatorIdSet = <String>{};
+      final orderedIds = <String>[];
 
-      if (cpfs.isEmpty) return right([]);
-
-      final usersByCpf = <String, UserModel>{};
-      const chunkSize = 50;
-
-      for (var i = 0; i < cpfs.length; i += chunkSize) {
-        final chunk = cpfs.sublist(
-          i,
-          i + chunkSize > cpfs.length ? cpfs.length : i + chunkSize,
-        );
-
-        final usersSnapshot =
-            await _client.from(DbTables.users).select().inFilter('cpf', chunk);
-
-        for (final raw in usersSnapshot) {
-          final user = UserModel.fromMap(raw);
-          if ((user.cpf ?? '').isNotEmpty) {
-            usersByCpf[user.cpf!] = user;
+      for (final doc in docs) {
+        final id = (doc['testatorId'] as String?)?.trim();
+        if (id != null && id.isNotEmpty) {
+          if (testatorIdSet.add(id)) {
+            orderedIds.add(id);
           }
         }
       }
 
-      final summaries = cpfs.map((cpf) {
-        final user = usersByCpf[cpf];
-        if (user != null) {
-          return TestatorSummary(cpf: cpf, name: user.name, userId: user.id);
+      if (testatorIdSet.isEmpty) {
+        return right([]);
+      }
+
+      final usersById = <String, UserModel>{};
+      const chunkSize = 50;
+
+      for (var i = 0; i < orderedIds.length; i += chunkSize) {
+        final chunk = orderedIds.sublist(
+          i,
+          i + chunkSize > orderedIds.length ? orderedIds.length : i + chunkSize,
+        );
+
+        final usersSnapshot =
+            await _client.from(DbTables.users).select().inFilter('id', chunk);
+
+        for (final raw in usersSnapshot) {
+          final user = UserModel.fromMap(raw);
+          if ((user.id ?? '').isNotEmpty) {
+            usersById[user.id!] = user;
+          }
         }
-        return TestatorSummary(cpf: cpf, name: cpf, userId: null);
+      }
+
+      final summaries = orderedIds.map((id) {
+        final user = usersById[id];
+        if (user != null) {
+          return TestatorSummary(
+            cpf: user.cpf ?? '',
+            name: user.name,
+            userId: user.id,
+          );
+        }
+        return TestatorSummary(cpf: '', name: id, userId: id);
       }).toList();
 
       return right(summaries);
@@ -228,7 +238,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   @override
   Future<Either<ExceptionMessage, void>> updateInheritanceStatus({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
     required HeirStatus status,
   }) async {
     try {
@@ -237,7 +247,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
               .from(DbTables.inheritance)
               .select('id')
               .eq('requestBy', requesterId)
-              .eq('cpf', testatorCpf)
+              .eq('testatorId', testatorId)
               .limit(1)
               .maybeSingle();
 

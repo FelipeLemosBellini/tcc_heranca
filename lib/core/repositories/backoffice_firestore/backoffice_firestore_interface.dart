@@ -14,7 +14,7 @@ abstract class BackofficeFirestoreInterface {
 
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
-    String? testatorCpf,
+    String? testatorId,
     EnumDocumentsFrom? from,
     bool onlyPending = true,
   });
@@ -25,7 +25,7 @@ abstract class BackofficeFirestoreInterface {
 
   Future<Either<ExceptionMessage, void>> updateInheritanceStatus({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
     required HeirStatus status,
   });
 

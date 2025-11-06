@@ -16,7 +16,7 @@ abstract class InheritanceRepositoryInterface {
     required XFile xFile,
     required String inheritanceId,
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   });
 
   Future<Either<ExceptionMessage, List<RequestInheritanceModel>>>
@@ -30,6 +30,6 @@ abstract class InheritanceRepositoryInterface {
 
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByInheritance({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   });
 }

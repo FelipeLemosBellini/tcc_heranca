@@ -4,7 +4,6 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 
 class Document {
-  String? content;
   String? pathStorage;
   String? reviewMessage;
   final ReviewStatusDocument reviewStatus;
@@ -13,10 +12,10 @@ class Document {
   String? id;
   String? idDocument;
   String? ownerId;
+  String? testatorId;
   EnumDocumentsFrom? from;
 
   Document({
-    this.content,
     this.pathStorage,
     this.reviewMessage,
     required this.reviewStatus,
@@ -25,6 +24,7 @@ class Document {
     this.id,
     this.idDocument,
     this.ownerId,
+    this.testatorId,
     this.from,
   });
 
@@ -32,13 +32,13 @@ class Document {
     return {
       'id': id,
       'idUser': ownerId ?? idDocument,
-      'content': content,
       'arquivo': pathStorage,
       'reviewMessage': reviewMessage,
       'numStatus': DbMappings.documentStatusToId(reviewStatus),
       'type': DbMappings.documentTypeToId(typeDocument),
       'created_at': uploadedAt.toIso8601String(),
       'numFlux': DbMappings.fluxToId(from),
+      'testatorId': testatorId,
     };
   }
 
@@ -52,13 +52,13 @@ class Document {
       id: docId,
       idDocument: docId,
       ownerId: ownerId ?? map['userId'] as String?,
-      content: map['content'] as String?,
       pathStorage: map['arquivo'] as String? ?? map['pathStorage'] as String?,
       reviewStatus: DbMappings.documentStatusFromId(_tryParseInt(map['numStatus'])),
       typeDocument: DbMappings.documentTypeFromId(_tryParseInt(map['type'])),
       reviewMessage: map['reviewMessage'] as String?,
       uploadedAt: createdAt,
       from: DbMappings.fluxFromId(_tryParseInt(map['numFlux'])),
+      testatorId: map['testatorId'] as String? ?? map['testator_id'] as String?,
     );
   }
 }

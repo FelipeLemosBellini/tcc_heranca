@@ -123,7 +123,6 @@ class KycController extends BaseController {
     bool cpfOk = false;
     bool proofOk = false;
     Document userCpfDocument = Document(
-      content: cpf,
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.cpf,
       uploadedAt: DateTime.now(),
@@ -139,7 +138,6 @@ class KycController extends BaseController {
     });
 
     Document userProofDocument = Document(
-      content: rg,
       reviewStatus: ReviewStatusDocument.pending,
       typeDocument: TypeDocument.proofResidence,
       uploadedAt: DateTime.now(),

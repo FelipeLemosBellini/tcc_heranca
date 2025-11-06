@@ -27,13 +27,13 @@ class ListUserDocumentsController extends BaseController {
   List<Document> _documents = [];
   List<TextEditingController> reasonControllers = [];
   List<FocusNode> focusNodes = [];
-  String? _currentTestatorCpf;
+  String? _currentTestatorId;
   bool _hasFinalDocuments = false;
 
   final Map<String, bool?> decisions = {};
 
   List<Document> get listDocuments => _documents;
-  String? get currentTestatorCpf => _currentTestatorCpf;
+  String? get currentTestatorId => _currentTestatorId;
   bool get hasFinalDocuments => _hasFinalDocuments;
 
   @override
@@ -48,10 +48,10 @@ class ListUserDocumentsController extends BaseController {
 
   Future<void> getDocumentsByUserId({
     required String userId,
-    String? testatorCpf,
+    String? testatorId,
     EnumDocumentsFrom? from,
   }) async {
-    _currentTestatorCpf = testatorCpf;
+    _currentTestatorId = testatorId;
     _hasFinalDocuments = false;
 
     for (final controller in reasonControllers) {
@@ -68,9 +68,9 @@ class ListUserDocumentsController extends BaseController {
 
     final response = await backofficeFirestoreInterface.getDocumentsByUserId(
       userId: userId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
       from: from,
-      onlyPending: testatorCpf != null,
+      onlyPending: testatorId != null && testatorId.isNotEmpty,
     );
 
     response.fold((error) {
@@ -135,9 +135,9 @@ class ListUserDocumentsController extends BaseController {
   Future<void> updateInheritanceStatus({
     required bool hasInvalidDocuments,
     required String requesterId,
-    required String testatorCpf,
   }) async {
-    if (testatorCpf.isEmpty) return;
+    final testatorId = _currentTestatorId;
+    if (testatorId == null || testatorId.isEmpty) return;
     final status = hasFinalDocuments
         ? (hasInvalidDocuments
             ? HeirStatus.transferenciaSaldoRecusado
@@ -147,7 +147,7 @@ class ListUserDocumentsController extends BaseController {
             : HeirStatus.consultaSaldoAprovado);
     final result = await backofficeFirestoreInterface.updateInheritanceStatus(
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
       status: status,
     );
 

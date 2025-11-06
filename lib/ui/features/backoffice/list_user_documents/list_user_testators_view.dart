@@ -96,13 +96,14 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                       return GestureDetector(
                         onTap: () {
                           context.push(
-                            RouterApp.listDocuments,
-                            extra: {
-                              'userId': widget.requesterId,
-                              'testatorCpf': testator.cpf,
-                              'testatorName': testator.name,
-                            },
-                          );
+                      RouterApp.listDocuments,
+                      extra: {
+                        'userId': widget.requesterId,
+                        'testatorId': testator.userId,
+                        'testatorCpf': testator.cpf,
+                        'testatorName': testator.name,
+                      },
+                    );
                         },
                         child: Container(
                           margin: const EdgeInsets.only(

@@ -34,8 +34,9 @@ class RequestInheritanceController extends BaseController {
     final requesterId = inheritance.requestById;
     final testatorCpf = inheritance.cpf;
     final inheritanceId = inheritance.id;
+    final testatorId = inheritance.userId;
 
-    if (requesterId == null || testatorCpf == null || inheritanceId == null) {
+    if (requesterId == null || testatorCpf == null || inheritanceId == null || testatorId == null) {
       setMessage(
         AlertData(
           message:
@@ -78,7 +79,7 @@ class RequestInheritanceController extends BaseController {
     final docs = <Document, XFile>{
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.procuracaoAdvogado,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -87,7 +88,7 @@ class RequestInheritanceController extends BaseController {
       ): procuracaoDoInventariante,
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.deathCertificate,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -96,7 +97,7 @@ class RequestInheritanceController extends BaseController {
       ): certidaoDeObito,
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.cpf,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -105,7 +106,7 @@ class RequestInheritanceController extends BaseController {
       ): documentoCpf,
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.proofResidence,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -114,7 +115,7 @@ class RequestInheritanceController extends BaseController {
       ): enderecoDoInventariante,
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.testamentDocument,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -123,7 +124,7 @@ class RequestInheritanceController extends BaseController {
       ): testamento,
       Document(
         ownerId: requesterId,
-        content: testatorCpf,
+        testatorId: testatorId,
         typeDocument: TypeDocument.transferAssetsOrder,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -140,7 +141,7 @@ class RequestInheritanceController extends BaseController {
         xFile: entry.value,
         inheritanceId: inheritanceId,
         requesterId: requesterId,
-        testatorCpf: testatorCpf,
+        testatorId: testatorId,
       );
 
       result.fold(

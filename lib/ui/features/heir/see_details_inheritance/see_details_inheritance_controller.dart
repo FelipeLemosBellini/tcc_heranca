@@ -20,13 +20,13 @@ class SeeDetailsInheritanceController extends BaseController {
 
   Future<void> loadDocuments({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   }) async {
-    if (requesterId.isEmpty || testatorCpf.isEmpty) return;
+    if (requesterId.isEmpty || testatorId.isEmpty) return;
     setLoading(true);
     final result = await inheritanceRepository.getDocumentsByInheritance(
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
     );
 
     result.fold(
