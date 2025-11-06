@@ -14,12 +14,10 @@ import 'package:tcc/core/repositories/storage_repository/storage_repository_inte
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ListUserDocumentsController extends BaseController {
-  final KycRepositoryInterface kycRepositoryInterface;
   final StorageRepositoryInterface storageRepository;
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
 
   ListUserDocumentsController({
-    required this.kycRepositoryInterface,
     required this.storageRepository,
     required this.backofficeFirestoreInterface,
   });
@@ -107,10 +105,9 @@ class ListUserDocumentsController extends BaseController {
     final status =
         decision ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
 
-    final result = await kycRepositoryInterface.updateDocument(
-      docId: docId,
-      reviewStatus: status,
-      reason: documents.reviewMessage,
+    final result = await backofficeFirestoreInterface.changeStatusDocument(
+      documentId: docId,
+      status: decision,
     );
 
     result.fold((error) {}, (_) {});

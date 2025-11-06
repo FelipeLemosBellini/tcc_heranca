@@ -25,17 +25,17 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           DbMappings.documentStatusToId(ReviewStatusDocument.pending);
       final fluxId = DbMappings.fluxToId(from);
 
-      var query =
+      var documentsQuery =
           _client.from(DbTables.documents).select('idUser').eq('numStatus', pendingStatusId);
 
       if (fluxId != null) {
-        query = query.eq('numFlux', fluxId);
+        documentsQuery = documentsQuery.eq('numFlux', fluxId);
       }
 
-      final pendingDocs = await query;
+      final documentsResponse = await documentsQuery;
 
       final userIds =
-          pendingDocs
+          documentsResponse
               .map((doc) => doc['idUser'] as String?)
               .whereType<String>()
               .toSet()
@@ -184,7 +184,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           .from(DbTables.documents)
           .update({
             'numStatus': DbMappings.documentStatusToId(statusEnum),
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', documentId);
       return right(null);
@@ -204,7 +204,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           .from(DbTables.users)
           .update({
             'numKycStatus': DbMappings.kycStatusToId(newStatus),
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', userId);
       return right(null);
@@ -225,7 +225,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           .from(DbTables.users)
           .update({
             'numKycStatus': DbMappings.kycStatusToId(status),
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', userId);
       return const Right(null);
@@ -264,7 +264,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           .from(DbTables.inheritance)
           .update({
             'status': DbMappings.heirStatusToId(status),
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', record['id']);
 
@@ -290,7 +290,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
         return RequestInheritanceModel.fromMap({
           ...row,
           'createdAt': row['createdAt'],
-          'updatedAt': row['updated_at'],
+          'updatedAt': row['updatedAt'],
         });
       }).toList();
 

@@ -142,7 +142,6 @@ abstract class DI {
 
     getIt.registerFactory(
       () => ListUserDocumentsController(
-        kycRepositoryInterface: getIt.get<KycRepositoryInterface>(),
         storageRepository: getIt.get<StorageRepository>(),
         backofficeFirestoreInterface:
             getIt.get<BackofficeFirestoreInterface>(),

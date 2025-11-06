@@ -226,7 +226,7 @@ class KycRepository implements KycRepositoryInterface {
           .update({
             'numStatus': DbMappings.documentStatusToId(reviewStatus),
             'reviewMessage': reason,
-            'updated_at': DateTime.now().toIso8601String(),
+            'updatedAt': DateTime.now().toIso8601String(),
           })
           .eq('id', docId);
       return const Right(null);
