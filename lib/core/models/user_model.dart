@@ -37,7 +37,7 @@ class UserModel {
       'isAdmin': isAdmin,
       'id': id,
       'hasVault': hasVault,
-      'created_at': createdAt?.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 
