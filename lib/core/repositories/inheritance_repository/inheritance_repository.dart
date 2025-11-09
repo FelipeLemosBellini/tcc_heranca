@@ -64,7 +64,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         );
       }
 
-      final testatorId = (userResponse['id'] as String?) ?? '';
+      final testatorId = _asString(userResponse['id']) ?? '';
       final user = UserModel.fromMap({
         ...userResponse,
         'id': testatorId,
@@ -93,7 +93,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
               .select('id')
               .single();
 
-      final inheritanceId = insertResponse['id'] as String;
+      final inheritanceId = _asString(insertResponse['id']) ?? '';
 
       return Right(
         InheritanceCreationResult(
@@ -169,7 +169,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
       final response =
           await _client
               .from(DbTables.inheritance)
-              .select()
+              .select('*, users:users!inner(name, cpf, rg)')
               .eq('requestBy', uid);
 
       final inheritances =
@@ -245,4 +245,10 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
       );
     }
   }
+}
+
+String? _asString(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  return value.toString();
 }

@@ -26,15 +26,16 @@ class RequestInheritanceModel {
   });
 
   factory RequestInheritanceModel.fromMap(Map<String, dynamic> json) {
+    final userData = json['users'] as Map<String, dynamic>?;
     return RequestInheritanceModel(
       id: json['id'],
       userId: json['userId'] ?? json['testatorId'],
-      cpf: json['cpf'],
-      name: json['name'],
+      cpf: json['cpf'] ?? userData?['cpf'],
+      name: json['name'] ?? userData?['name'],
       requestById: json['requestById'] ?? json['requestBy'],
       heirStatus: DbMappings.heirStatusFromId(_tryParseInt(json['status']) ??
               _tryParseInt(json['heirStatus'])),
-      rg: json['rg'],
+      rg: json['rg'] ?? userData?['rg'],
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
     );
@@ -42,11 +43,7 @@ class RequestInheritanceModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': userId,
       'testatorId': userId,
-      'cpf': cpf,
-      'name': name,
-      'requestById': requestById,
       'requestBy': requestById,
       'status':
           DbMappings.heirStatusToId(heirStatus ?? HeirStatus.consultaSaldoSolicitado),
