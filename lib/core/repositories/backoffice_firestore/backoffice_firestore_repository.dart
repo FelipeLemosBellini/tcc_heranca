@@ -325,8 +325,8 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           Message()
             ..from = Address(gmailUser, 'Ethernium App')
             ..recipients.add(response?['email'])
-            ..subject = 'Assunto de teste'
-            ..text = 'Corpo em texto';
+            ..subject = 'Saldo da conta de seu cliente'
+            ..text = 'Segue o saldo de ETH do seu cliente $balance';
 
       try {
         final sendReport = await send(message, smtpServer);
