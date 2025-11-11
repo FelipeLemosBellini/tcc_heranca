@@ -65,26 +65,24 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
       }
 
       final testatorId = _asString(userResponse['id']) ?? '';
-      final user = UserModel.fromMap({
-        ...userResponse,
-        'id': testatorId,
-      });
+      final user = UserModel.fromMap({...userResponse, 'id': testatorId});
 
       requestInheritanceModel
-        ..userId = testatorId
+        ..testatorId = testatorId
         ..name = user.name
         ..cpf = cleanCpf
         ..rg = user.rg
         ..heirStatus ??= HeirStatus.consultaSaldoSolicitado;
 
       final now = DateTime.now();
-      final payload = requestInheritanceModel.toMap()
-        ..remove('id')
-        ..remove('createdAt')
-        ..remove('updatedAt')
-        ..putIfAbsent('cpf', () => cleanCpf)
-        ..putIfAbsent('createdAt', () => now.toIso8601String())
-        ..putIfAbsent('updatedAt', () => now.toIso8601String());
+      final payload =
+          requestInheritanceModel.toMap()
+            ..remove('id')
+            ..remove('createdAt')
+            ..remove('updatedAt')
+            ..putIfAbsent('cpf', () => cleanCpf)
+            ..putIfAbsent('createdAt', () => now.toIso8601String())
+            ..putIfAbsent('updatedAt', () => now.toIso8601String());
 
       final insertResponse =
           await _client
@@ -133,27 +131,27 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         namePath: storagePath,
       );
 
-      return await saveResult.fold(
-        (error) async => Left(error),
-        (_) async {
-          final payload = document.toMap()
-            ..remove('id')
-            ..putIfAbsent('idUser', () => requesterId)
-            ..remove('createdAt')
-            ..putIfAbsent('createdAt', () => now.toIso8601String());
+      return await saveResult.fold((error) async => Left(error), (_) async {
+        final payload =
+            document.toMap()
+              ..remove('id')
+              ..putIfAbsent('idUser', () => requesterId)
+              ..remove('createdAt')
+              ..putIfAbsent('createdAt', () => now.toIso8601String());
 
-          await _client.from(DbTables.documents).insert(payload);
+        await _client.from(DbTables.documents).insert(payload);
 
-          await _client
-              .from(DbTables.inheritance)
-              .update({'updatedAt': now.toIso8601String()})
-              .eq('id', inheritanceId);
+        await _client
+            .from(DbTables.inheritance)
+            .update({'updatedAt': now.toIso8601String()})
+            .eq('id', inheritanceId);
 
-          return const Right(null);
-        },
-      );
+        return const Right(null);
+      });
     } catch (e) {
-      return Left(ExceptionMessage('Erro ao enviar documento: ${e.toString()}'));
+      return Left(
+        ExceptionMessage('Erro ao enviar documento: ${e.toString()}'),
+      );
     }
   }
 
@@ -166,21 +164,17 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         return Left(ExceptionMessage("Erro ao buscar usuário"));
       }
 
-      final response =
-          await _client
-              .from(DbTables.inheritance)
-              .select('*, users:users!inner(name, cpf, rg)')
-              .eq('requestBy', uid);
+      final response = await _client
+          .from(DbTables.inheritance)
+          .select('''
+      id, testatorId, requestBy, status, createdAt, updatedAt,
+      testatorUser:users!inheritance_testatorId_fkey(id, name, cpf, rg)
+    ''')
+          .eq('requestBy', uid)
+          .order('createdAt', ascending: false);
 
       final inheritances =
-          response.map((row) {
-            return RequestInheritanceModel.fromMap({
-              ...row,
-              'id': row['id'],
-              'createdAt': row['createdAt'],
-              'updatedAt': row['updatedAt'],
-            });
-          }).toList();
+          response.map((row) => RequestInheritanceModel.fromMap(row)).toList();
 
       inheritances.sort((a, b) {
         final dateA = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
@@ -226,13 +220,15 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
     required String testatorId,
   }) async {
     try {
-      final response =
-          await _client
-              .from(DbTables.documents)
-              .select()
-              .eq('idUser', requesterId)
-              .eq('testatorId', testatorId)
-              .eq('numFlux', DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!);
+      final response = await _client
+          .from(DbTables.documents)
+          .select()
+          .eq('idUser', requesterId)
+          .eq('testatorId', testatorId)
+          .eq(
+            'numFlux',
+            DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!,
+          );
 
       final documents =
           response.map((row) => Document.fromMap(row)).toList()

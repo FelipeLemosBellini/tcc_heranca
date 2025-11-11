@@ -34,7 +34,7 @@ class RequestInheritanceController extends BaseController {
     final requesterId = inheritance.requestById;
     final testatorCpf = inheritance.cpf;
     final inheritanceId = inheritance.id;
-    final testatorId = inheritance.userId;
+    final testatorId = inheritance.testatorId;
 
     if (requesterId == null || testatorCpf == null || inheritanceId == null || testatorId == null) {
       setMessage(
