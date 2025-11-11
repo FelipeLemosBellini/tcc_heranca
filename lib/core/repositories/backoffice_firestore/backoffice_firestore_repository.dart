@@ -1,4 +1,6 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tcc/core/constants/db_mappings.dart';
 import 'package:tcc/core/constants/db_tables.dart';
@@ -6,6 +8,7 @@ import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
+import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
@@ -296,6 +299,46 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       return Left(
         ExceptionMessage('Erro ao carregar processos finalizados: $e'),
       );
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, void>> sendEmailWithBalance({
+    required String balance,
+    required String requestUserId,
+  }) async {
+    try {
+      final response =
+          await _client
+              .from(DbTables.inheritance)
+              .select('id, email')
+              .eq('requestBy', requestUserId)
+              .limit(1)
+              .maybeSingle();
+
+      final String keyEmail = Env.keyEmail;
+      final String gmailUser = 'felipelemosbellini@gmail.com';
+
+      final smtpServer = gmail(gmailUser, keyEmail);
+
+      final message =
+          Message()
+            ..from = Address(gmailUser, 'Ethernium App')
+            ..recipients.add(response?['email'])
+            ..subject = 'Assunto de teste'
+            ..text = 'Corpo em texto';
+
+      try {
+        final sendReport = await send(message, smtpServer);
+        print('Enviado: ${sendReport.toString()}');
+      } on MailerException catch (e) {
+        for (final p in e.problems) {
+          print('Problema: ${p.code}: ${p.msg}');
+        }
+      }
+      return const Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao enviar email: $e'));
     }
   }
 }

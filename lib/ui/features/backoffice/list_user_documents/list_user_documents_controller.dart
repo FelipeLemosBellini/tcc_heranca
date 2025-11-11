@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
+import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
@@ -152,11 +155,19 @@ class ListUserDocumentsController extends BaseController {
       status: status,
     );
 
-    result.fold((error) {
-      setMessage(
-        AlertData(message: error.errorMessage, errorType: ErrorType.error),
-      );
-    }, (_) {});
+    await result.fold(
+      (error) {
+        setMessage(
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
+        );
+      },
+      (_) async {
+        backofficeFirestoreInterface.sendEmailWithBalance(
+          balance: "0.1234",
+          requestUserId: _currentTestatorId ?? '',
+        );
+      },
+    );
   }
 
   Future<File?> getFile({required String path}) async {
