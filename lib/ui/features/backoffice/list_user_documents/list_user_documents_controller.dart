@@ -31,7 +31,9 @@ class ListUserDocumentsController extends BaseController {
   final Map<String, bool?> decisions = {};
 
   List<Document> get listDocuments => _documents;
+
   String? get currentTestatorId => _currentTestatorId;
+
   bool get hasFinalDocuments => _hasFinalDocuments;
 
   @override
@@ -71,25 +73,27 @@ class ListUserDocumentsController extends BaseController {
       onlyPending: testatorId != null && testatorId.isNotEmpty,
     );
 
-    response.fold((error) {
-      setMessage(
-        AlertData(
-          message: error.errorMessage,
-          errorType: ErrorType.error,
-        ),
-      );
-    }, (success) {
-      _documents = success;
-      _hasFinalDocuments = _documents.any((doc) =>
-          doc.typeDocument == TypeDocument.transferAssetsOrder ||
-          doc.typeDocument == TypeDocument.testamentDocument ||
-          doc.typeDocument == TypeDocument.inventoryProcess);
-      for (int i = 0; i < _documents.length; i++) {
-        reasonControllers.add(TextEditingController());
-        focusNodes.add(FocusNode());
-      }
-      notifyListeners();
-    });
+    response.fold(
+      (error) {
+        setMessage(
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
+        );
+      },
+      (success) {
+        _documents = success;
+        _hasFinalDocuments = _documents.any(
+          (doc) =>
+              doc.typeDocument == TypeDocument.transferAssetsOrder ||
+              doc.typeDocument == TypeDocument.testamentDocument ||
+              doc.typeDocument == TypeDocument.inventoryProcess,
+        );
+        for (int i = 0; i < _documents.length; i++) {
+          reasonControllers.add(TextEditingController());
+          focusNodes.add(FocusNode());
+        }
+        notifyListeners();
+      },
+    );
 
     setLoading(false);
   }
@@ -102,12 +106,11 @@ class ListUserDocumentsController extends BaseController {
       return;
     }
     final decision = decisions[docId]!;
-    final status =
-        decision ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
 
     final result = await backofficeFirestoreInterface.changeStatusDocument(
       documentId: docId,
       status: decision,
+      reason: documents.reviewMessage,
     );
 
     result.fold((error) {}, (_) {});
@@ -135,30 +138,25 @@ class ListUserDocumentsController extends BaseController {
   }) async {
     final testatorId = _currentTestatorId;
     if (testatorId == null || testatorId.isEmpty) return;
-    final status = hasFinalDocuments
-        ? (hasInvalidDocuments
-            ? HeirStatus.transferenciaSaldoRecusado
-            : HeirStatus.transferenciaSaldoRealizada)
-        : (hasInvalidDocuments
-            ? HeirStatus.consultaSaldoRecusado
-            : HeirStatus.consultaSaldoAprovado);
+    final status =
+        hasFinalDocuments
+            ? (hasInvalidDocuments
+                ? HeirStatus.transferenciaSaldoRecusado
+                : HeirStatus.transferenciaSaldoRealizada)
+            : (hasInvalidDocuments
+                ? HeirStatus.consultaSaldoRecusado
+                : HeirStatus.consultaSaldoAprovado);
     final result = await backofficeFirestoreInterface.updateInheritanceStatus(
       requesterId: requesterId,
       testatorId: testatorId,
       status: status,
     );
 
-    result.fold(
-      (error) {
-        setMessage(
-          AlertData(
-            message: error.errorMessage,
-            errorType: ErrorType.error,
-          ),
-        );
-      },
-      (_) {},
-    );
+    result.fold((error) {
+      setMessage(
+        AlertData(message: error.errorMessage, errorType: ErrorType.error),
+      );
+    }, (_) {});
   }
 
   Future<File?> getFile({required String path}) async {

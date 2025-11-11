@@ -11,25 +11,17 @@ abstract class KycRepositoryInterface {
     required XFile xFile,
   });
 
-  Future<Either<ExceptionMessage, Document?>> getCurrent();
-
-  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
-    required String userId,
-  });
+  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId();
 
   Future<Either<ExceptionMessage, Document>> getDocumentById({
     required String docId,
   });
 
-  Future<Either<ExceptionMessage, void>> updateDocument({
-    required String docId,
-    required ReviewStatusDocument reviewStatus,
-    String? reason,
-  });
   Future<Either<ExceptionMessage, void>> setStatusKyc({
     required KycStatus kycStatus,
     required String cpf,
     required String rg,
   });
+
   Future<Either<ExceptionMessage, KycStatus>> getStatusKyc();
 }

@@ -21,12 +21,15 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     EnumDocumentsFrom? from,
   }) async {
     try {
-      final pendingStatusId =
-          DbMappings.documentStatusToId(ReviewStatusDocument.pending);
+      final pendingStatusId = DbMappings.documentStatusToId(
+        ReviewStatusDocument.pending,
+      );
       final fluxId = DbMappings.fluxToId(from);
 
-      var documentsQuery =
-          _client.from(DbTables.documents).select('idUser').eq('numStatus', pendingStatusId);
+      var documentsQuery = _client
+          .from(DbTables.documents)
+          .select('idUser')
+          .eq('numStatus', pendingStatusId);
 
       if (fluxId != null) {
         documentsQuery = documentsQuery.eq('numFlux', fluxId);
@@ -52,8 +55,10 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           i + chunkSize > userIds.length ? userIds.length : i + chunkSize,
         );
 
-        final snapshot =
-            await _client.from(DbTables.users).select().inFilter('id', chunk);
+        final snapshot = await _client
+            .from(DbTables.users)
+            .select()
+            .inFilter('id', chunk);
 
         users.addAll(snapshot.map((raw) => UserModel.fromMap(raw)));
       }
@@ -72,8 +77,10 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     bool onlyPending = true,
   }) async {
     try {
-      var query =
-          _client.from(DbTables.documents).select().eq('idUser', userId);
+      var query = _client
+          .from(DbTables.documents)
+          .select()
+          .eq('idUser', userId);
 
       if (onlyPending) {
         query = query.eq(
@@ -100,22 +107,21 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({
-    required String requesterId,
-  }) async {
+  Future<Either<ExceptionMessage, List<TestatorSummary>>>
+  getTestatorsByRequester({required String requesterId}) async {
     try {
-      final pendingStatusId =
-          DbMappings.documentStatusToId(ReviewStatusDocument.pending);
+      final pendingStatusId = DbMappings.documentStatusToId(
+        ReviewStatusDocument.pending,
+      );
       final inheritanceFluxId =
           DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!;
 
-      final docs =
-          await _client
-              .from(DbTables.documents)
-              .select('testatorId')
-              .eq('idUser', requesterId)
-              .eq('numStatus', pendingStatusId)
-              .eq('numFlux', inheritanceFluxId);
+      final docs = await _client
+          .from(DbTables.documents)
+          .select('testatorId')
+          .eq('idUser', requesterId)
+          .eq('numStatus', pendingStatusId)
+          .eq('numFlux', inheritanceFluxId);
 
       final testatorIdSet = <String>{};
       final orderedIds = <String>[];
@@ -142,8 +148,10 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           i + chunkSize > orderedIds.length ? orderedIds.length : i + chunkSize,
         );
 
-        final usersSnapshot =
-            await _client.from(DbTables.users).select().inFilter('id', chunk);
+        final usersSnapshot = await _client
+            .from(DbTables.users)
+            .select()
+            .inFilter('id', chunk);
 
         for (final raw in usersSnapshot) {
           final user = UserModel.fromMap(raw);
@@ -176,6 +184,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   Future<Either<ExceptionMessage, void>> changeStatusDocument({
     required String documentId,
     required bool status,
+    String? reason,
   }) async {
     try {
       final statusEnum =
@@ -185,6 +194,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
           .update({
             'numStatus': DbMappings.documentStatusToId(statusEnum),
             'updatedAt': DateTime.now().toIso8601String(),
+            'reviewMessage': reason,
           })
           .eq('id', documentId);
       return right(null);
@@ -194,32 +204,12 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> changeStatusUser({
-    required String userId,
-    required bool status,
-  }) async {
-    try {
-      final newStatus = status ? KycStatus.approved : KycStatus.rejected;
-      await _client
-          .from(DbTables.users)
-          .update({
-            'numKycStatus': DbMappings.kycStatusToId(newStatus),
-            'updatedAt': DateTime.now().toIso8601String(),
-          })
-          .eq('id', userId);
-      return right(null);
-    } catch (e) {
-      return left(ExceptionMessage('Erro ao atualizar status do usuário: $e'));
-    }
-  }
-
-  @override
   Future<Either<ExceptionMessage, void>> updateStatusUser({
     required bool hasInvalidDocument,
     required String userId,
   }) async {
     try {
-      final status =
+      KycStatus status =
           hasInvalidDocument ? KycStatus.rejected : KycStatus.approved;
       await _client
           .from(DbTables.users)
@@ -275,24 +265,26 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>> getCompletedInheritances() async {
+  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>>
+  getCompletedInheritances() async {
     try {
-      final completedStatus =
-          DbMappings.heirStatusToId(HeirStatus.transferenciaSaldoRealizada);
+      final completedStatus = DbMappings.heirStatusToId(
+        HeirStatus.transferenciaSaldoRealizada,
+      );
 
-      final snapshot =
-          await _client
-              .from(DbTables.inheritance)
-              .select('*, users:users!inner(name, cpf, rg)')
-              .eq('status', completedStatus);
+      final snapshot = await _client
+          .from(DbTables.inheritance)
+          .select('*, users:users!inner(name, cpf, rg)')
+          .eq('status', completedStatus);
 
-      final inheritances = snapshot.map((row) {
-        return RequestInheritanceModel.fromMap({
-          ...row,
-          'createdAt': row['createdAt'],
-          'updatedAt': row['updatedAt'],
-        });
-      }).toList();
+      final inheritances =
+          snapshot.map((row) {
+            return RequestInheritanceModel.fromMap({
+              ...row,
+              'createdAt': row['createdAt'],
+              'updatedAt': row['updatedAt'],
+            });
+          }).toList();
 
       inheritances.sort(
         (a, b) => (b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/header_banner.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/section_card.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/upload_tile_simple.dart';
@@ -15,7 +16,9 @@ import 'package:tcc/ui/widgets/input_formatters/cpf_input_formatter.dart';
 import 'package:tcc/ui/features/auth/kyc/kyc_controller.dart';
 
 class KycView extends StatefulWidget {
-  const KycView({super.key});
+  final bool isEdit;
+
+  const KycView({super.key, required this.isEdit});
 
   @override
   State<KycView> createState() => _KycViewState();
@@ -26,49 +29,54 @@ class _KycViewState extends State<KycView> {
 
   ImagePicker imagePicker = ImagePicker();
 
-  XFile? cpfFront;
-  XFile? proofResidence;
-
-  // Controllers
-  final cpfController = TextEditingController();
-  final rgController = TextEditingController();
-
   // FocusNodes
   final cpfFocus = FocusNode();
   final rgFocus = FocusNode();
 
   @override
   void dispose() {
-    cpfController.dispose();
-    rgController.dispose();
-    cpfFocus.dispose();
-    rgFocus.dispose();
     super.dispose();
   }
 
-  Future<void> _onSubmit(BuildContext context) async {
-    if (cpfFront != null && proofResidence != null) {
-      bool response = await controller.submit(
-        cpf: cpfController.text,
-        rg: rgController.text,
-        cpfFront: cpfFront!,
-        proofResidence: proofResidence!,
-      );
-      if (response) {
-        context.pop();
-        context.pop();
-        controller.setMessage(
-          AlertData(
-            message: "Documentos enviados para análise",
-            errorType: ErrorType.success,
-          ),
-        );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isEdit) {
+        controller.getUser();
       }
+    });
+  }
+
+  Future<void> _onSubmit(BuildContext context) async {
+    if (widget.isEdit) {
+      if (controller.proofResidence != null || controller.cpfFront != null) {
+        submit(isEdit: true);
+      }
+      return;
+    }
+
+    if (controller.cpfFront != null && controller.proofResidence != null) {
+      submit(isEdit: false);
     } else {
       controller.setMessage(
         AlertData(
           message: "Anexe todos os documentos",
           errorType: ErrorType.warning,
+        ),
+      );
+    }
+  }
+
+  void submit({required bool isEdit}) async {
+    bool response = await controller.submit(isEdit: isEdit);
+    if (response) {
+      context.pop();
+      context.pop();
+      controller.setMessage(
+        AlertData(
+          message: "Documentos enviados para análise",
+          errorType: ErrorType.success,
         ),
       );
     }
@@ -109,7 +117,7 @@ class _KycViewState extends State<KycView> {
                       children: [
                         TextFieldWidget(
                           hintText: 'CPF (somente números)',
-                          controller: cpfController,
+                          controller: controller.cpfController,
                           keyboardType: TextInputType.number,
                           focusNode: cpfFocus,
                           inputFormatters: [CpfInputFormatter()],
@@ -117,7 +125,7 @@ class _KycViewState extends State<KycView> {
                         const SizedBox(height: 16),
                         TextFieldWidget(
                           hintText: 'Número do RG',
-                          controller: rgController,
+                          controller: controller.rgController,
                           focusNode: rgFocus,
                         ),
                       ],
@@ -127,22 +135,40 @@ class _KycViewState extends State<KycView> {
                       title: 'Anexos - somente PDF',
                       icon: Icons.attach_file_outlined,
                       children: [
-                        UploadTileSimple(
-                          label: 'Documento de identidade (frente/verso)',
-                          hasAttach: cpfFront != null,
-                          attach: () async {
-                            cpfFront = await getFile(context);
-                            setState(() {});
-                          },
+                        Visibility(
+                          visible:
+                              !widget.isEdit || controller.cpfDocument != null,
+                          child: UploadTileSimple(
+                            document: controller.cpfDocument,
+                            label: 'Documento de identidade (frente/verso)',
+                            hasAttach: controller.cpfFront != null,
+                            attach: () async {
+                              controller.cpfFront = await getFile(context);
+                              setState(() {});
+                            },
+                          ),
                         ),
-                        SizedBox(height: 12),
-                        UploadTileSimple(
-                          label: 'Comprovante de residência',
-                          hasAttach: proofResidence != null,
-                          attach: () async {
-                            proofResidence = await getFile(context);
-                            setState(() {});
-                          },
+                        Visibility(
+                          visible:
+                              !widget.isEdit ||
+                              controller.proofResidenceDocument != null,
+                          child: SizedBox(height: 12),
+                        ),
+                        Visibility(
+                          visible:
+                              !widget.isEdit ||
+                              controller.proofResidenceDocument != null,
+                          child: UploadTileSimple(
+                            document: controller.proofResidenceDocument,
+                            label: 'Comprovante de residência',
+                            hasAttach: controller.proofResidence != null,
+                            attach: () async {
+                              controller.proofResidence = await getFile(
+                                context,
+                              );
+                              setState(() {});
+                            },
+                          ),
                         ),
                       ],
                     ),

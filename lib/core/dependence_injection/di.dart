@@ -1,7 +1,6 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
-import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_repository.dart';
 import 'package:tcc/core/repositories/firebase_auth/auth_repository.dart';
@@ -39,11 +38,6 @@ abstract class DI {
     //Controllers Notifiers
     getIt.registerLazySingleton(() => TestamentController());
 
-    //Local Storage
-    getIt.registerSingletonAsync<LocalStorageService>(
-      () async => LocalStorageService.init(),
-    );
-
     await getIt.allReady();
     //Repositories
     getIt.registerSingleton<RpcRepository>(RpcRepository());
@@ -52,9 +46,7 @@ abstract class DI {
     getIt.registerLazySingleton<KycRepositoryInterface>(
       () => KycRepository(storageRepository: getIt.get<StorageRepository>()),
     );
-    getIt.registerLazySingleton<AuthRepository>(
-      () => AuthRepository(),
-    );
+    getIt.registerLazySingleton<AuthRepository>(() => AuthRepository());
     getIt.registerLazySingleton<BackofficeFirestoreInterface>(
       () => BackofficeFirestoreRepository(),
     );
@@ -83,7 +75,6 @@ abstract class DI {
       () => LoginController(
         firebaseAuthRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
-        localStorageService: getIt.get<LocalStorageService>(),
         kycRepository: getIt.get<KycRepositoryInterface>(),
       ),
     );
@@ -103,7 +94,10 @@ abstract class DI {
     );
 
     getIt.registerFactory<KycController>(
-      () => KycController(kycRepository: getIt.get<KycRepositoryInterface>()),
+      () => KycController(
+        kycRepository: getIt.get<KycRepositoryInterface>(),
+        userRepository: getIt.get<UserRepository>(),
+      ),
     );
 
     //Controllers LazySingletons
@@ -111,7 +105,6 @@ abstract class DI {
       () => HomeController(
         authRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
-        localStorageService: getIt.get<LocalStorageService>(),
       ),
     );
     getIt.registerLazySingleton(
@@ -128,30 +121,26 @@ abstract class DI {
 
     getIt.registerFactory(
       () => ListUsersController(
-        backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreInterface>(),
+        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => ListUserTestatorsController(
-        backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreInterface>(),
+        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => ListUserDocumentsController(
         storageRepository: getIt.get<StorageRepository>(),
-        backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreInterface>(),
+        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
       ),
     );
 
     getIt.registerFactory(
       () => CompletedProcessesController(
-        backofficeFirestoreInterface:
-            getIt.get<BackofficeFirestoreInterface>(),
+        backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
         userRepository: getIt.get<UserRepository>(),
       ),
     );

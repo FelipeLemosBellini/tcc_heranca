@@ -19,31 +19,6 @@ class KycRepository implements KycRepositoryInterface {
   KycRepository({required this.storageRepository});
 
   @override
-  Future<Either<ExceptionMessage, Document?>> getCurrent() async {
-    try {
-      final uid = _client.auth.currentUser?.id;
-      if (uid == null) return const Right(null);
-
-      final fluxId = DbMappings.fluxToId(EnumDocumentsFrom.kyc)!;
-
-      final response =
-          await _client
-              .from(DbTables.documents)
-              .select()
-              .eq('idUser', uid)
-              .eq('numFlux', fluxId)
-              .order('createdAt', ascending: false)
-              .limit(1);
-
-      if (response == null || response.isEmpty) return const Right(null);
-
-      return Right(Document.fromMap(response.first));
-    } catch (e) {
-      return Left(ExceptionMessage('Erro ao carregar KYC: ${e.toString()}'));
-    }
-  }
-
-  @override
   Future<Either<ExceptionMessage, void>> submit({
     required Document userDocument,
     required XFile xFile,
@@ -69,18 +44,15 @@ class KycRepository implements KycRepositoryInterface {
         namePath: storagePath,
       );
 
-      return await saveResult.fold(
-        (error) async => Left(error),
-        (_) async {
-          final payload = userDocument.toMap()
-            ..remove('id')
-            ..putIfAbsent('createdAt', () => now.toIso8601String());
+      return await saveResult.fold((error) async => Left(error), (_) async {
+        final payload =
+            userDocument.toMap()
+              ..remove('id')
+              ..putIfAbsent('createdAt', () => now.toIso8601String());
 
-          await _client.from(DbTables.documents).insert(payload);
-          return const Right(null);
-        },
-      );
-
+        await _client.from(DbTables.documents).insert(payload);
+        return const Right(null);
+      });
     } catch (e) {
       return Left(ExceptionMessage('Erro ao enviar KYC: ${e.toString()}'));
     }
@@ -101,7 +73,9 @@ class KycRepository implements KycRepositoryInterface {
               .eq('id', uid)
               .maybeSingle();
 
-      final status = DbMappings.kycStatusFromId(response?['numKycStatus'] as int?);
+      final status = DbMappings.kycStatusFromId(
+        response?['numKycStatus'] as int?,
+      );
       return Right(status);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o status do Kyc."));
@@ -127,12 +101,11 @@ class KycRepository implements KycRepositoryInterface {
         return Left(ExceptionMessage("CPF e RG são obrigatórios."));
       }
 
-      final cpfQuery =
-          await _client
-              .from(DbTables.users)
-              .select('id')
-              .eq('cpf', cleanCpf)
-              .neq('id', uid);
+      final cpfQuery = await _client
+          .from(DbTables.users)
+          .select('id')
+          .eq('cpf', cleanCpf)
+          .neq('id', uid);
 
       final cpfAlreadyUsed = cpfQuery.isNotEmpty;
 
@@ -142,12 +115,11 @@ class KycRepository implements KycRepositoryInterface {
         );
       }
 
-      final rgQuery =
-          await _client
-              .from(DbTables.users)
-              .select('id')
-              .eq('rg', cleanRg)
-              .neq('id', uid);
+      final rgQuery = await _client
+          .from(DbTables.users)
+          .select('id')
+          .eq('rg', cleanRg)
+          .neq('id', uid);
 
       final rgAlreadyUsed = rgQuery.isNotEmpty;
 
@@ -174,20 +146,44 @@ class KycRepository implements KycRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
-    required String userId,
-  }) async {
+  Future<Either<ExceptionMessage, List<Document>>>
+  getDocumentsByUserId() async {
     try {
-      final response =
-          await _client
-              .from(DbTables.documents)
-              .select()
-              .eq('idUser', userId)
-              .eq('numStatus', DbMappings.documentStatusToId(ReviewStatusDocument.pending));
+      final uid = _client.auth.currentUser?.id;
+      if (uid == null) {
+        return Left(ExceptionMessage("Erro ao buscar usuário"));
+      }
+
+      final response = await _client
+          .from(DbTables.documents)
+          .select()
+          .eq('idUser', uid);
 
       final docs = response.map((doc) => Document.fromMap(doc)).toList();
 
-      return Right(docs);
+      if (docs.isEmpty) {
+        return Right(<Document>[]);
+      }
+
+      final Map<DateTime, List<Document>> gruposPorMinuto = {};
+      for (final d in docs) {
+        final DateTime dt = d.uploadedAt;
+        final key = DateTime(dt.year, dt.month, dt.day, dt.hour, dt.minute);
+        (gruposPorMinuto[key] ??= <Document>[]).add(d);
+      }
+
+      final DateTime chaveMaisRecente = gruposPorMinuto.keys.reduce(
+        (a, b) => a.isAfter(b) ? a : b,
+      );
+
+      final List<Document> grupoMaisRecente = List<Document>.from(
+        gruposPorMinuto[chaveMaisRecente]!,
+      );
+
+      // Opcional: ordenar os docs do grupo por data decrescente
+      grupoMaisRecente.sort((a, b) => b.uploadedAt.compareTo(a.uploadedAt));
+
+      return Right(grupoMaisRecente);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar os documentos"));
     }
@@ -211,29 +207,6 @@ class KycRepository implements KycRepositoryInterface {
       return Right(doc);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar o documento"));
-    }
-  }
-
-  @override
-  Future<Either<ExceptionMessage, void>> updateDocument({
-    required String docId,
-    required ReviewStatusDocument reviewStatus,
-    String? reason,
-  }) async {
-    try {
-      await _client
-          .from(DbTables.documents)
-          .update({
-            'numStatus': DbMappings.documentStatusToId(reviewStatus),
-            'reviewMessage': reason,
-            'updatedAt': DateTime.now().toIso8601String(),
-          })
-          .eq('id', docId);
-      return const Right(null);
-    } catch (e) {
-      return Left(
-        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
-      );
     }
   }
 }

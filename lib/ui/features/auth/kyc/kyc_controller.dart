@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
@@ -11,55 +12,54 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class KycController extends BaseController {
   final KycRepositoryInterface kycRepository;
+  final UserRepositoryInterface userRepository;
 
-  KycController({required this.kycRepository});
+  KycController({required this.userRepository, required this.kycRepository});
 
-  Document? _kyc;
-  Uint8List? _docFront;
-  Uint8List? _docBack;
-  Uint8List? _proofResidence;
+  // Controllers
+  final cpfController = TextEditingController();
+  final rgController = TextEditingController();
 
-  Document? get kyc => _kyc;
+  Document? cpfDocument;
+  Document? proofResidenceDocument;
 
-  Uint8List? get docFront => _docFront;
+  XFile? cpfFront;
+  XFile? proofResidence;
 
-  Uint8List? get docBack => _docBack;
+  @override
+  void dispose() {
+    super.dispose();
+    cpfController.dispose();
+    rgController.dispose();
+  }
 
-  Uint8List? get proofResidence => _proofResidence;
-
-  Future<void> load() async {
+  Future<void> getUser() async {
     setLoading(true);
-    final Either<ExceptionMessage, Document?> response =
-        await kycRepository.getCurrent();
+    final response = await userRepository.getUser();
+    response.fold((error) {}, (user) {
+      cpfController.text = user.cpf ?? '';
+      rgController.text = user.rg ?? '';
+    });
 
-    response.fold(
-      (err) => setMessage(
-        AlertData(message: err.errorMessage, errorType: ErrorType.error),
-      ),
-      (data) {
-        _kyc = data;
-      },
-    );
+    final responseDocuments = await kycRepository.getDocumentsByUserId();
+    responseDocuments.fold((e) {}, (listDocuments) {
+      for (Document document in listDocuments) {
+        if (document.typeDocument == TypeDocument.cpf) {
+          cpfDocument = document;
+        }
+        if (document.typeDocument == TypeDocument.proofResidence) {
+          proofResidenceDocument = document;
+        }
+      }
+    });
+    notifyListeners();
     setLoading(false);
-  }
-
-  void setDocFront(Uint8List? bytes) {
-    _docFront = bytes;
-    notifyListeners();
-  }
-
-  void setDocBack(Uint8List? bytes) {
-    _docBack = bytes;
-    notifyListeners();
-  }
-
-  void setProofResidence(Uint8List? bytes) {
-    _proofResidence = bytes;
-    notifyListeners();
   }
 
   bool validateCpf(String raw) {
@@ -111,60 +111,59 @@ class KycController extends BaseController {
     return true;
   }
 
-  Future<bool> submit({
-    required String cpf,
-    required String rg,
-    required XFile cpfFront,
-    required XFile proofResidence,
-  }) async {
-    if (!_validateInput(cpf: cpf, rg: rg)) return false;
+  Future<bool> submit({required bool isEdit}) async {
+    if (!_validateInput(cpf: cpfController.text, rg: rgController.text)) {
+      return false;
+    }
     setLoading(true);
 
     bool cpfOk = false;
     bool proofOk = false;
-    Document userCpfDocument = Document(
-      reviewStatus: ReviewStatusDocument.pending,
-      typeDocument: TypeDocument.cpf,
-      uploadedAt: DateTime.now(),
-      from: EnumDocumentsFrom.kyc
-    );
-    var cpfResponse = await kycRepository.submit(
-      userDocument: userCpfDocument,
-      xFile: cpfFront,
-    );
 
-    cpfResponse.fold((error) {}, (success) {
-      cpfOk = true;
-    });
+    if (cpfFront != null) {
+      Document userCpfDocument = Document(
+        reviewStatus: ReviewStatusDocument.pending,
+        typeDocument: TypeDocument.cpf,
+        uploadedAt: DateTime.now(),
+        from: EnumDocumentsFrom.kyc,
+      );
+      var cpfResponse = await kycRepository.submit(
+        userDocument: userCpfDocument,
+        xFile: cpfFront!,
+      );
 
-    Document userProofDocument = Document(
-      reviewStatus: ReviewStatusDocument.pending,
-      typeDocument: TypeDocument.proofResidence,
-      uploadedAt: DateTime.now(),
-      from: EnumDocumentsFrom.kyc
-    );
-    var proofResponse = await kycRepository.submit(
-      userDocument: userProofDocument,
-      xFile: proofResidence,
-    );
+      cpfResponse.fold((error) {}, (success) {
+        cpfOk = true;
+      });
+    }
 
-    proofResponse.fold((error) {}, (success) {
-      proofOk = true;
-    });
+    if (proofResidence != null) {
+      Document userProofDocument = Document(
+        reviewStatus: ReviewStatusDocument.pending,
+        typeDocument: TypeDocument.proofResidence,
+        uploadedAt: DateTime.now(),
+        from: EnumDocumentsFrom.kyc,
+      );
+      var proofResponse = await kycRepository.submit(
+        userDocument: userProofDocument,
+        xFile: proofResidence!,
+      );
+
+      proofResponse.fold((error) {}, (success) {
+        proofOk = true;
+      });
+    }
 
     var responseUpdateKycStatus = await kycRepository.setStatusKyc(
       kycStatus: KycStatus.submitted,
-      cpf: cpf,
-      rg: rg,
+      cpf: cpfController.text,
+      rg: rgController.text,
     );
     var statusOk = false;
     responseUpdateKycStatus.fold(
       (error) {
         setMessage(
-          AlertData(
-            message: error.errorMessage,
-            errorType: ErrorType.error,
-          ),
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
       (_) {
@@ -173,6 +172,8 @@ class KycController extends BaseController {
     );
 
     setLoading(false);
-    return cpfOk && proofOk && statusOk;
+
+    bool deuCertoOsDocuments = cpfOk || proofOk;
+    return deuCertoOsDocuments && statusOk;
   }
 }

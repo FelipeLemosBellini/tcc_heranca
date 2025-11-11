@@ -34,11 +34,7 @@ abstract class BackofficeFirestoreInterface {
   Future<Either<ExceptionMessage, void>> changeStatusDocument({
     required String documentId,
     required bool status,
-  });
-
-  Future<Either<ExceptionMessage, void>> changeStatusUser({
-    required String userId,
-    required bool status,
+    String? reason,
   });
 
   Future<Either<ExceptionMessage, void>> updateStatusUser({

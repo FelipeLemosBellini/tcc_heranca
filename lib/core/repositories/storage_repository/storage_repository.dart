@@ -30,7 +30,7 @@ class StorageRepository implements StorageRepositoryInterface {
             namePath,
             bytes,
             fileOptions: FileOptions(
-              contentType: 'image/$typeImage',
+              contentType: 'content/$typeImage',
               upsert: true,
             ),
           );
