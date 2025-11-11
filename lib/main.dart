@@ -1,9 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tcc/app_widget.dart';
 import 'package:tcc/core/dependence_injection/di.dart';
+import 'package:tcc/core/environment/env.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,26 +14,22 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyDP5sJRjZlHkXd0r4qynDsZG355CE6-_B8",
-      appId: "tcc-heranca",
-      messagingSenderId: "",
-      projectId: "tcc-heranca",
-      storageBucket: "tcc-heranca.firebasestorage.app",
+  //start environment variables
+  await Env.start();
+
+  //start supabase
+  await Supabase.initialize(
+    url: Env.supabaseUrl,
+    anonKey: Env.supabaseKey,
+    authOptions: FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.implicit,
+      autoRefreshToken: true,
     ),
   );
-  DI.setDependencies();
+
+  await DI.setDependencies();
 
   await GetIt.I.allReady();
 
-  // runApp(DevicePreview(
-  //   enabled: true,
-  //   builder: (context) => MyApp(),
-  // ));
   runApp(MyApp());
-  // runApp(DevicePreview(
-  //   enabled: true,
-  //   builder: (context) => const MyApp(),
-  // ));*/
 }

@@ -26,8 +26,12 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   LoginController controller = GetIt.I.get<LoginController>();
 
-  TextEditingController emailController = TextEditingController(text: "a@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "@Abc1234");
+  TextEditingController emailController = TextEditingController(
+    text: "teste2@gmail.com",
+  );
+  TextEditingController passwordController = TextEditingController(
+    text: "@Abc1234",
+  );
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -69,11 +73,11 @@ class _LoginViewState extends State<LoginView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                      Image.asset(
-                      'assets/images/ethernium-logo.png',
-                      height: 200,
-                      fit: BoxFit.contain,
-                      ),
+                        Image.asset(
+                          'assets/images/ethernium-logo.png',
+                          height: 200,
+                          fit: BoxFit.contain,
+                        ),
                         TextFieldWidget(
                           hintText: "Digite seu email",
                           controller: emailController,
@@ -142,7 +146,7 @@ class _LoginViewState extends State<LoginView> {
         switch (loginSuccess.kycStatus) {
           case KycStatus.rejected:
           case KycStatus.waiting:
-            context.go(RouterApp.kycStep);
+            context.go(RouterApp.kycStep, extra: {'isEdit': true});
           case KycStatus.approved:
             context.go(RouterApp.home);
           case KycStatus.submitted:

@@ -40,10 +40,12 @@ abstract class AdminRoutes {
       builder: (BuildContext context, GoRouterState state) {
         Map<String, dynamic> params = state.extra as Map<String, dynamic>;
         String userId = params['userId'] as String;
+        final String? testatorId = params['testatorId'] as String?;
         final String? testatorCpf = params['testatorCpf'] as String?;
         final String? testatorName = params['testatorName'] as String?;
         return ListUserDocumentsView(
           userId: userId,
+          testatorId: testatorId,
           testatorCpf: testatorCpf,
           testatorName: testatorName,
         );

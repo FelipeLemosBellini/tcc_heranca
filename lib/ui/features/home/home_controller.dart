@@ -1,14 +1,12 @@
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/local_storage/local_storage_service.dart';
 import 'package:tcc/core/models/user_model.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
-import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/firebase_auth/auth_repository_interface.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class HomeController extends BaseController {
-  final FirebaseAuthRepositoryInterface authRepository;
-  final UserRepository userRepository;
-  final LocalStorageService localStorageService;
+  final AuthRepositoryInterface authRepository;
+  final UserRepositoryInterface userRepository;
 
   UserModel? currentUser;
 
@@ -19,7 +17,6 @@ class HomeController extends BaseController {
   HomeController({
     required this.authRepository,
     required this.userRepository,
-    required this.localStorageService,
   });
 
   Future<void> loadUserData() async {
@@ -45,7 +42,6 @@ class HomeController extends BaseController {
   }
 
   void signOut() {
-    localStorageService.cleanAllData();
     authRepository.signOut();
   }
 }

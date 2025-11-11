@@ -1,43 +1,48 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:tcc/core/constants/db_mappings.dart';
+import 'package:tcc/core/constants/db_tables.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
+import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/models/document.dart';
-import 'package:tcc/core/models/testator_summary.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
+import 'package:tcc/core/models/testator_summary.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 
 class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
-  final FirebaseFirestore _firestore;
-
-  BackofficeFirestoreRepository({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+  final SupabaseClient _client = Supabase.instance.client;
 
   @override
   Future<Either<ExceptionMessage, List<UserModel>>> getUsersPendentes({
     EnumDocumentsFrom? from,
   }) async {
     try {
-      var query = _firestore
-          .collection('documents')
-          .where(
-            'reviewStatus',
-            isEqualTo: ReviewStatusDocument.pending.name,
-          );
+      final pendingStatusId = DbMappings.documentStatusToId(
+        ReviewStatusDocument.pending,
+      );
+      final fluxId = DbMappings.fluxToId(from);
 
-      if (from != null) {
-        query = query.where('from', isEqualTo: from.name);
+      var documentsQuery = _client
+          .from(DbTables.documents)
+          .select('idUser')
+          .eq('numStatus', pendingStatusId);
+
+      if (fluxId != null) {
+        documentsQuery = documentsQuery.eq('numFlux', fluxId);
       }
 
-      final pendingDocs = await query.get();
+      final documentsResponse = await documentsQuery;
 
       final userIds =
-          pendingDocs.docs
-              .map((doc) => doc.data()['idDocument'] as String?)
+          documentsResponse
+              .map((doc) => doc['idUser'] as String?)
               .whereType<String>()
               .toSet()
               .toList();
@@ -45,135 +50,136 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       if (userIds.isEmpty) return right([]);
 
       final users = <UserModel>[];
-      const chunkSize = 10;
+      const chunkSize = 50;
 
       for (var i = 0; i < userIds.length; i += chunkSize) {
         final chunk = userIds.sublist(
           i,
           i + chunkSize > userIds.length ? userIds.length : i + chunkSize,
         );
-        final usersSnapshot =
-            await _firestore
-                .collection('users')
-                .where(FieldPath.documentId, whereIn: chunk)
-                .get();
 
-        users.addAll(
-          usersSnapshot.docs.map((userDoc) {
-            final data = userDoc.data();
-            return UserModel.fromMap({
-              ...data,
-              'id': userDoc.id, // garante o id no modelo
-            });
-          }),
-        );
+        final snapshot = await _client
+            .from(DbTables.users)
+            .select()
+            .inFilter('id', chunk);
+
+        users.addAll(snapshot.map((raw) => UserModel.fromMap(raw)));
       }
 
       return right(users);
     } catch (e) {
-      return left(ExceptionMessage(e.toString()));
+      return left(ExceptionMessage('Erro ao buscar usuários pendentes: $e'));
     }
   }
 
   @override
   Future<Either<ExceptionMessage, List<Document>>> getDocumentsByUserId({
     required String userId,
-    String? testatorCpf,
+    String? testatorId,
     EnumDocumentsFrom? from,
     bool onlyPending = true,
   }) async {
     try {
-      var query =
-          _firestore.collection('documents').where('idDocument', isEqualTo: userId);
+      var query = _client
+          .from(DbTables.documents)
+          .select()
+          .eq('idUser', userId);
 
       if (onlyPending) {
-        query = query.where(
-          'reviewStatus',
-          isEqualTo: ReviewStatusDocument.pending.name,
+        query = query.eq(
+          'numStatus',
+          DbMappings.documentStatusToId(ReviewStatusDocument.pending),
         );
       }
 
       if (from != null) {
-        query = query.where('from', isEqualTo: from.name);
+        query = query.eq('numFlux', DbMappings.fluxToId(from)!);
       }
 
-      final response = await query.get();
-      var docs = response.docs.map((doc) {
-        return Document.fromMap(doc.data())..idDocument = doc.id;
-      }).toList();
-
-      if (testatorCpf != null && testatorCpf.isNotEmpty) {
-        docs = docs.where((doc) => doc.content == testatorCpf).toList();
+      if (testatorId != null && testatorId.isNotEmpty) {
+        query = query.eq('testatorId', testatorId);
       }
+
+      final response = await query;
+      var docs = response.map((row) => Document.fromMap(row)).toList();
 
       return Right(docs);
     } catch (e) {
-      return Left(ExceptionMessage("Erro ao pegar os documentos"));
+      return Left(ExceptionMessage("Erro ao pegar os documentos: $e"));
     }
   }
 
   @override
-  Future<Either<ExceptionMessage, List<TestatorSummary>>> getTestatorsByRequester({
-    required String requesterId,
-  }) async {
+  Future<Either<ExceptionMessage, List<TestatorSummary>>>
+  getTestatorsByRequester({required String requesterId}) async {
     try {
-      final documentsSnapshot =
-          await _firestore
-              .collection('documents')
-              .where('idDocument', isEqualTo: requesterId)
-              .where('reviewStatus', isEqualTo: ReviewStatusDocument.pending.name)
-              .where('from', isEqualTo: EnumDocumentsFrom.inheritanceRequest.name)
-              .get();
+      final pendingStatusId = DbMappings.documentStatusToId(
+        ReviewStatusDocument.pending,
+      );
+      final inheritanceFluxId =
+          DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!;
 
-      final cpfs = documentsSnapshot.docs
-          .map((doc) => (doc.data()['content'] as String?)?.trim())
-          .whereType<String>()
-          .where((cpf) => cpf.isNotEmpty)
-          .toSet()
-          .toList();
+      final docs = await _client
+          .from(DbTables.documents)
+          .select('testatorId')
+          .eq('idUser', requesterId)
+          .eq('numStatus', pendingStatusId)
+          .eq('numFlux', inheritanceFluxId);
 
-      if (cpfs.isEmpty) {
-        return right([]);
-      }
+      final testatorIdSet = <String>{};
+      final orderedIds = <String>[];
 
-      final usersByCpf = <String, UserModel>{};
-      const chunkSize = 10;
-
-      for (var i = 0; i < cpfs.length; i += chunkSize) {
-        final chunk = cpfs.sublist(
-          i,
-          i + chunkSize > cpfs.length ? cpfs.length : i + chunkSize,
-        );
-
-        final usersSnapshot =
-            await _firestore
-                .collection('users')
-                .where('cpf', whereIn: chunk)
-                .get();
-
-        for (final userDoc in usersSnapshot.docs) {
-          final data = userDoc.data();
-          final user = UserModel.fromMap({
-            ...data,
-            'id': userDoc.id,
-          });
-          if (user.cpf != null && user.cpf!.isNotEmpty) {
-            usersByCpf[user.cpf!] = user;
+      for (final doc in docs) {
+        final id = (doc['testatorId'] as String?)?.trim();
+        if (id != null && id.isNotEmpty) {
+          if (testatorIdSet.add(id)) {
+            orderedIds.add(id);
           }
         }
       }
 
-      final summaries = cpfs.map((cpf) {
-        final user = usersByCpf[cpf];
-        if (user != null) {
-          return TestatorSummary(cpf: cpf, name: user.name, userId: user.id);
+      if (testatorIdSet.isEmpty) {
+        return right([]);
+      }
+
+      final usersById = <String, UserModel>{};
+      const chunkSize = 50;
+
+      for (var i = 0; i < orderedIds.length; i += chunkSize) {
+        final chunk = orderedIds.sublist(
+          i,
+          i + chunkSize > orderedIds.length ? orderedIds.length : i + chunkSize,
+        );
+
+        final usersSnapshot = await _client
+            .from(DbTables.users)
+            .select()
+            .inFilter('id', chunk);
+
+        for (final raw in usersSnapshot) {
+          final user = UserModel.fromMap(raw);
+          if ((user.id ?? '').isNotEmpty) {
+            usersById[user.id!] = user;
+          }
         }
-        return TestatorSummary(cpf: cpf, name: cpf, userId: null);
-      }).toList();
+      }
+
+      final summaries =
+          orderedIds.map((id) {
+            final user = usersById[id];
+            if (user != null) {
+              return TestatorSummary(
+                cpf: user.cpf ?? '',
+                name: user.name,
+                userId: user.id,
+              );
+            }
+            return TestatorSummary(cpf: '', name: id, userId: id);
+          }).toList();
 
       return right(summaries);
     } catch (e) {
-      return left(ExceptionMessage(e.toString()));
+      return left(ExceptionMessage('Erro ao buscar testadores: $e'));
     }
   }
 
@@ -181,29 +187,22 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   Future<Either<ExceptionMessage, void>> changeStatusDocument({
     required String documentId,
     required bool status,
+    String? reason,
   }) async {
     try {
-      await _firestore.collection('documents').doc(documentId).update({
-        'reviewStatus': status,
-      });
+      final statusEnum =
+          status ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
+      await _client
+          .from(DbTables.documents)
+          .update({
+            'numStatus': DbMappings.documentStatusToId(statusEnum),
+            'updatedAt': DateTime.now().toIso8601String(),
+            'reviewMessage': reason,
+          })
+          .eq('id', documentId);
       return right(null);
     } catch (e) {
-      return left(ExceptionMessage(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<ExceptionMessage, void>> changeStatusUser({
-    required String userId,
-    required bool status,
-  }) async {
-    try {
-      await _firestore.collection('users').doc(userId).update({
-        'kycStatus': status,
-      });
-      return right(null);
-    } catch (e) {
-      return left(ExceptionMessage(e.toString()));
+      return left(ExceptionMessage('Erro ao atualizar documento: $e'));
     }
   }
 
@@ -213,13 +212,19 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     required String userId,
   }) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
-        'kycStatus': hasInvalidDocument ? "reproved" : "approved",
-      });
+      KycStatus status =
+          hasInvalidDocument ? KycStatus.rejected : KycStatus.approved;
+      await _client
+          .from(DbTables.users)
+          .update({
+            'numKycStatus': DbMappings.kycStatusToId(status),
+            'updatedAt': DateTime.now().toIso8601String(),
+          })
+          .eq('id', userId);
       return const Right(null);
     } catch (e) {
       return Left(
-        ExceptionMessage("Erro ao atualizar o documento: ${e.toString()}"),
+        ExceptionMessage("Erro ao atualizar o status do usuário: $e"),
       );
     }
   }
@@ -227,27 +232,34 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   @override
   Future<Either<ExceptionMessage, void>> updateInheritanceStatus({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
     required HeirStatus status,
   }) async {
     try {
-      final query = await _firestore
-          .collection('inheritance')
-          .where('requestById', isEqualTo: requesterId)
-          .where('cpf', isEqualTo: testatorCpf)
-          .limit(1)
-          .get();
+      final record =
+          await _client
+              .from(DbTables.inheritance)
+              .select('id')
+              .eq('requestBy', requesterId)
+              .eq('testatorId', testatorId)
+              .limit(1)
+              .maybeSingle();
 
-      if (query.docs.isEmpty) {
+      if (record == null || record['id'] == null) {
         return left(
-          ExceptionMessage('Processo de herança não encontrado para atualização.'),
+          ExceptionMessage(
+            'Processo de herança não encontrado para atualização.',
+          ),
         );
       }
 
-      await query.docs.first.reference.update({
-        'heirStatus': status.value,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      await _client
+          .from(DbTables.inheritance)
+          .update({
+            'status': DbMappings.heirStatusToId(status),
+            'updatedAt': DateTime.now().toIso8601String(),
+          })
+          .eq('id', record['id']);
 
       return const Right(null);
     } catch (e) {
@@ -256,22 +268,26 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>> getCompletedInheritances() async {
+  Future<Either<ExceptionMessage, List<RequestInheritanceModel>>>
+  getCompletedInheritances() async {
     try {
-      final snapshot = await _firestore
-          .collection('inheritance')
-          .where('heirStatus', isEqualTo: HeirStatus.transferenciaSaldoRealizada.value)
-          .get();
+      final completedStatus = DbMappings.heirStatusToId(
+        HeirStatus.transferenciaSaldoRealizada,
+      );
 
-      final inheritances = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return RequestInheritanceModel.fromMap({
-          ...data,
-          'id': doc.id,
-          'createdAt': (data['createdAt'] as Timestamp?)?.toDate(),
-          'updatedAt': (data['updatedAt'] as Timestamp?)?.toDate(),
-        });
-      }).toList();
+      final snapshot = await _client
+          .from(DbTables.inheritance)
+          .select('*, users:users!inner(name, cpf, rg)')
+          .eq('status', completedStatus);
+
+      final inheritances =
+          snapshot.map((row) {
+            return RequestInheritanceModel.fromMap({
+              ...row,
+              'createdAt': row['createdAt'],
+              'updatedAt': row['updatedAt'],
+            });
+          }).toList();
 
       inheritances.sort(
         (a, b) => (b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
@@ -280,7 +296,49 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
 
       return Right(inheritances);
     } catch (e) {
-      return Left(ExceptionMessage('Erro ao carregar processos finalizados: ${e.toString()}'));
+      return Left(
+        ExceptionMessage('Erro ao carregar processos finalizados: $e'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, void>> sendEmailWithBalance({
+    required String balance,
+    required String requestUserId,
+  }) async {
+    try {
+      final response =
+          await _client
+              .from(DbTables.inheritance)
+              .select('id, email')
+              .eq('requestBy', requestUserId)
+              .limit(1)
+              .maybeSingle();
+
+      final String keyEmail = Env.keyEmail;
+      final String gmailUser = 'felipelemosbellini@gmail.com';
+
+      final smtpServer = gmail(gmailUser, keyEmail);
+
+      final message =
+          Message()
+            ..from = Address(gmailUser, 'Ethernium App')
+            ..recipients.add(response?['email'])
+            ..subject = 'Saldo da conta de seu cliente'
+            ..text = 'Segue o saldo de ETH do seu cliente $balance';
+
+      try {
+        final sendReport = await send(message, smtpServer);
+        print('Enviado: ${sendReport.toString()}');
+      } on MailerException catch (e) {
+        for (final p in e.problems) {
+          print('Problema: ${p.code}: ${p.msg}');
+        }
+      }
+      return const Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao enviar email: $e'));
     }
   }
 }

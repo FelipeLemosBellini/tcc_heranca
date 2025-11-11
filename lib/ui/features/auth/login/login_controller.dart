@@ -1,27 +1,21 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
-import 'package:tcc/core/local_storage/local_storage_service.dart';
-import 'package:tcc/core/repositories/firebase_auth/firebase_auth_repository_interface.dart';
-import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
-import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/firebase_auth/auth_repository_interface.dart';
+import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class LoginController extends BaseController {
-  final FirebaseAuthRepositoryInterface firebaseAuthRepository;
-  final UserRepository userRepository;
-  final KycRepository kycRepository;
-  final LocalStorageService localStorageService;
+  final AuthRepositoryInterface firebaseAuthRepository;
+  final UserRepositoryInterface userRepository;
+  final KycRepositoryInterface kycRepository;
 
   LoginController({
     required this.kycRepository,
     required this.firebaseAuthRepository,
     required this.userRepository,
-    required this.localStorageService,
   });
 
   Future<LoginSuccess> login(String email, String password) async {
@@ -29,7 +23,6 @@ class LoginController extends BaseController {
     bool wasLogged = false;
     LoginSuccess loginSuccess = LoginSuccess();
 
-    late KycStatus kycStatus;
     Either<ExceptionMessage, bool> response = await firebaseAuthRepository
         .login(email: email, password: password);
     response.fold(
@@ -55,7 +48,6 @@ class LoginController extends BaseController {
       var user = await userRepository.getUser();
       user.fold((error) {}, (success) {
         loginSuccess.isAdmin = success.isAdmin;
-        localStorageService.setIsAdmin(success.isAdmin == true);
       });
     }
     setLoading(false);

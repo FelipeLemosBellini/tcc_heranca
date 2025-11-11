@@ -10,10 +10,11 @@ import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
+import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class RequestInheritanceController extends BaseController {
-  final InheritanceRepository inheritanceRepository;
+  final InheritanceRepositoryInterface inheritanceRepository;
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
   RequestInheritanceController({
@@ -33,8 +34,9 @@ class RequestInheritanceController extends BaseController {
     final requesterId = inheritance.requestById;
     final testatorCpf = inheritance.cpf;
     final inheritanceId = inheritance.id;
+    final testatorId = inheritance.testatorId;
 
-    if (requesterId == null || testatorCpf == null || inheritanceId == null) {
+    if (requesterId == null || testatorCpf == null || inheritanceId == null || testatorId == null) {
       setMessage(
         AlertData(
           message:
@@ -76,8 +78,8 @@ class RequestInheritanceController extends BaseController {
 
     final docs = <Document, XFile>{
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.procuracaoAdvogado,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -85,8 +87,8 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): procuracaoDoInventariante,
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.deathCertificate,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -94,8 +96,8 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): certidaoDeObito,
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.cpf,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -103,8 +105,8 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): documentoCpf,
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.proofResidence,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -112,8 +114,8 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): enderecoDoInventariante,
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.testamentDocument,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -121,8 +123,8 @@ class RequestInheritanceController extends BaseController {
         uploadedAt: DateTime.now(),
       ): testamento,
       Document(
-        idDocument: requesterId,
-        content: testatorCpf,
+        ownerId: requesterId,
+        testatorId: testatorId,
         typeDocument: TypeDocument.transferAssetsOrder,
         reviewStatus: ReviewStatusDocument.pending,
         reviewMessage: '',
@@ -139,7 +141,7 @@ class RequestInheritanceController extends BaseController {
         xFile: entry.value,
         inheritanceId: inheritanceId,
         requesterId: requesterId,
-        testatorCpf: testatorCpf,
+        testatorId: testatorId,
       );
 
       result.fold(

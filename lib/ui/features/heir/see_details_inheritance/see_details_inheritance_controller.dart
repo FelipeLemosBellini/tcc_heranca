@@ -1,13 +1,13 @@
 import 'package:open_filex/open_filex.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
-import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class SeeDetailsInheritanceController extends BaseController {
-  final InheritanceRepository inheritanceRepository;
-  final StorageRepository storageRepository;
+  final InheritanceRepositoryInterface inheritanceRepository;
+  final StorageRepositoryInterface storageRepository;
 
   SeeDetailsInheritanceController({
     required this.inheritanceRepository,
@@ -20,13 +20,13 @@ class SeeDetailsInheritanceController extends BaseController {
 
   Future<void> loadDocuments({
     required String requesterId,
-    required String testatorCpf,
+    required String testatorId,
   }) async {
-    if (requesterId.isEmpty || testatorCpf.isEmpty) return;
+    if (requesterId.isEmpty || testatorId.isEmpty) return;
     setLoading(true);
     final result = await inheritanceRepository.getDocumentsByInheritance(
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
     );
 
     result.fold(

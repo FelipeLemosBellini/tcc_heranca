@@ -4,13 +4,14 @@ import 'package:tcc/core/models/testament_model.dart';
 import 'package:tcc/core/models/user_model.dart';
 import 'package:tcc/core/repositories/rpc_repository/rpc_repository.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/features/home/home_controller.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class TestatorController extends BaseController {
   final HomeController _homeController = GetIt.I.get<HomeController>();
   final RpcRepository rpcRepository;
-  final UserRepository userRepository;
+  final UserRepositoryInterface userRepository;
 
   TestatorController({
     required this.rpcRepository,

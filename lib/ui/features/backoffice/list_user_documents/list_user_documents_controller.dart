@@ -1,25 +1,26 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
+import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
-import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
+import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ListUserDocumentsController extends BaseController {
-  final KycRepositoryInterface kycRepositoryInterface;
-  final StorageRepository storageRepository;
+  final StorageRepositoryInterface storageRepository;
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
 
   ListUserDocumentsController({
-    required this.kycRepositoryInterface,
     required this.storageRepository,
     required this.backofficeFirestoreInterface,
   });
@@ -27,13 +28,15 @@ class ListUserDocumentsController extends BaseController {
   List<Document> _documents = [];
   List<TextEditingController> reasonControllers = [];
   List<FocusNode> focusNodes = [];
-  String? _currentTestatorCpf;
+  String? _currentTestatorId;
   bool _hasFinalDocuments = false;
 
   final Map<String, bool?> decisions = {};
 
   List<Document> get listDocuments => _documents;
-  String? get currentTestatorCpf => _currentTestatorCpf;
+
+  String? get currentTestatorId => _currentTestatorId;
+
   bool get hasFinalDocuments => _hasFinalDocuments;
 
   @override
@@ -48,10 +51,10 @@ class ListUserDocumentsController extends BaseController {
 
   Future<void> getDocumentsByUserId({
     required String userId,
-    String? testatorCpf,
+    String? testatorId,
     EnumDocumentsFrom? from,
   }) async {
-    _currentTestatorCpf = testatorCpf;
+    _currentTestatorId = testatorId;
     _hasFinalDocuments = false;
 
     for (final controller in reasonControllers) {
@@ -68,43 +71,48 @@ class ListUserDocumentsController extends BaseController {
 
     final response = await backofficeFirestoreInterface.getDocumentsByUserId(
       userId: userId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
       from: from,
-      onlyPending: testatorCpf != null,
+      onlyPending: testatorId != null && testatorId.isNotEmpty,
     );
 
-    response.fold((error) {
-      setMessage(
-        AlertData(
-          message: error.errorMessage,
-          errorType: ErrorType.error,
-        ),
-      );
-    }, (success) {
-      _documents = success;
-      _hasFinalDocuments = _documents.any((doc) =>
-          doc.typeDocument == TypeDocument.transferAssetsOrder ||
-          doc.typeDocument == TypeDocument.testamentDocument ||
-          doc.typeDocument == TypeDocument.inventoryProcess);
-      for (int i = 0; i < _documents.length; i++) {
-        reasonControllers.add(TextEditingController());
-        focusNodes.add(FocusNode());
-      }
-      notifyListeners();
-    });
+    response.fold(
+      (error) {
+        setMessage(
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
+        );
+      },
+      (success) {
+        _documents = success;
+        _hasFinalDocuments = _documents.any(
+          (doc) =>
+              doc.typeDocument == TypeDocument.transferAssetsOrder ||
+              doc.typeDocument == TypeDocument.testamentDocument ||
+              doc.typeDocument == TypeDocument.inventoryProcess,
+        );
+        for (int i = 0; i < _documents.length; i++) {
+          reasonControllers.add(TextEditingController());
+          focusNodes.add(FocusNode());
+        }
+        notifyListeners();
+      },
+    );
 
     setLoading(false);
   }
 
   Future<void> submit({required Document documents}) async {
     setLoading(true);
-    final decision = decisions[documents.idDocument]!;
-    final status =
-        decision ? ReviewStatusDocument.approved : ReviewStatusDocument.invalid;
+    final docId = documents.id;
+    if (docId == null) {
+      setLoading(false);
+      return;
+    }
+    final decision = decisions[docId]!;
 
-    final result = await kycRepositoryInterface.updateDocument(
-      docId: documents.idDocument!,
-      reviewStatus: status,
+    final result = await backofficeFirestoreInterface.changeStatusDocument(
+      documentId: docId,
+      status: decision,
       reason: documents.reviewMessage,
     );
 
@@ -130,32 +138,35 @@ class ListUserDocumentsController extends BaseController {
   Future<void> updateInheritanceStatus({
     required bool hasInvalidDocuments,
     required String requesterId,
-    required String testatorCpf,
   }) async {
-    if (testatorCpf.isEmpty) return;
-    final status = hasFinalDocuments
-        ? (hasInvalidDocuments
-            ? HeirStatus.transferenciaSaldoRecusado
-            : HeirStatus.transferenciaSaldoRealizada)
-        : (hasInvalidDocuments
-            ? HeirStatus.consultaSaldoRecusado
-            : HeirStatus.consultaSaldoAprovado);
+    final testatorId = _currentTestatorId;
+    if (testatorId == null || testatorId.isEmpty) return;
+    final status =
+        hasFinalDocuments
+            ? (hasInvalidDocuments
+                ? HeirStatus.transferenciaSaldoRecusado
+                : HeirStatus.transferenciaSaldoRealizada)
+            : (hasInvalidDocuments
+                ? HeirStatus.consultaSaldoRecusado
+                : HeirStatus.consultaSaldoAprovado);
     final result = await backofficeFirestoreInterface.updateInheritanceStatus(
       requesterId: requesterId,
-      testatorCpf: testatorCpf,
+      testatorId: testatorId,
       status: status,
     );
 
-    result.fold(
+    await result.fold(
       (error) {
         setMessage(
-          AlertData(
-            message: error.errorMessage,
-            errorType: ErrorType.error,
-          ),
+          AlertData(message: error.errorMessage, errorType: ErrorType.error),
         );
       },
-      (_) {},
+      (_) async {
+        backofficeFirestoreInterface.sendEmailWithBalance(
+          balance: "0.1234",
+          requestUserId: _currentTestatorId ?? '',
+        );
+      },
     );
   }
 

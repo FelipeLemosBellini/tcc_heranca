@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tcc/core/models/testament_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tcc/core/routers/admin_routes.dart';
 import 'package:tcc/core/routers/auth_routes.dart';
 import 'package:tcc/core/routers/home_routes.dart';
@@ -40,7 +39,28 @@ abstract class RouterApp {
   static const String requestVault = "/requestVault";
   static const String requestInheritance = "/requestInheritance";
 
+  static final SupabaseClient _supabase = Supabase.instance.client;
+
   static final GoRouter router = GoRouter(
+    refreshListenable: GoRouterRefreshStream(_supabase.auth.onAuthStateChange),
+    redirect: (context, state) {
+      final goingTo = state.matchedLocation;
+      final session = _supabase.auth.currentSession;
+      // Rotas públicas (auth/entrada)
+      final isAuthRoute = [
+        login,
+        createAccount,
+        forgotPassword,
+      ].contains(goingTo);
+
+      if (session == null) {
+        return login;
+      }
+      if ((isAuthRoute) && goingTo != home) {
+        return home;
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: login,
@@ -53,7 +73,6 @@ abstract class RouterApp {
           ...TestamentRoutes.testamentRoutes,
           ...TestatorRoutes.testatorRoutes,
           ...AdminRoutes.adminRoutes,
-
 
           GoRoute(
             path: loginWallet,
@@ -77,13 +96,11 @@ abstract class RouterApp {
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<User?> stream) {
-    _sub = stream.asBroadcastStream().listen((User? user) {
-      notifyListeners();
-    });
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    _sub = stream.asBroadcastStream().listen((_) => notifyListeners());
   }
 
-  late final StreamSubscription<User?> _sub;
+  late final StreamSubscription<dynamic> _sub;
 
   @override
   void dispose() {

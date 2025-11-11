@@ -9,7 +9,10 @@ import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/heir/see_details_inheritance/see_details_inheritance_controller.dart';
+import 'package:tcc/ui/features/heir/see_details_inheritance/widgets/details_row_widget.dart';
+import 'package:tcc/ui/features/heir/see_details_inheritance/widgets/status_banner_widget.dart';
 import 'package:tcc/ui/features/testament/widgets/enum_type_user.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -37,12 +40,12 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
   void initState() {
     super.initState();
     final requesterId = widget.testament.requestById ?? '';
-    final testatorCpf = widget.testament.cpf ?? '';
-    if (requesterId.isNotEmpty && testatorCpf.isNotEmpty) {
+    final testatorId = widget.testament.testatorId ?? '';
+    if (requesterId.isNotEmpty && testatorId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _controller.loadDocuments(
           requesterId: requesterId,
-          testatorCpf: testatorCpf,
+          testatorId: testatorId,
         );
       });
     }
@@ -56,7 +59,8 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
 
   @override
   Widget build(BuildContext context) {
-    final status = widget.testament.heirStatus ?? HeirStatus.consultaSaldoSolicitado;
+    final status =
+        widget.testament.heirStatus ?? HeirStatus.consultaSaldoSolicitado;
     final createdAt = widget.testament.createdAt?.formatDateWithHour() ?? '---';
     final updatedAt = widget.testament.updatedAt?.formatDateWithHour();
     final cpf = widget.testament.cpf?.formatCpf() ?? '---';
@@ -78,23 +82,26 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _DetailRow(label: 'Testador', value: widget.testament.name ?? 'Não informado'),
+                  DetailRow(
+                    label: 'Testador',
+                    value: widget.testament.name ?? 'Não informado',
+                  ),
                   const SizedBox(height: 12),
-                  _DetailRow(label: 'CPF', value: cpf),
+                  DetailRow(label: 'CPF', value: cpf),
                   const SizedBox(height: 12),
-                  _DetailRow(label: 'RG', value: rg),
+                  DetailRow(label: 'RG', value: rg),
                   const SizedBox(height: 12),
-                  _DetailRow(label: 'Solicitado em', value: createdAt),
+                  DetailRow(label: 'Solicitado em', value: createdAt),
                   if (updatedAt != null) ...[
                     const SizedBox(height: 12),
-                    _DetailRow(label: 'Última atualização', value: updatedAt),
+                    DetailRow(label: 'Última atualização', value: updatedAt),
                   ],
                   const SizedBox(height: 24),
-                  _StatusBanner(status: status),
+                  StatusBanner(status: status),
                   const SizedBox(height: 24),
                   Text(
                     _statusMessage(status, widget.typeUser),
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: AppFonts.labelSmallMedium,
                   ),
                   if (status == HeirStatus.consultaSaldoAprovado &&
                       widget.typeUser == EnumTypeUser.heir) ...[
@@ -112,7 +119,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                   const SizedBox(height: 32),
                   Text(
                     'Documentos do processo',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: AppFonts.bodySmallMedium,
                   ),
                   const SizedBox(height: 12),
                   if (_controller.documents.isEmpty)
@@ -177,7 +184,10 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: statusData.background,
                   borderRadius: BorderRadius.circular(20),
@@ -193,16 +203,15 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            'Enviado em $uploadedAt',
-            style: theme.textTheme.bodySmall,
-          ),
+          Text('Enviado em $uploadedAt', style: theme.textTheme.bodySmall),
           if (document.reviewStatus == ReviewStatusDocument.invalid &&
               (document.reviewMessage?.isNotEmpty ?? false)) ...[
             const SizedBox(height: 8),
             Text(
               'Motivo da reprovação: ${document.reviewMessage}',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.red.shade400),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.red.shade400,
+              ),
             ),
           ],
           if (document.pathStorage != null && document.pathStorage!.isNotEmpty)
@@ -234,89 +243,12 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
           foreground: Colors.red.shade700,
         );
       case ReviewStatusDocument.pending:
-      default:
         return _StatusChipData(
           label: 'Pendente',
           background: Colors.orange.withOpacity(0.15),
           foreground: Colors.orange.shade800,
         );
     }
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _DetailRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: theme.textTheme.labelMedium),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatusBanner extends StatelessWidget {
-  final HeirStatus status;
-
-  const _StatusBanner({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color background;
-    Color foreground;
-    switch (status) {
-      case HeirStatus.consultaSaldoAprovado:
-      case HeirStatus.transferenciaSaldoRealizada:
-        background = Colors.green.withOpacity(0.15);
-        foreground = Colors.green.shade800;
-        break;
-      case HeirStatus.consultaSaldoRecusado:
-      case HeirStatus.transferenciaSaldoRecusado:
-        background = Colors.red.withOpacity(0.15);
-        foreground = Colors.red.shade700;
-        break;
-      case HeirStatus.consultaSaldoSolicitado:
-      case HeirStatus.transferenciaSaldoSolicitado:
-      default:
-        background = Colors.orange.withOpacity(0.15);
-        foreground = Colors.orange.shade800;
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.info_outline, color: foreground),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              status.label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: foreground, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

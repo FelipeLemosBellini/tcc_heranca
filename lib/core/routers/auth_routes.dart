@@ -21,9 +21,15 @@ abstract class AuthRoutes {
     ),
     GoRoute(
       path: RouterApp.kycStep,
-      pageBuilder:
-          (context, state) =>
-              Transitions.customTransitionPage(KycView(), state),
+      pageBuilder: (context, state) {
+        final params =
+            state.extra as Map<String, dynamic>? ?? <String, dynamic>{};
+        final isEdit = params['isEdit'] as bool?;
+        return Transitions.customTransitionPage(
+          KycView(isEdit: isEdit ?? false),
+          state,
+        );
+      },
     ),
   ];
 }
