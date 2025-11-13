@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/section_card.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/upload_tile_simple.dart';
@@ -34,6 +35,9 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
   XFile? enderecoDoInventariante;
   XFile? testamento;
   XFile? transferenciaDeAtivos;
+
+  bool get _isCorrection =>
+      widget.inheritance.heirStatus == HeirStatus.transferenciaSaldoRecusado;
 
   // Controllers
   final cpfController = TextEditingController();
@@ -102,6 +106,10 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                       const SizedBox(height: 20),
                       SectionCard(
                         title: 'Anexos - somente PDF',
+                        subtitle:
+                            _isCorrection
+                                ? 'Envie apenas os documentos que precisam de correção.'
+                                : null,
                         icon: Icons.attach_file_outlined,
                         children: [
                           UploadTileSimple(
@@ -168,37 +176,57 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                         children: [
                           Expanded(
                             child: ElevatedButtonWidget(
-                              text: 'Enviar',
+                              text:
+                                  _isCorrection ? 'Enviar correção' : 'Enviar',
                               onTap: () async {
-                                if (procuracaoDoInventariante == null ||
-                                    certidaoDeObito == null ||
-                                    documentoCpf == null ||
-                                    enderecoDoInventariante == null ||
-                                    testamento == null ||
-                                    transferenciaDeAtivos == null) {
+                                final attachments = [
+                                  procuracaoDoInventariante,
+                                  certidaoDeObito,
+                                  documentoCpf,
+                                  enderecoDoInventariante,
+                                  testamento,
+                                  transferenciaDeAtivos,
+                                ];
+
+                                if (!_isCorrection &&
+                                    attachments.any((file) => file == null)) {
                                   AlertHelper.showAlertSnackBar(
                                     context: context,
                                     alertData: AlertData(
-                                      message: 'Anexe todos os documentos obrigatórios.',
+                                      message:
+                                          'Anexe todos os documentos obrigatórios.',
                                       errorType: ErrorType.warning,
                                     ),
                                   );
                                   return;
                                 }
-                                final success = await _requestInheritanceController
-                                    .createRequestInheritance(
-                                      inheritance: widget.inheritance,
-                                      rg: rgController.text,
-                                      procuracaoDoInventariante:
-                                          procuracaoDoInventariante!,
-                                      certidaoDeObito: certidaoDeObito!,
-                                      documentoCpf: documentoCpf!,
-                                      enderecoDoInventariante:
-                                          enderecoDoInventariante!,
-                                      testamento: testamento!,
-                                      transferenciaDeAtivos:
-                                          transferenciaDeAtivos!,
-                                    );
+                                if (_isCorrection &&
+                                    attachments.every((file) => file == null)) {
+                                  AlertHelper.showAlertSnackBar(
+                                    context: context,
+                                    alertData: AlertData(
+                                      message:
+                                          'Selecione ao menos um documento para reenviar.',
+                                      errorType: ErrorType.warning,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                final success =
+                                    await _requestInheritanceController
+                                        .createRequestInheritance(
+                                          inheritance: widget.inheritance,
+                                          rg: rgController.text,
+                                          procuracaoDoInventariante:
+                                              procuracaoDoInventariante,
+                                          certidaoDeObito: certidaoDeObito,
+                                          documentoCpf: documentoCpf,
+                                          enderecoDoInventariante:
+                                              enderecoDoInventariante,
+                                          testamento: testamento,
+                                          transferenciaDeAtivos:
+                                              transferenciaDeAtivos,
+                                        );
                                 if (!mounted) return;
                                 if (success) {
                                   context.pop();

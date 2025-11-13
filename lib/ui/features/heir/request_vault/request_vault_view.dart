@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/section_card.dart';
 import 'package:tcc/ui/features/auth/kyc/widgets/upload_tile_simple.dart';
-import 'package:tcc/ui/features/heir/request_inheritance/request_inheritance_controller.dart';
 import 'package:tcc/ui/features/heir/request_vault/request_vault_controller.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
@@ -15,7 +15,9 @@ import 'package:tcc/ui/widgets/input_formatters/cpf_input_formatter.dart';
 import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class RequestVaultView extends StatefulWidget {
-  const RequestVaultView({super.key});
+  final RequestInheritanceModel? inheritance;
+
+  const RequestVaultView({super.key, this.inheritance});
 
   @override
   State<RequestVaultView> createState() => _RequestVaultViewState();
@@ -30,9 +32,15 @@ class _RequestVaultViewState extends State<RequestVaultView> {
   XFile? procuracaoDoInventariante;
   XFile? certidaoDeObito;
 
+  bool get _isCorrection => widget.inheritance != null;
+
   @override
   void initState() {
     super.initState();
+    if (_isCorrection) {
+      _requestVaultController.cpfTestatorController.text =
+          widget.inheritance?.cpf ?? '';
+    }
   }
 
   @override
@@ -63,7 +71,10 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                     children: [
                       SectionCard(
                         title: 'Dados do falecido',
-                        subtitle: 'Preencha com os dados básicos do falecido.',
+                        subtitle:
+                            _isCorrection
+                                ? 'Confirme os dados e envie apenas os documentos corrigidos.'
+                                : 'Preencha com os dados básicos do falecido.',
                         icon: Icons.person_outline,
                         children: [
                           TextFieldWidget(
@@ -73,6 +84,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             keyboardType: TextInputType.number,
                             focusNode: _requestVaultController.cpfTestatorFocus,
                             inputFormatters: [CpfInputFormatter()],
+                            enabled: !_isCorrection,
                           ),
                         ],
                       ),
@@ -85,7 +97,9 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                             label: 'Certificado de Obito',
                             hasAttach: procuracaoDoInventariante != null,
                             attach: () async {
-                              procuracaoDoInventariante = await getFile(context);
+                              procuracaoDoInventariante = await getFile(
+                                context,
+                              );
                               setState(() {});
                             },
                           ),
@@ -105,10 +119,12 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                         children: [
                           Expanded(
                             child: ElevatedButtonWidget(
-                              text: 'Enviar',
+                              text:
+                                  _isCorrection ? 'Enviar correção' : 'Enviar',
                               onTap: () async {
-                                if (procuracaoDoInventariante == null ||
-                                    certidaoDeObito == null) {
+                                if (!_isCorrection &&
+                                    (procuracaoDoInventariante == null ||
+                                        certidaoDeObito == null)) {
                                   _requestVaultController.setMessage(
                                     AlertData(
                                       message: "Anexe os documentos!",
@@ -118,17 +134,40 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                                   return;
                                 }
 
+                                if (_isCorrection &&
+                                    procuracaoDoInventariante == null &&
+                                    certidaoDeObito == null) {
+                                  _requestVaultController.setMessage(
+                                    AlertData(
+                                      message:
+                                          "Envie pelo menos um documento para correção.",
+                                      errorType: ErrorType.warning,
+                                    ),
+                                  );
+                                  return;
+                                }
+
                                 final success =
-                                    await _requestVaultController
-                                        .createRequestInheritance(
-                                          certificadoDeObito: certidaoDeObito!,
-                                          procuracaoAdvogado:
-                                              procuracaoDoInventariante!,
-                                          cpfTestator:
-                                              _requestVaultController
-                                                  .cpfTestatorController
-                                                  .text,
-                                        );
+                                    _isCorrection
+                                        ? await _requestVaultController
+                                            .resendBalanceDocuments(
+                                              inheritance: widget.inheritance!,
+                                              certificadoDeObito:
+                                                  certidaoDeObito,
+                                              procuracaoAdvogado:
+                                                  procuracaoDoInventariante,
+                                            )
+                                        : await _requestVaultController
+                                            .createRequestInheritance(
+                                              certificadoDeObito:
+                                                  certidaoDeObito!,
+                                              procuracaoAdvogado:
+                                                  procuracaoDoInventariante!,
+                                              cpfTestator:
+                                                  _requestVaultController
+                                                      .cpfTestatorController
+                                                      .text,
+                                            );
                                 if (!mounted) return;
                                 if (success) {
                                   context.pop();

@@ -20,7 +20,6 @@ import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/enum/type_document.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 
-
 class RequestVaultController extends BaseController {
   final UserRepositoryInterface userRepository;
   final InheritanceRepositoryInterface inheritanceRepository;
@@ -39,22 +38,48 @@ class RequestVaultController extends BaseController {
 
   bool _validateInputs({
     required String cpfTestator,
-    required XFile certificadoDeObito,
-    required XFile procuracaoAdvogado,
+    XFile? certificadoDeObito,
+    XFile? procuracaoAdvogado,
+    bool requireAll = true,
   }) {
-    if (certificadoDeObito.path.isEmpty) {
+    final hasCertidao =
+        certificadoDeObito != null && certificadoDeObito.path.isNotEmpty;
+    final hasProcuracao =
+        procuracaoAdvogado != null && procuracaoAdvogado.path.isNotEmpty;
+
+    if (requireAll) {
+      if (!hasCertidao) {
+        setMessage(
+          AlertData(
+            message: 'Anexe a Certidão de Óbito.',
+            errorType: ErrorType.warning,
+          ),
+        );
+        return false;
+      }
+      if (!hasProcuracao) {
+        setMessage(
+          AlertData(
+            message: 'Anexe a Procuração do Advogado.',
+            errorType: ErrorType.warning,
+          ),
+        );
+        return false;
+      }
+    } else if (!hasCertidao && !hasProcuracao) {
       setMessage(
         AlertData(
-          message: 'Anexe a Certidão de Óbito.',
+          message: 'Envie ao menos um documento corrigido.',
           errorType: ErrorType.warning,
         ),
       );
       return false;
     }
-    if (procuracaoAdvogado.path.isEmpty) {
+
+    if (cpfTestator.trim().isEmpty) {
       setMessage(
         AlertData(
-          message: 'Anexe a Procuração do Advogado.',
+          message: 'Informe o CPF do testador.',
           errorType: ErrorType.warning,
         ),
       );
@@ -124,62 +149,139 @@ class RequestVaultController extends BaseController {
     return created;
   }
 
+  Future<bool> resendBalanceDocuments({
+    required RequestInheritanceModel inheritance,
+    XFile? certificadoDeObito,
+    XFile? procuracaoAdvogado,
+  }) async {
+    final inheritanceId = inheritance.id;
+    final requesterId = inheritance.requestById;
+    final testatorId = inheritance.testatorId;
+
+    if (inheritanceId == null || requesterId == null || testatorId == null) {
+      setMessage(
+        AlertData(
+          message:
+              'Não foi possível reenviar os documentos desta solicitação. Tente novamente.',
+          errorType: ErrorType.error,
+        ),
+      );
+      return false;
+    }
+
+    setLoading(true);
+
+    final sent = await submitDocuments(
+      cpfTestator: inheritance.cpf ?? '',
+      certificadoDeObito: certificadoDeObito,
+      procuracaoAdvogado: procuracaoAdvogado,
+      inheritanceId: inheritanceId,
+      requesterId: requesterId,
+      testatorId: testatorId,
+      requireAllDocs: false,
+      showSuccessMessage: false,
+    );
+
+    if (!sent) {
+      setLoading(false);
+      return false;
+    }
+
+    bool updated = false;
+    final statusResult = await inheritanceRepository.updateStatus(
+      inheritanceId: inheritanceId,
+      status: HeirStatus.consultaSaldoSolicitado,
+    );
+
+    statusResult.fold(
+      (error) {
+        setMessage(
+          AlertData(
+            message:
+                'Documentos reenviados, porém ocorreu um erro ao atualizar o status: ${error.errorMessage}',
+            errorType: ErrorType.warning,
+          ),
+        );
+      },
+      (_) {
+        eventBus.fire(TestamentEvent());
+        setMessage(
+          AlertData(
+            message: 'Correções enviadas para análise.',
+            errorType: ErrorType.success,
+          ),
+        );
+        updated = true;
+      },
+    );
+
+    setLoading(false);
+    return updated;
+  }
+
   Future<bool> submitDocuments({
     required String cpfTestator,
-    required XFile certificadoDeObito,
-    required XFile procuracaoAdvogado,
+    XFile? certificadoDeObito,
+    XFile? procuracaoAdvogado,
     required String inheritanceId,
     required String requesterId,
     required String testatorId,
+    bool requireAllDocs = true,
+    bool showSuccessMessage = true,
   }) async {
     if (!_validateInputs(
       cpfTestator: cpfTestator,
       certificadoDeObito: certificadoDeObito,
       procuracaoAdvogado: procuracaoAdvogado,
+      requireAll: requireAllDocs,
     )) {
       return false;
     }
 
-    final obitoDocument = Document(
-      ownerId: requesterId,
-      testatorId: testatorId,
-      typeDocument: TypeDocument.deathCertificate,
-      reviewStatus: ReviewStatusDocument.pending,
-      reviewMessage: '',
-      from: EnumDocumentsFrom.inheritanceRequest,
-      uploadedAt: DateTime.now(),
-    );
+    final uploads = <Document, XFile>{};
 
-    final procuracaoAdvogadoDocument = Document(
-      ownerId: requesterId,
-      testatorId: testatorId,
-      typeDocument: TypeDocument.procuracaoAdvogado,
-      reviewStatus: ReviewStatusDocument.pending,
-      reviewMessage: '',
-      from: EnumDocumentsFrom.inheritanceRequest,
-      uploadedAt: DateTime.now(),
-    );
+    if (certificadoDeObito != null) {
+      uploads[Document(
+            ownerId: requesterId,
+            testatorId: testatorId,
+            typeDocument: TypeDocument.deathCertificate,
+            reviewStatus: ReviewStatusDocument.pending,
+            reviewMessage: '',
+            from: EnumDocumentsFrom.inheritanceRequest,
+            uploadedAt: DateTime.now(),
+          )] =
+          certificadoDeObito;
+    }
 
-    var resultObito = await inheritanceRepository.submit(
-      document: obitoDocument,
-      xFile: certificadoDeObito,
-      inheritanceId: inheritanceId,
-      requesterId: requesterId,
-      testatorId: testatorId,
-    );
+    if (procuracaoAdvogado != null) {
+      uploads[Document(
+            ownerId: requesterId,
+            testatorId: testatorId,
+            typeDocument: TypeDocument.procuracaoAdvogado,
+            reviewStatus: ReviewStatusDocument.pending,
+            reviewMessage: '',
+            from: EnumDocumentsFrom.inheritanceRequest,
+            uploadedAt: DateTime.now(),
+          )] =
+          procuracaoAdvogado;
+    }
 
-    var resultProcuracao = await inheritanceRepository.submit(
-      document: procuracaoAdvogadoDocument,
-      xFile: procuracaoAdvogado,
-      inheritanceId: inheritanceId,
-      requesterId: requesterId,
-      testatorId: testatorId,
-    );
+    if (uploads.isEmpty) {
+      return false;
+    }
 
     bool success = true;
 
-    resultObito.fold(
-      (error) {
+    for (final entry in uploads.entries) {
+      final result = await inheritanceRepository.submit(
+        document: entry.key,
+        xFile: entry.value,
+        inheritanceId: inheritanceId,
+        requesterId: requesterId,
+        testatorId: testatorId,
+      );
+
+      result.fold((error) {
         success = false;
         setMessage(
           AlertData(
@@ -187,24 +289,12 @@ class RequestVaultController extends BaseController {
             errorType: ErrorType.error,
           ),
         );
-      },
-      (_) {},
-    );
+      }, (_) {});
 
-    resultProcuracao.fold(
-      (error) {
-        success = false;
-        setMessage(
-          AlertData(
-            message: 'Erro ao enviar documentos: ${error.errorMessage}',
-            errorType: ErrorType.error,
-          ),
-        );
-      },
-      (_) {},
-    );
+      if (!success) break;
+    }
 
-    if (success) {
+    if (success && showSuccessMessage) {
       setMessage(
         AlertData(
           message: 'Documentos enviados com sucesso!',

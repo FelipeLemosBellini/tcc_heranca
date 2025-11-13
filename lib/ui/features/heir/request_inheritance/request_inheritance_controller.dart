@@ -17,26 +17,29 @@ class RequestInheritanceController extends BaseController {
   final InheritanceRepositoryInterface inheritanceRepository;
   final EventBus eventBus = GetIt.I.get<EventBus>();
 
-  RequestInheritanceController({
-    required this.inheritanceRepository,
-  });
+  RequestInheritanceController({required this.inheritanceRepository});
 
   Future<bool> createRequestInheritance({
     required RequestInheritanceModel inheritance,
     required String rg,
-    required XFile procuracaoDoInventariante,
-    required XFile certidaoDeObito,
-    required XFile documentoCpf,
-    required XFile enderecoDoInventariante,
-    required XFile testamento,
-    required XFile transferenciaDeAtivos,
+    XFile? procuracaoDoInventariante,
+    XFile? certidaoDeObito,
+    XFile? documentoCpf,
+    XFile? enderecoDoInventariante,
+    XFile? testamento,
+    XFile? transferenciaDeAtivos,
   }) async {
     final requesterId = inheritance.requestById;
     final testatorCpf = inheritance.cpf;
     final inheritanceId = inheritance.id;
     final testatorId = inheritance.testatorId;
+    final isCorrection =
+        inheritance.heirStatus == HeirStatus.transferenciaSaldoRecusado;
 
-    if (requesterId == null || testatorCpf == null || inheritanceId == null || testatorId == null) {
+    if (requesterId == null ||
+        testatorCpf == null ||
+        inheritanceId == null ||
+        testatorId == null) {
       setMessage(
         AlertData(
           message:
@@ -57,17 +60,27 @@ class RequestInheritanceController extends BaseController {
       return false;
     }
 
-    if (!_hasAllFiles([
+    final files = [
       procuracaoDoInventariante,
       certidaoDeObito,
       documentoCpf,
       enderecoDoInventariante,
       testamento,
       transferenciaDeAtivos,
-    ])) {
+    ];
+
+    if (!isCorrection && !_hasAllFiles(files)) {
       setMessage(
         AlertData(
           message: 'Anexe todos os documentos obrigatórios.',
+          errorType: ErrorType.warning,
+        ),
+      );
+      return false;
+    } else if (isCorrection && !_hasAnyFile(files)) {
+      setMessage(
+        AlertData(
+          message: 'Selecione pelo menos um documento para reenviar.',
           errorType: ErrorType.warning,
         ),
       );
@@ -76,62 +89,28 @@ class RequestInheritanceController extends BaseController {
 
     setLoading(true);
 
-    final docs = <Document, XFile>{
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.procuracaoAdvogado,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): procuracaoDoInventariante,
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.deathCertificate,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): certidaoDeObito,
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.cpf,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): documentoCpf,
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.proofResidence,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): enderecoDoInventariante,
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.testamentDocument,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): testamento,
-      Document(
-        ownerId: requesterId,
-        testatorId: testatorId,
-        typeDocument: TypeDocument.transferAssetsOrder,
-        reviewStatus: ReviewStatusDocument.pending,
-        reviewMessage: '',
-        from: EnumDocumentsFrom.inheritanceRequest,
-        uploadedAt: DateTime.now(),
-      ): transferenciaDeAtivos,
-    };
+    final docs = <Document, XFile>{};
+
+    void addDoc(XFile? file, TypeDocument type) {
+      if (file == null) return;
+      docs[Document(
+            ownerId: requesterId,
+            testatorId: testatorId,
+            typeDocument: type,
+            reviewStatus: ReviewStatusDocument.pending,
+            reviewMessage: '',
+            from: EnumDocumentsFrom.inheritanceRequest,
+            uploadedAt: DateTime.now(),
+          )] =
+          file;
+    }
+
+    addDoc(procuracaoDoInventariante, TypeDocument.procuracaoAdvogado);
+    addDoc(certidaoDeObito, TypeDocument.deathCertificate);
+    addDoc(documentoCpf, TypeDocument.cpf);
+    addDoc(enderecoDoInventariante, TypeDocument.proofResidence);
+    addDoc(testamento, TypeDocument.testamentDocument);
+    addDoc(transferenciaDeAtivos, TypeDocument.transferAssetsOrder);
 
     var hasError = false;
 
@@ -144,18 +123,15 @@ class RequestInheritanceController extends BaseController {
         testatorId: testatorId,
       );
 
-      result.fold(
-        (error) {
-          hasError = true;
-          setMessage(
-            AlertData(
-              message: 'Erro ao enviar documento: ${error.errorMessage}',
-              errorType: ErrorType.error,
-            ),
-          );
-        },
-        (_) {},
-      );
+      result.fold((error) {
+        hasError = true;
+        setMessage(
+          AlertData(
+            message: 'Erro ao enviar documento: ${error.errorMessage}',
+            errorType: ErrorType.error,
+          ),
+        );
+      }, (_) {});
 
       if (hasError) break;
     }
@@ -176,7 +152,8 @@ class RequestInheritanceController extends BaseController {
         (error) {
           setMessage(
             AlertData(
-              message: 'Documentos enviados, mas houve erro ao atualizar o status: ${error.errorMessage}',
+              message:
+                  'Documentos enviados, mas houve erro ao atualizar o status: ${error.errorMessage}',
               errorType: ErrorType.warning,
             ),
           );
@@ -184,7 +161,10 @@ class RequestInheritanceController extends BaseController {
         (_) {
           setMessage(
             AlertData(
-              message: 'Documentos enviados com sucesso!',
+              message:
+                  isCorrection
+                      ? 'Correções enviadas para análise!'
+                      : 'Documentos enviados com sucesso!',
               errorType: ErrorType.success,
             ),
           );
@@ -205,5 +185,14 @@ class RequestInheritanceController extends BaseController {
       }
     }
     return true;
+  }
+
+  bool _hasAnyFile(List<XFile?> files) {
+    for (final file in files) {
+      if (file != null && file.path.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 }

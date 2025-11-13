@@ -15,15 +15,13 @@ abstract class TestamentRoutes {
     GoRoute(
       path: RouterApp.seeDetailsInheritance,
       pageBuilder: (BuildContext context, GoRouterState state) {
-        final params = state.extra as Map<String, dynamic>?
-            ?? <String, dynamic>{};
+        final params =
+            state.extra as Map<String, dynamic>? ?? <String, dynamic>{};
         final testament = params['testament'] as RequestInheritanceModel;
-        final typeUser = params['typeUser'] as EnumTypeUser? ?? EnumTypeUser.heir;
+        final typeUser =
+            params['typeUser'] as EnumTypeUser? ?? EnumTypeUser.heir;
         return Transitions.customTransitionPage(
-          SeeDetailsInheritanceView(
-            testament: testament,
-            typeUser: typeUser,
-          ),
+          SeeDetailsInheritanceView(testament: testament, typeUser: typeUser),
           state,
         );
       },
@@ -41,8 +39,18 @@ abstract class TestamentRoutes {
     GoRoute(
       path: RouterApp.requestVault,
       pageBuilder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra;
+        RequestInheritanceModel? inheritance;
+        if (extra is RequestInheritanceModel) {
+          inheritance = extra;
+        } else if (extra is Map<String, dynamic>) {
+          final maybe = extra['inheritance'];
+          if (maybe is RequestInheritanceModel) {
+            inheritance = maybe;
+          }
+        }
         return Transitions.customTransitionPage(
-          RequestVaultView(),
+          RequestVaultView(inheritance: inheritance),
           state,
         );
       },
