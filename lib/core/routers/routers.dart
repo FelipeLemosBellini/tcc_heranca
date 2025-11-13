@@ -43,24 +43,24 @@ abstract class RouterApp {
 
   static final GoRouter router = GoRouter(
     refreshListenable: GoRouterRefreshStream(_supabase.auth.onAuthStateChange),
-    redirect: (context, state) {
-      final goingTo = state.matchedLocation;
-      final session = _supabase.auth.currentSession;
-      // Rotas públicas (auth/entrada)
-      final isAuthRoute = [
-        login,
-        createAccount,
-        forgotPassword,
-      ].contains(goingTo);
-
-      if (session == null) {
-        return login;
-      }
-      if ((isAuthRoute) && goingTo != home) {
-        return home;
-      }
-      return null;
-    },
+    // redirect: (context, state) {
+    //   final goingTo = state.matchedLocation;
+    //   final session = _supabase.auth.currentSession;
+    //   // Rotas públicas (auth/entrada)
+    //   final isAuthRoute = [
+    //     login,
+    //     createAccount,
+    //     forgotPassword,
+    //   ].contains(goingTo);
+    //
+    //   if (session == null) {
+    //     return login;
+    //   }
+    //   if ((isAuthRoute) && goingTo != home) {
+    //     return home;
+    //   }
+    //   return null;
+    // },
     routes: <RouteBase>[
       GoRoute(
         path: login,

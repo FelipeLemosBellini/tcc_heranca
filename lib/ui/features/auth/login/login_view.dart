@@ -96,11 +96,13 @@ class _LoginViewState extends State<LoginView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             PillButtonWidget(
-                              onTap: () => context.go(RouterApp.createAccount),
+                              onTap: () {
+                                context.push(RouterApp.createAccount);
+                              },
                               text: "Criar conta",
                             ),
                             GestureDetector(
-                              onTap: () => context.go(RouterApp.forgotPassword),
+                              onTap: () => context.push(RouterApp.forgotPassword),
                               child: Text(
                                 "Esqueci minha senha",
                                 style: AppFonts.labelMediumMedium,
