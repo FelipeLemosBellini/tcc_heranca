@@ -264,6 +264,9 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                                         ),
                                       ),
                                     ),
+                                  if (_controller.listDocuments.length - 1 ==
+                                      index)
+                                    SizedBox(height: 200),
                                 ],
                               );
                             },
