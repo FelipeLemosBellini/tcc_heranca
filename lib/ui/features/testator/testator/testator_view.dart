@@ -2,6 +2,8 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reown_appkit/modal/widgets/buttons/primary_button.dart';
+import 'package:tcc/core/enum/connect_state_blockchain.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
@@ -29,10 +31,16 @@ class _TestatorViewState extends State<TestatorView>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      testatorController.checkHasVault();
+      testatorController.init();
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    testatorController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,19 +56,30 @@ class _TestatorViewState extends State<TestatorView>
             alertData: testatorController.alertData,
             child: Stack(
               children: [
-                if (testatorController.hasVault == null &&
+                if (testatorController.state == ConnectStateBlockchain.idle)
+                  Center(
+                    child: ElevatedButtonWidget(
+                      text: "Conectar carteira",
+                      onTap: () {},
+                    ),
+                  ),
+                if (testatorController.state ==
+                        ConnectStateBlockchain.connected &&
+                    testatorController.hasVault == null &&
                     !testatorController.isLoading)
                   Center(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
-                        'Não foi possível verificar seu cofre, tente novamente mais tarde',
+                        'Não foi possível verificar seu cofre, tente novamente',
                         textAlign: TextAlign.center,
                         style: AppFonts.bodyMediumRegular,
                       ),
                     ),
                   ),
-                if (testatorController.hasVault == false)
+                if (testatorController.state ==
+                        ConnectStateBlockchain.connected &&
+                    testatorController.hasVault == false)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
@@ -91,7 +110,9 @@ class _TestatorViewState extends State<TestatorView>
                       ],
                     ),
                   ),
-                if (testatorController.hasVault == true)
+                if (testatorController.state ==
+                        ConnectStateBlockchain.connected &&
+                    testatorController.hasVault == true)
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(

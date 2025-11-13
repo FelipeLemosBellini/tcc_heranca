@@ -3,12 +3,12 @@ import 'package:get_it/get_it.dart';
 import 'package:tcc/core/controllers/testament_controller.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_repository.dart';
+import 'package:tcc/core/repositories/blockchain_repository/blockchain_repository.dart';
 import 'package:tcc/core/repositories/firebase_auth/auth_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository.dart';
 import 'package:tcc/core/repositories/inheritance_repository/inheritance_repository_interface.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
-import 'package:tcc/core/repositories/rpc_repository/rpc_repository.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository.dart';
 import 'package:tcc/core/repositories/user_repository/user_repository.dart';
 import 'package:tcc/ui/features/auth/create_account/create_account_controller.dart';
@@ -40,7 +40,7 @@ abstract class DI {
 
     await getIt.allReady();
     //Repositories
-    getIt.registerSingleton<RpcRepository>(RpcRepository());
+    getIt.registerSingleton<BlockchainRepository>(BlockchainRepository());
     getIt.registerSingleton<UserRepository>(UserRepository());
     getIt.registerLazySingleton<StorageRepository>(() => StorageRepository());
     getIt.registerLazySingleton<KycRepositoryInterface>(
@@ -109,7 +109,7 @@ abstract class DI {
     );
     getIt.registerLazySingleton(
       () => TestatorController(
-        rpcRepository: getIt.get<RpcRepository>(),
+        blockchainRepository: getIt.get<BlockchainRepository>(),
         userRepository: getIt.get<UserRepository>(),
       ),
     );
