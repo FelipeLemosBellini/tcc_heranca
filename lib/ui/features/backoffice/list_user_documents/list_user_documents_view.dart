@@ -48,9 +48,10 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
       _controller.getDocumentsByUserId(
         userId: widget.userId,
         testatorId: widget.testatorId,
-        from: widget.testatorId != null
-            ? EnumDocumentsFrom.inheritanceRequest
-            : EnumDocumentsFrom.kyc,
+        from:
+            widget.testatorId != null
+                ? EnumDocumentsFrom.inheritanceRequest
+                : EnumDocumentsFrom.kyc,
       );
     });
   }
@@ -93,155 +94,180 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                     ),
                   ),
                 Expanded(
-                  child: _controller.listDocuments.isEmpty
-                      ? const Center(
-                          child: Text('Nenhum documento pendente.'),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          itemCount: _controller.listDocuments.length,
-                          itemBuilder: (context, index) {
-                            final doc = _controller.listDocuments[index];
-                            final docId = doc.id;
-                            final isPending =
-                                doc.reviewStatus == ReviewStatusDocument.pending;
-                            final selected = (isPending && docId != null)
-                                ? _controller.decisions[docId]
-                                : null;
-                            return Column(
-                              children: [
-                                Card(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.description),
-                                            const SizedBox(width: 8),
-                                            Text(doc.typeDocument.Name),
-                                            const Spacer(),
-                                            GestureDetector(
-                                              onTap: () {
-                                                if (doc.pathStorage != null) {
-                                                  _controller.openPdf(
-                                                    doc.pathStorage!,
-                                                  );
-                                                }
-                                              },
-                                              child: const Icon(
-                                                Icons.file_open_outlined,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        if (isPending)
+                  child:
+                      _controller.listDocuments.isEmpty
+                          ? const Center(
+                            child: Text('Nenhum documento pendente.'),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            itemCount: _controller.listDocuments.length,
+                            itemBuilder: (context, index) {
+                              final doc = _controller.listDocuments[index];
+                              final docId = doc.id;
+                              final isPending =
+                                  doc.reviewStatus ==
+                                  ReviewStatusDocument.pending;
+                              final selected =
+                                  (isPending && docId != null)
+                                      ? _controller.decisions[docId]
+                                      : null;
+                              return Column(
+                                children: [
+                                  Card(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
                                           Row(
                                             children: [
-                                              Expanded(
-                                                child: RadioListTile<bool>(
-                                                  title: const Text('Aprovar'),
-                                                  value: true,
-                                                  groupValue: selected,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if (docId != null) {
-                                                        _controller.decisions[docId] =
-                                                            value;
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: RadioListTile<bool>(
-                                                  title: const Text('Reprovar'),
-                                                  value: false,
-                                                  groupValue: selected,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if (docId != null) {
-                                                        _controller.decisions[docId] =
-                                                            value;
-                                                      }
-                                                    });
-                                                  },
+                                              const Icon(Icons.description),
+                                              const SizedBox(width: 8),
+                                              Text(doc.typeDocument.Name),
+                                              const Spacer(),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (doc.pathStorage != null) {
+                                                    _controller.openPdf(
+                                                      doc.pathStorage!,
+                                                    );
+                                                  }
+                                                },
+                                                child: const Icon(
+                                                  Icons.file_open_outlined,
                                                 ),
                                               ),
                                             ],
-                                          )
-                                        else
-                                          Container(
-                                            margin: const EdgeInsets.only(top: 12),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: doc.reviewStatus ==
-                                                      ReviewStatusDocument.approved
-                                                  ? Colors.green.withOpacity(0.15)
-                                                  : Colors.red.withOpacity(0.15),
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Row(
+                                          ),
+                                          if (isPending)
+                                            Row(
                                               children: [
-                                                Icon(
-                                                  doc.reviewStatus ==
-                                                          ReviewStatusDocument
-                                                              .approved
-                                                      ? Icons.check_circle_outline
-                                                      : Icons.highlight_off,
-                                                  color: doc.reviewStatus ==
-                                                          ReviewStatusDocument
-                                                              .approved
-                                                      ? Colors.green.shade700
-                                                      : Colors.red.shade700,
-                                                ),
-                                                const SizedBox(width: 8),
                                                 Expanded(
-                                                  child: Text(
-                                                    doc.reviewStatus ==
-                                                            ReviewStatusDocument
-                                                                .approved
-                                                        ? 'Documento aprovado'
-                                                        : 'Documento recusado',
+                                                  child: RadioListTile<bool>(
+                                                    title: const Text(
+                                                      'Aprovar',
+                                                    ),
+                                                    value: true,
+                                                    groupValue: selected,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        if (docId != null) {
+                                                          _controller
+                                                                  .decisions[docId] =
+                                                              value;
+                                                        }
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: RadioListTile<bool>(
+                                                    title: const Text(
+                                                      'Reprovar',
+                                                    ),
+                                                    value: false,
+                                                    groupValue: selected,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        if (docId != null) {
+                                                          _controller
+                                                                  .decisions[docId] =
+                                                              value;
+                                                        }
+                                                      });
+                                                    },
                                                   ),
                                                 ),
                                               ],
+                                            )
+                                          else
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                top: 12,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 8,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    doc.reviewStatus ==
+                                                            ReviewStatusDocument
+                                                                .approved
+                                                        ? Colors.green
+                                                            .withOpacity(0.15)
+                                                        : Colors.red
+                                                            .withOpacity(0.15),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    doc.reviewStatus ==
+                                                            ReviewStatusDocument
+                                                                .approved
+                                                        ? Icons
+                                                            .check_circle_outline
+                                                        : Icons.highlight_off,
+                                                    color:
+                                                        doc.reviewStatus ==
+                                                                ReviewStatusDocument
+                                                                    .approved
+                                                            ? Colors
+                                                                .green
+                                                                .shade700
+                                                            : Colors
+                                                                .red
+                                                                .shade700,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      doc.reviewStatus ==
+                                                              ReviewStatusDocument
+                                                                  .approved
+                                                          ? 'Documento aprovado'
+                                                          : 'Documento recusado',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                if (isPending)
-                                  Visibility(
-                                    visible: selected == false,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 8,
-                                      ),
-                                      child: TextFieldWidget(
-                                        controller: _controller
-                                            .reasonControllers[index],
-                                        maxLines: 3,
-                                        hintText: 'Motivo da reprovação',
-                                        focusNode: _controller.focusNodes[index],
+                                        ],
                                       ),
                                     ),
                                   ),
-                              ],
-                            );
-                          },
-                        ),
+                                  if (isPending)
+                                    Visibility(
+                                      visible: selected == false,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 8,
+                                        ),
+                                        child: TextFieldWidget(
+                                          controller:
+                                              _controller
+                                                  .reasonControllers[index],
+                                          maxLines: 3,
+                                          hintText: 'Motivo da reprovação',
+                                          focusNode:
+                                              _controller.focusNodes[index],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
                 ),
               ],
             ),
@@ -259,8 +285,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   }
                   if (_controller.reasonControllers[index].text.isEmpty &&
                       docId != null &&
-                      _controller.decisions[docId] ==
-                          false) {
+                      _controller.decisions[docId] == false) {
                     AlertHelper.showAlertSnackBar(
                       context: context,
                       alertData: AlertData(
@@ -326,22 +351,18 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   );
                 }
 
-                AlertHelper.showAlertSnackBar(
+                await AlertHelper.showAlertSnackBar(
                   context: context,
                   alertData: AlertData(
-                    message: hasInvalidDocuments
-                        ? 'Análise concluída: existem documentos reprovados.'
-                        : 'Documentos aprovados com sucesso!',
+                    message:
+                        hasInvalidDocuments
+                            ? 'Análise concluída: existem documentos reprovados.'
+                            : 'Documentos aprovados com sucesso!',
                     errorType: ErrorType.success,
                   ),
                 );
                 eventBus.fire(UpdateUsersEvent());
-                if (!mounted) return;
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go(RouterApp.listUsers);
-                }
+                context.pop();
               },
               text: "Enviar",
             ),
