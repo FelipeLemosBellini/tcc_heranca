@@ -58,59 +58,70 @@ class _CompletedProcessesViewState extends State<CompletedProcessesView> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(24),
-              child: _controller.processes.isEmpty
-                  ? const Center(
-                      child: Text('Nenhum processo finalizado encontrado.'),
-                    )
-                  : ListView.builder(
-                      itemCount: _controller.processes.length,
-                      itemBuilder: (context, index) {
-                        final process = _controller.processes[index];
-                        final responsibleName =
-                            _controller.responsibleNameOf(process.requestById);
-                        return Container(
-                          margin: EdgeInsets.only(bottom: index == _controller.processes.length - 1 ? 32 : 16),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                process.name ?? 'Testador não informado',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 4),
-                              Text('CPF: ${process.cpf?.formatCpf() ?? '---'}'),
-                              const SizedBox(height: 4),
-                              Text('Responsável: $responsibleName'),
-                              const SizedBox(height: 4),
-                              Text('Finalizado em: ${process.updatedAt?.formatDateWithHour() ?? '---'}'),
-                              const SizedBox(height: 12),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton.icon(
-                                  onPressed: () {
-                                    context.push(
-                                      RouterApp.seeDetailsInheritance,
-                                      extra: {
-                                        'testament': process,
-                                        'typeUser': EnumTypeUser.admin,
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(Icons.visibility_outlined),
-                                  label: const Text('Ver detalhes'),
+              child:
+                  _controller.processes.isEmpty
+                      ? const Center(
+                        child: Text('Nenhum processo finalizado encontrado.'),
+                      )
+                      : ListView.builder(
+                        itemCount: _controller.processes.length,
+                        itemBuilder: (context, index) {
+                          final process = _controller.processes[index];
+                          final responsibleName =
+                              process.requesterName ?? '---';
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom:
+                                  index == _controller.processes.length - 1
+                                      ? 32
+                                      : 16,
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.white10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  process.name ?? 'Testador não informado',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'CPF: ${process.cpf?.formatCpf() ?? '---'}',
+                                ),
+                                const SizedBox(height: 4),
+                                Text('Responsável: $responsibleName'),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Finalizado em: ${process.updatedAt?.formatDateWithHour() ?? '---'}',
+                                ),
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton.icon(
+                                    onPressed: () {
+                                      context.push(
+                                        RouterApp.seeDetailsInheritance,
+                                        extra: {
+                                          'testament': process,
+                                          'typeUser': EnumTypeUser.admin,
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.visibility_outlined),
+                                    label: const Text('Ver detalhes'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
             ),
           ),
         );

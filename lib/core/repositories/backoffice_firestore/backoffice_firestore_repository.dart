@@ -277,7 +277,9 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
 
       final snapshot = await _client
           .from(DbTables.inheritance)
-          .select('*, users:users!inner(name, cpf, rg)')
+          .select(
+            '*,testatorUser:users!inheritance_testatorId_fkey(name,cpf,rg),requesterUser:users!inheritance_requestBy_fkey(name)',
+          )
           .eq('status', completedStatus);
 
       final inheritances =
