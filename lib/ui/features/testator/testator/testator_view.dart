@@ -31,7 +31,7 @@ class _TestatorViewState extends State<TestatorView>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      testatorController.init();
+      // testatorController.init();
     });
 
     super.initState();
@@ -39,7 +39,7 @@ class _TestatorViewState extends State<TestatorView>
 
   @override
   void dispose() {
-    testatorController.dispose();
+    // testatorController.dispose();
     super.dispose();
   }
 
@@ -60,7 +60,9 @@ class _TestatorViewState extends State<TestatorView>
                   Center(
                     child: ElevatedButtonWidget(
                       text: "Conectar carteira",
-                      onTap: () {},
+                      onTap: () {
+                        testatorController.init();
+                      },
                     ),
                   ),
                 if (testatorController.state ==

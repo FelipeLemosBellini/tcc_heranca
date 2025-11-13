@@ -44,6 +44,14 @@ class DrawerListUsersWidget extends StatelessWidget {
               ),
               onTap: () => goToCompleted.call(),
             ),
+            ListTile(
+              leading: const Icon(Icons.attach_money, color: Colors.white),
+              title: const Text(
+                'Transferências em aberto',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
             const Spacer(),
             SignOutWidget(onTap: () => signOut.call()),
           ],

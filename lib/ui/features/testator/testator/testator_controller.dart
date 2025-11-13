@@ -25,11 +25,11 @@ class TestatorController extends BaseController {
 
   bool? hasVault;
 
-  @override
-  void dispose() {
-    _sub?.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _sub?.cancel();
+  //   super.dispose();
+  // }
 
   Future<void> init() async {
     final result = await blockchainRepository.watchState();

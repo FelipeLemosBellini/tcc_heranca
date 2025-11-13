@@ -197,7 +197,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
     try {
       final payload = <String, dynamic>{
         'status': DbMappings.heirStatusToId(status),
-        'updated_at': DateTime.now().toIso8601String(),
+        'updatedAt': DateTime.now().toIso8601String(),
       };
       if (additionalData != null && additionalData.isNotEmpty) {
         payload.addAll(additionalData);

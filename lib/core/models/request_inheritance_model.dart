@@ -38,9 +38,9 @@ class RequestInheritanceModel {
       ),
       rg: userData?['rg'],
       createdAt:
-          _parseDate(json['createdAt']) ?? _parseDate(json['created_at']),
+          _parseDate(json['createdAt']) ?? _parseDate(json['createdAt']),
       updatedAt:
-          _parseDate(json['updatedAt']) ?? _parseDate(json['updated_at']),
+          _parseDate(json['updatedAt']) ?? _parseDate(json['updatedAt']),
     );
   }
 

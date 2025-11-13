@@ -142,7 +142,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
         return 'A solicitação está aguardando análise do backoffice. Assim que for avaliada, você será notificado.';
       case HeirStatus.consultaSaldoAprovado:
         return isHeir
-            ? 'A consulta de saldo foi aprovada. Reúna os documentos complementares e envie a solicitação de transferência.'
+            ? 'A consulta de saldo foi aprovada. Reúna os documentos complementares e envie a solicitação de transferência. Verifique seu email, enviamos o saldo do testador para você.'
             : 'Consulta de saldo aprovada. Oriente o solicitante a enviar os documentos complementares.';
       case HeirStatus.consultaSaldoRecusado:
         return 'A consulta de saldo foi recusada. Verifique os documentos enviados e envie uma nova solicitação se necessário.';

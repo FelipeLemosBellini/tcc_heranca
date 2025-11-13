@@ -12,7 +12,10 @@ class AlertData {
 }
 
 abstract class AlertHelper {
-  static void showAlertSnackBar({AlertData? alertData, required BuildContext context}) {
+  static Future<void> showAlertSnackBar({
+    AlertData? alertData,
+    required BuildContext context,
+  }) async {
     if (alertData != null) {
       switch (alertData.errorType) {
         case ErrorType.error:
@@ -59,8 +62,11 @@ abstract class AlertHelper {
     required Color fontColor,
   }) {
     SnackBar snackBar = SnackBar(
-      content: Text(message, style: AppFonts.labelMediumMedium.copyWith(color: fontColor)),
-      duration: const Duration(seconds: 2),
+      content: Text(
+        message,
+        style: AppFonts.labelMediumMedium.copyWith(color: fontColor),
+      ),
+      duration: const Duration(seconds: 10),
       backgroundColor: background,
       behavior: SnackBarBehavior.floating,
     );
