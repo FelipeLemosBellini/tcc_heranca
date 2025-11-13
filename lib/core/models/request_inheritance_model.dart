@@ -7,6 +7,7 @@ class RequestInheritanceModel {
   String? cpf; // cpf do cliente
   String? name; // nome do cliente
   String? requestById; // userId do solicitante
+  String? requesterName;
   HeirStatus? heirStatus; // status da herança
   String? rg;
   DateTime? createdAt;
@@ -18,6 +19,7 @@ class RequestInheritanceModel {
     this.cpf,
     this.name,
     this.requestById,
+    this.requesterName,
     this.heirStatus,
     this.rg,
     this.createdAt,
@@ -25,22 +27,24 @@ class RequestInheritanceModel {
   });
 
   factory RequestInheritanceModel.fromMap(Map<String, dynamic> json) {
-    final userData = json['testatorUser'] as Map<String, dynamic>?;
+    final testatorData = json['testatorUser'] as Map<String, dynamic>?;
+    final requesterData = json['requesterUser'] as Map<String, dynamic>?;
 
     return RequestInheritanceModel(
-      id: json['id'].toString(),
+      id: json['id']?.toString(),
       testatorId: json['testatorId'] ?? json['userId'],
-      cpf: userData?['cpf'],
-      name: userData?['name'],
+      cpf: testatorData?['cpf'] ?? json['cpf'],
+      name: testatorData?['name'] ?? json['name'],
       requestById: json['requestBy'],
+      requesterName: requesterData?['name'] ?? json['requesterName'],
       heirStatus: DbMappings.heirStatusFromId(
         _tryParseInt(json['status']) ?? _tryParseInt(json['heirStatus']),
       ),
-      rg: userData?['rg'],
+      rg: testatorData?['rg'] ?? json['rg'],
       createdAt:
-          _parseDate(json['createdAt']) ?? _parseDate(json['createdAt']),
+          _parseDate(json['createdAt']) ?? _parseDate(json['created_at']),
       updatedAt:
-          _parseDate(json['updatedAt']) ?? _parseDate(json['updatedAt']),
+          _parseDate(json['updatedAt']) ?? _parseDate(json['updated_at']),
     );
   }
 

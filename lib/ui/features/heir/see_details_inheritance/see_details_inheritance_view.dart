@@ -103,18 +103,43 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                     _statusMessage(status, widget.typeUser),
                     style: AppFonts.labelSmallMedium,
                   ),
-                  if (status == HeirStatus.consultaSaldoAprovado &&
-                      widget.typeUser == EnumTypeUser.heir) ...[
-                    const SizedBox(height: 24),
-                    ElevatedButtonWidget(
-                      text: 'Enviar documentos da herança',
-                      onTap: () {
-                        context.push(
-                          RouterApp.requestInheritance,
-                          extra: widget.testament,
-                        );
-                      },
-                    ),
+                  if (widget.typeUser == EnumTypeUser.heir) ...[
+                    if (status == HeirStatus.consultaSaldoAprovado) ...[
+                      const SizedBox(height: 24),
+                      ElevatedButtonWidget(
+                        text: 'Enviar documentos da herança',
+                        onTap: () {
+                          context.push(
+                            RouterApp.requestInheritance,
+                            extra: widget.testament,
+                          );
+                        },
+                      ),
+                    ],
+                    if (status == HeirStatus.consultaSaldoRecusado) ...[
+                      const SizedBox(height: 24),
+                      ElevatedButtonWidget(
+                        text: 'Corrigir documentos da consulta de saldo',
+                        onTap: () {
+                          context.push(
+                            RouterApp.requestVault,
+                            extra: widget.testament,
+                          );
+                        },
+                      ),
+                    ],
+                    if (status == HeirStatus.transferenciaSaldoRecusado) ...[
+                      const SizedBox(height: 24),
+                      ElevatedButtonWidget(
+                        text: 'Reenviar documentos da transferência',
+                        onTap: () {
+                          context.push(
+                            RouterApp.requestInheritance,
+                            extra: widget.testament,
+                          );
+                        },
+                      ),
+                    ],
                   ],
                   const SizedBox(height: 32),
                   Text(
