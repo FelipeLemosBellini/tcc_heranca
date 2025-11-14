@@ -133,7 +133,7 @@ class _TestatorViewState extends State<TestatorView>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Seu saldo atual:", style: AppFonts.bodyHeadBold),
+                        Text("Seu saldo atual do cofre:", style: AppFonts.bodyHeadBold),
                         SizedBox(height: 4),
                         Text(
                           "${testatorController.balance} WEI",
@@ -147,11 +147,10 @@ class _TestatorViewState extends State<TestatorView>
                               child: ElevatedButtonThematicWidget(
                                 text: "Depositar",
                                 onTap: () {
-                                  testatorController.checkHasVault();
-                                  // context.push(
-                                  //   RouterApp.vault,
-                                  //   extra: FlowTestamentEnum.deposit,
-                                  // );
+                                  context.push(
+                                    RouterApp.vault,
+                                    extra: FlowTestamentEnum.deposit,
+                                  );
                                 },
                                 thematicEnum: ThematicButtonEnum.green,
                                 padding: EdgeInsets.zero,

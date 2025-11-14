@@ -20,7 +20,6 @@ class TestatorController extends BaseController {
   });
 
   ConnectStateBlockchain state = ConnectStateBlockchain.idle;
-  StreamSubscription<ConnectStateBlockchain>? _sub;
 
   String balance = "0";
 
@@ -44,16 +43,15 @@ class TestatorController extends BaseController {
   }
 
   Future<void> startWatchState() async {
+    _homeController.setLoading(true);
     final result = await blockchainRepository.watchState();
     await result.fold(
       (err) {
         notifyListeners();
       },
       (stream) async {
-        _sub?.cancel();
-        _sub = stream.listen(
+        stream.listen(
           (s) async {
-            print("na controller: ${s.toString()}");
             if (s != state) {
               state = s;
               if (state == ConnectStateBlockchain.connected) {
@@ -68,6 +66,7 @@ class TestatorController extends BaseController {
         );
       },
     );
+    _homeController.setLoading(false);
   }
 
   Future<void> checkHasVault() async {

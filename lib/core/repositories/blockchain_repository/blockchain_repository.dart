@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:http/http.dart' as http;
+import 'package:web3dart/web3dart.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reown_appkit/modal/i_appkit_modal_impl.dart';
@@ -11,9 +14,10 @@ import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 
 class BlockchainRepository {
-  StreamController<ConnectStateBlockchain>? _controller;
-  ConnectStateBlockchain? _last;
-  bool _listening = false;
+  StreamController<ConnectStateBlockchain>? _controllerState;
+  StreamController<BigInt>? _walletBalance;
+  bool _listeningConnectState = false;
+  bool _listeningWalletBalance = false;
 
   late IReownAppKitModal _appKitModal;
 
@@ -258,17 +262,41 @@ class BlockchainRepository {
   Future<Either<ExceptionMessage, Stream<ConnectStateBlockchain>>>
   watchState() async {
     try {
-      _controller ??= StreamController<ConnectStateBlockchain>.broadcast(
+      _controllerState ??= StreamController<ConnectStateBlockchain>.broadcast(
         sync: true,
       );
 
-      if (!_listening) {
+      if (!_listeningConnectState) {
         _appKitModal.addListener(_emit);
-        _listening = true;
+        _listeningConnectState = true;
         _emit();
       }
 
-      return Right(_controller!.stream);
+      return Right(_controllerState!.stream);
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    }
+  }
+
+  Future<Either<ExceptionMessage, Stream<BigInt>>> getWalletBalance() async {
+    try {
+      _walletBalance ??= StreamController<BigInt>.broadcast(sync: true);
+      if (!_listeningWalletBalance) {
+        await _appKitModal.selectChain(
+          const ReownAppKitModalNetworkInfo(
+            isTestNetwork: true,
+            chainId: BlockchainConstants.chainId,
+            name: BlockchainConstants.nameChain,
+            currency: BlockchainConstants.currency,
+            rpcUrl: BlockchainConstants.rpcUrl,
+            explorerUrl: BlockchainConstants.explorerUrl,
+          ),
+        );
+        _appKitModal.balanceNotifier.addListener(_emitWalletBalance);
+        _listeningWalletBalance = true;
+      }
+      _emitWalletBalance();
+      return Right(_walletBalance!.stream);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }
@@ -286,21 +314,105 @@ class BlockchainRepository {
   }
 
   void dispose() async {
-    if (_listening) {
+    if (_listeningConnectState || _listeningWalletBalance) {
       _appKitModal.removeListener(_emit);
-      _listening = false;
+      _appKitModal.balanceNotifier.removeListener(_emitWalletBalance);
+      _listeningConnectState = false;
     }
-    _controller?.close();
+    _controllerState?.close();
+    _walletBalance?.close();
   }
 
   void _emit() {
-    final controller = _controller;
+    final controller = _controllerState;
     if (controller == null || controller.isClosed) return;
 
     final next = _mapToBlockchainState(_appKitModal);
 
     controller.add(next);
   }
+
+  void _emitWalletBalance() async {
+    final controller = _walletBalance;
+    if (controller == null || controller.isClosed) return;
+
+    BigInt value = await getNativeBalanceWei();
+    controller.add(value);
+  }
+
+  // 1) Pega o address conectado via Reown (CAIP-10 -> 0x...)
+  EthereumAddress _connectedAddressOrThrow() {
+    final accounts = _appKitModal.session?.getAccounts();
+    if (accounts == null || accounts.isEmpty) {
+      throw Exception('Carteira não conectada');
+    }
+    final caip10 = accounts.first; // ex: eip155:11155111:0xABC...
+    final hex = caip10.split(':').last; // -> 0xABC...
+    return EthereumAddress.fromHex(hex);
+  }
+
+  // 2) Lê o saldo em wei direto do RPC (sem arredondar)
+  Future<BigInt> getNativeBalanceWei() async {
+    final addr = _connectedAddressOrThrow();
+    final client = Web3Client(
+      'https://1rpc.io/sepolia',
+      http.Client(),
+    ); // ou seu RPC
+    try {
+      final EtherAmount bal = await client.getBalance(addr);
+      return bal.getInWei; // BigInt preciso
+    } finally {
+      client.dispose();
+    }
+  }
+
+  // 3) Formata BigInt com n casas decimais (sem usar double)
+  String formatUnits(
+      BigInt amount, {
+        int decimals = 18,
+        int precision = 18, // quantas casas mostrar (<= decimals)
+        bool trimTrailingZeros = true,
+      }) {
+    final s = amount.toString();
+    if (decimals == 0) return s;
+
+    // separa parte inteira e fracionária
+    String intPart, fracPart;
+    if (s.length <= decimals) {
+      intPart = '0';
+      fracPart = s.padLeft(decimals, '0');
+    } else {
+      final cut = s.length - decimals;
+      intPart = s.substring(0, cut);
+      fracPart = s.substring(cut);
+    }
+
+    // aplica precisão
+    if (precision < decimals) {
+      fracPart = fracPart.substring(0, precision);
+    }
+
+    if (trimTrailingZeros) {
+      fracPart = fracPart.replaceFirst(RegExp(r'0+$'), '');
+    }
+
+    return fracPart.isEmpty ? intPart : '$intPart.$fracPart';
+  }
+
+  // 4) Uso
+  Future<void> showPreciseBalance() async {
+    final wei = await getNativeBalanceWei();
+    final full18 = formatUnits(
+      wei,
+      decimals: 18,
+      precision: 18,
+    ); // até 18 casas
+    final eight = formatUnits(wei, decimals: 18, precision: 8); // 8 casas
+
+    debugPrint('Saldo (18 casas): $full18 ETH');
+    debugPrint('Saldo (8 casas):  $eight ETH');
+  }
+
 
   ConnectStateBlockchain _mapToBlockchainState(IReownAppKitModal appKit) {
     if (appKit.status == ReownAppKitModalStatus.error) {

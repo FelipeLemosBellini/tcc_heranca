@@ -145,7 +145,11 @@ abstract class DI {
       ),
     );
 
-    getIt.registerFactory<VaultController>(() => VaultController());
+    getIt.registerFactory<VaultController>(
+      () => VaultController(
+        blockchainRepository: getIt.get<BlockchainRepository>(),
+      ),
+    );
     getIt.registerFactory<SeeDetailsInheritanceController>(
       () => SeeDetailsInheritanceController(
         inheritanceRepository: getIt.get<InheritanceRepositoryInterface>(),
