@@ -15,7 +15,7 @@ class BlockchainRepository {
   ConnectStateBlockchain? _last;
   bool _listening = false;
 
-  late ReownAppKitModal _appKitModal;
+  late IReownAppKitModal _appKitModal;
 
   late ContractAbi _contractAbi;
 
@@ -36,17 +36,62 @@ class BlockchainRepository {
       );
       _deployedContract = DeployedContract(_contractAbi, _ethereumAddress);
 
+      final requiredNamespaces = <String, RequiredNamespace>{
+        'eip155': RequiredNamespace.fromJson({
+          'chains': ['eip155:11155111'], // Sepolia
+          'methods': NetworkUtils.defaultNetworkMethods['eip155']!.toList(),
+          'events': NetworkUtils.defaultNetworkEvents['eip155']!.toList(),
+        }),
+      };
+
       _appKitModal = ReownAppKitModal(
         context: context,
         projectId: Env.projectReownId,
+        optionalNamespaces: requiredNamespaces,
         metadata: const PairingMetadata(
           name: BlockchainConstants.projectName,
           description: BlockchainConstants.descriptionOfProject,
           url: BlockchainConstants.urlProject,
-          redirect: Redirect(native: 'com.heranca://', linkMode: false),
+
+          redirect: Redirect(native: 'com.tcc_heranca://', linkMode: false),
         ),
       );
+      await _appKitModal.init();
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    }
+  }
 
+  Future<Either<ExceptionMessage, String>> getAddress() async {
+    try {
+      if (_appKitModal.session == null) {
+        return Left(ExceptionMessage("Conecte sua carteira"));
+      }
+      List<String>? addresses = _appKitModal.session?.getAccounts();
+
+      if (addresses == null || addresses.isEmpty) {
+        return Left(ExceptionMessage("Endereço público não encontrado"));
+      }
+      return Right(_getConnectedAddress().hex);
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    }
+  }
+
+  Future<Either<ExceptionMessage, void>> connectWallet() async {
+    try {
+      await _appKitModal.selectChain(
+        const ReownAppKitModalNetworkInfo(
+          isTestNetwork: true,
+          chainId: BlockchainConstants.chainId,
+          name: BlockchainConstants.nameChain,
+          currency: BlockchainConstants.currency,
+          rpcUrl: BlockchainConstants.rpcUrl,
+          explorerUrl: BlockchainConstants.explorerUrl,
+        ),
+      );
+      await _appKitModal.openModalView();
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
@@ -67,6 +112,16 @@ class BlockchainRepository {
           BigInt.from(10000000000000),
         ),
         parameters: [],
+      );
+      await _appKitModal.selectChain(
+        const ReownAppKitModalNetworkInfo(
+          isTestNetwork: true,
+          chainId: BlockchainConstants.chainId,
+          name: BlockchainConstants.nameChain,
+          currency: BlockchainConstants.currency,
+          rpcUrl: BlockchainConstants.rpcUrl,
+          explorerUrl: BlockchainConstants.explorerUrl,
+        ),
       );
       await _appKitModal.requestWriteContract(
         topic: _appKitModal.session?.topic,
@@ -175,7 +230,7 @@ class BlockchainRepository {
         functionName: FunctionsBlockchainEnum.myVault.functionName,
       );
 
-      return Right(response.first as BigInt);
+      return Right(response[0][0] as BigInt);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }
@@ -219,6 +274,17 @@ class BlockchainRepository {
     }
   }
 
+  Future<Either<ExceptionMessage, void>> logout() async {
+    try {
+      if (_appKitModal.session != null) {
+        await _appKitModal.disconnect();
+      }
+      return Right(null);
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    }
+  }
+
   void dispose() async {
     if (_listening) {
       _appKitModal.removeListener(_emit);
@@ -232,13 +298,11 @@ class BlockchainRepository {
     if (controller == null || controller.isClosed) return;
 
     final next = _mapToBlockchainState(_appKitModal);
-    if (next != _last) {
-      _last = next;
-      controller.add(next);
-    }
+
+    controller.add(next);
   }
 
-  ConnectStateBlockchain _mapToBlockchainState(ReownAppKitModal appKit) {
+  ConnectStateBlockchain _mapToBlockchainState(IReownAppKitModal appKit) {
     if (appKit.status == ReownAppKitModalStatus.error) {
       return ConnectStateBlockchain.error;
     } else if (appKit.isConnected) {

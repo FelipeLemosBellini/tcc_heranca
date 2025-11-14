@@ -11,4 +11,6 @@ abstract class UserRepositoryInterface {
   );
 
   Future<Either<ExceptionMessage, String>> getUserName(String userId);
+
+  Future<Either<ExceptionMessage, void>> setAddressUser(String address);
 }

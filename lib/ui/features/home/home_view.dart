@@ -23,10 +23,7 @@ class _HomeViewState extends State<HomeView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    const TestatorView(),
-    const HeirView(),
-  ];
+  final List<Widget> _screens = [const TestatorView(), const HeirView()];
 
   final List<String> _titles = ['Meu cofre', 'Heranças'];
 
@@ -47,9 +44,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     homeController.addListener(_onLoadingChanged);
     // homeController.loadUserData();
-    _pageController = PageController(
-      initialPage: _selectedIndex,
-    );
+    _pageController = PageController(initialPage: _selectedIndex);
     super.initState();
   }
 
@@ -81,8 +76,8 @@ class _HomeViewState extends State<HomeView> {
         drawer: DrawerHomeWidget(
           openAboutUs: () => context.go(RouterApp.aboutUs),
           isHome: true,
-          signOut: () {
-            homeController.signOut();
+          signOut: () async {
+            await homeController.signOut();
             context.go(RouterApp.login);
           },
         ),

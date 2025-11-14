@@ -58,5 +58,7 @@
     <queries>
         <package android:name="io.metamask" />
         <package android:name="com.wallet.crypto.trustapp" />
+        <package android:name="io.gnosis.safe" />
+        <package android:name="me.rainbow" />
     </queries>
 </manifest>

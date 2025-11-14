@@ -31,7 +31,7 @@ class _TestatorViewState extends State<TestatorView>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // testatorController.init();
+      testatorController.init(context);
     });
 
     super.initState();
@@ -51,6 +51,7 @@ class _TestatorViewState extends State<TestatorView>
       child: ListenableBuilder(
         listenable: testatorController,
         builder: (context, _) {
+          print(testatorController.state.name);
           return LoadingAndAlertOverlayWidget(
             isLoading: testatorController.isLoading,
             alertData: testatorController.alertData,
@@ -61,7 +62,7 @@ class _TestatorViewState extends State<TestatorView>
                     child: ElevatedButtonWidget(
                       text: "Conectar carteira",
                       onTap: () {
-                        testatorController.init();
+                        testatorController.connectWallet();
                       },
                     ),
                   ),
@@ -77,6 +78,14 @@ class _TestatorViewState extends State<TestatorView>
                         textAlign: TextAlign.center,
                         style: AppFonts.bodyMediumRegular,
                       ),
+                    ),
+                  ),
+                if (testatorController.state ==
+                    ConnectStateBlockchain.connecting)
+                  Center(
+                    child: Text(
+                      "Conectando, abra sua carteira...",
+                      style: AppFonts.bodyHeadBold,
                     ),
                   ),
                 if (testatorController.state ==
@@ -105,7 +114,10 @@ class _TestatorViewState extends State<TestatorView>
                           onTap: () {
                             BuyVaultPopUp.openPopUp(
                               context: context,
-                              connectWallet: () {},
+                              connectWallet: () {
+                                context.pop();
+                                testatorController.buyVault();
+                              },
                             );
                           },
                         ),
@@ -123,7 +135,10 @@ class _TestatorViewState extends State<TestatorView>
                       children: [
                         Text("Seu saldo atual:", style: AppFonts.bodyHeadBold),
                         SizedBox(height: 4),
-                        Text("0.4 ETH", style: AppFonts.bodyLargeMedium),
+                        Text(
+                          "${testatorController.balance} WEI",
+                          style: AppFonts.bodyLargeMedium,
+                        ),
                         const Spacer(),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -132,10 +147,11 @@ class _TestatorViewState extends State<TestatorView>
                               child: ElevatedButtonThematicWidget(
                                 text: "Depositar",
                                 onTap: () {
-                                  context.push(
-                                    RouterApp.vault,
-                                    extra: FlowTestamentEnum.deposit,
-                                  );
+                                  testatorController.checkHasVault();
+                                  // context.push(
+                                  //   RouterApp.vault,
+                                  //   extra: FlowTestamentEnum.deposit,
+                                  // );
                                 },
                                 thematicEnum: ThematicButtonEnum.green,
                                 padding: EdgeInsets.zero,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tcc/core/enum/connect_state_blockchain.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
@@ -21,28 +22,43 @@ class TestatorController extends BaseController {
   ConnectStateBlockchain state = ConnectStateBlockchain.idle;
   StreamSubscription<ConnectStateBlockchain>? _sub;
 
-  double balance = 0.0;
+  String balance = "0";
 
   bool? hasVault;
 
-  // @override
-  // void dispose() {
-  //   _sub?.cancel();
-  //   super.dispose();
-  // }
+  Future<void> init(BuildContext context) async {
+    _homeController.setLoading(true);
+    await blockchainRepository.init(context: context).whenComplete(() async {
+      await startWatchState();
+    });
+    _homeController.setLoading(false);
+  }
 
-  Future<void> init() async {
+  Future<void> connectWallet() async {
+    var response = await blockchainRepository.connectWallet();
+    await response.fold((onLeft) {}, (onRight) async {
+      if (state == ConnectStateBlockchain.connected) {
+        await checkHasVault();
+      }
+    });
+  }
+
+  Future<void> startWatchState() async {
     final result = await blockchainRepository.watchState();
-    result.fold(
+    await result.fold(
       (err) {
         notifyListeners();
       },
-      (stream) {
+      (stream) async {
         _sub?.cancel();
         _sub = stream.listen(
-          (s) {
+          (s) async {
+            print("na controller: ${s.toString()}");
             if (s != state) {
               state = s;
+              if (state == ConnectStateBlockchain.connected) {
+                await checkHasVault();
+              }
               notifyListeners();
             }
           },
@@ -54,10 +70,16 @@ class TestatorController extends BaseController {
     );
   }
 
-  void checkHasVault() async {
+  Future<void> checkHasVault() async {
     _homeController.setLoading(true);
+
+    var responseMyVault = await blockchainRepository.myVault();
+    responseMyVault.fold((onLeft) {}, (onRight) {
+      balance = onRight.toString();
+      notifyListeners();
+    });
     var response = await userRepository.getUser();
-    response.fold(
+    await response.fold(
       (error) {
         setMessage(
           AlertData(
@@ -66,11 +88,24 @@ class TestatorController extends BaseController {
           ),
         );
       },
-      (success) {
+      (success) async {
         hasVault = success.hasVault;
+        if (success.address == null || success.address == "") {
+          var responseAddress = await blockchainRepository.getAddress();
+          await responseAddress.fold((onLeft) {}, (address) async {
+            await userRepository.setAddressUser(address);
+          });
+        }
         notifyListeners();
       },
     );
     _homeController.setLoading(false);
+  }
+
+  Future<void> buyVault() async {
+    setLoading(true);
+    var response = await blockchainRepository.createVault();
+    response.fold((onLeft) {}, (onRight) {});
+    setLoading(false);
   }
 }

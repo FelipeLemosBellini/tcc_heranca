@@ -16,5 +16,5 @@ abstract class AuthRepositoryInterface {
     required String email,
   });
 
-  void signOut();
+  Future<void> signOut();
 }

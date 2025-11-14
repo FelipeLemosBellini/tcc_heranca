@@ -105,6 +105,7 @@ abstract class DI {
       () => HomeController(
         authRepository: getIt.get<AuthRepository>(),
         userRepository: getIt.get<UserRepository>(),
+        blockchainRepository: getIt.get<BlockchainRepository>(),
       ),
     );
     getIt.registerLazySingleton(

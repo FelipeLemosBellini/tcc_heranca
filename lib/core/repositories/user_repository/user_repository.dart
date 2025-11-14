@@ -31,7 +31,10 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> createProfile(UserModel data, String id) async {
+  Future<Either<ExceptionMessage, void>> createProfile(
+    UserModel data,
+    String id,
+  ) async {
     try {
       final now = DateTime.now();
       data.createdAt = data.createdAt ?? now;
@@ -62,6 +65,23 @@ class UserRepository implements UserRepositoryInterface {
       return Right(response['name']);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao buscar usuário: ${e.toString()}"));
+    }
+  }
+
+  @override
+  Future<Either<ExceptionMessage, void>> setAddressUser(String address) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('Sem usuário autenticado');
+
+      Map<String, dynamic> data = {'address': address, 'id': user.id};
+      await _supabase.from(DbTables.users).upsert(data, onConflict: 'id');
+
+      return Right(null);
+    } catch (e) {
+      return Left(
+        ExceptionMessage("Erro armazenar chave pública: ${e.toString()}"),
+      );
     }
   }
 }

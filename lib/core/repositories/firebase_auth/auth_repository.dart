@@ -55,5 +55,5 @@ class AuthRepository implements AuthRepositoryInterface {
   }
 
   @override
-  Future<void> signOut() => _supabaseClient.auth.signOut();
+  Future<void> signOut() async => await _supabaseClient.auth.signOut();
 }
