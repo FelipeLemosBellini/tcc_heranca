@@ -40,18 +40,10 @@ class BlockchainRepository {
       );
       _deployedContract = DeployedContract(_contractAbi, _ethereumAddress);
 
-      final requiredNamespaces = <String, RequiredNamespace>{
-        'eip155': RequiredNamespace.fromJson({
-          'chains': ['eip155:11155111'], // Sepolia
-          'methods': NetworkUtils.defaultNetworkMethods['eip155']!.toList(),
-          'events': NetworkUtils.defaultNetworkEvents['eip155']!.toList(),
-        }),
-      };
-
       _appKitModal = ReownAppKitModal(
         context: context,
         projectId: Env.projectReownId,
-        optionalNamespaces: requiredNamespaces,
+        optionalNamespaces: requiredNamespaces(),
         metadata: const PairingMetadata(
           name: BlockchainConstants.projectName,
           description: BlockchainConstants.descriptionOfProject,
@@ -61,6 +53,7 @@ class BlockchainRepository {
         ),
       );
       await _appKitModal.init();
+      _getConnectedAddress();
       return Right(null);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
@@ -85,16 +78,7 @@ class BlockchainRepository {
 
   Future<Either<ExceptionMessage, void>> connectWallet() async {
     try {
-      await _appKitModal.selectChain(
-        const ReownAppKitModalNetworkInfo(
-          isTestNetwork: true,
-          chainId: BlockchainConstants.chainId,
-          name: BlockchainConstants.nameChain,
-          currency: BlockchainConstants.currency,
-          rpcUrl: BlockchainConstants.rpcUrl,
-          explorerUrl: BlockchainConstants.explorerUrl,
-        ),
-      );
+      await _selectNetwork();
       await _appKitModal.openModalView();
       return Right(null);
     } catch (e) {
@@ -117,16 +101,7 @@ class BlockchainRepository {
         ),
         parameters: [],
       );
-      await _appKitModal.selectChain(
-        const ReownAppKitModalNetworkInfo(
-          isTestNetwork: true,
-          chainId: BlockchainConstants.chainId,
-          name: BlockchainConstants.nameChain,
-          currency: BlockchainConstants.currency,
-          rpcUrl: BlockchainConstants.rpcUrl,
-          explorerUrl: BlockchainConstants.explorerUrl,
-        ),
-      );
+      await _selectNetwork();
       await _appKitModal.requestWriteContract(
         topic: _appKitModal.session?.topic,
         chainId: BlockchainConstants.chainId,
@@ -144,6 +119,10 @@ class BlockchainRepository {
     required BigInt amountInWei,
   }) async {
     try {
+      List<String>? list = _appKitModal.getAvailableChains();
+      list?.forEach((item) {
+        print(item);
+      });
       ContractFunction contractFunction = _getContractFunction(
         FunctionsBlockchainEnum.depositEth,
       );
@@ -154,6 +133,7 @@ class BlockchainRepository {
         value: EtherAmount.fromBigInt(EtherUnit.wei, amountInWei),
         parameters: [],
       );
+      await _selectNetwork();
       await _appKitModal.requestWriteContract(
         topic: _appKitModal.session?.topic,
         chainId: BlockchainConstants.chainId,
@@ -282,16 +262,7 @@ class BlockchainRepository {
     try {
       _walletBalance ??= StreamController<BigInt>.broadcast(sync: true);
       if (!_listeningWalletBalance) {
-        await _appKitModal.selectChain(
-          const ReownAppKitModalNetworkInfo(
-            isTestNetwork: true,
-            chainId: BlockchainConstants.chainId,
-            name: BlockchainConstants.nameChain,
-            currency: BlockchainConstants.currency,
-            rpcUrl: BlockchainConstants.rpcUrl,
-            explorerUrl: BlockchainConstants.explorerUrl,
-          ),
-        );
+        await _selectNetwork();
         _appKitModal.balanceNotifier.addListener(_emitWalletBalance);
         _listeningWalletBalance = true;
       }
@@ -368,11 +339,11 @@ class BlockchainRepository {
 
   // 3) Formata BigInt com n casas decimais (sem usar double)
   String formatUnits(
-      BigInt amount, {
-        int decimals = 18,
-        int precision = 18, // quantas casas mostrar (<= decimals)
-        bool trimTrailingZeros = true,
-      }) {
+    BigInt amount, {
+    int decimals = 18,
+    int precision = 18, // quantas casas mostrar (<= decimals)
+    bool trimTrailingZeros = true,
+  }) {
     final s = amount.toString();
     if (decimals == 0) return s;
 
@@ -412,7 +383,6 @@ class BlockchainRepository {
     debugPrint('Saldo (18 casas): $full18 ETH');
     debugPrint('Saldo (8 casas):  $eight ETH');
   }
-
 
   ConnectStateBlockchain _mapToBlockchainState(IReownAppKitModal appKit) {
     if (appKit.status == ReownAppKitModalStatus.error) {
@@ -474,5 +444,28 @@ class BlockchainRepository {
     final caip10 = accounts.first;
     final hex = caip10.contains(':') ? caip10.split(':').last : caip10;
     return EthereumAddress.fromHex(hex);
+  }
+
+  Future<void> _selectNetwork() async {
+    await _appKitModal.selectChain(
+      const ReownAppKitModalNetworkInfo(
+        isTestNetwork: true,
+        chainId: BlockchainConstants.chainId,
+        name: BlockchainConstants.nameChain,
+        currency: BlockchainConstants.currency,
+        rpcUrl: BlockchainConstants.rpcUrl,
+        explorerUrl: BlockchainConstants.explorerUrl,
+      ),
+    );
+  }
+
+  Map<String, RequiredNamespace> requiredNamespaces() {
+    return <String, RequiredNamespace>{
+      'eip155': RequiredNamespace.fromJson({
+        'chains': ['eip155:11155111'], // Sepolia
+        'methods': NetworkUtils.defaultNetworkMethods['eip155']!.toList(),
+        'events': NetworkUtils.defaultNetworkEvents['eip155']!.toList(),
+      }),
+    };
   }
 }

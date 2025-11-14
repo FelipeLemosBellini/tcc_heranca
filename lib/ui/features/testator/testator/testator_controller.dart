@@ -21,7 +21,7 @@ class TestatorController extends BaseController {
 
   ConnectStateBlockchain state = ConnectStateBlockchain.idle;
 
-  String balance = "0";
+  BigInt balance = BigInt.zero;
 
   bool? hasVault;
 
@@ -74,7 +74,7 @@ class TestatorController extends BaseController {
 
     var responseMyVault = await blockchainRepository.myVault();
     responseMyVault.fold((onLeft) {}, (onRight) {
-      balance = onRight.toString();
+      balance = onRight;
       notifyListeners();
     });
     var response = await userRepository.getUser();

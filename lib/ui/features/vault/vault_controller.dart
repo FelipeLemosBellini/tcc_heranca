@@ -32,4 +32,32 @@ class VaultController extends BaseController {
       },
     );
   }
+
+  Future<void> getVaultBalance() async {
+    setLoading(true);
+    var response = await blockchainRepository.myVault();
+    response.fold((onLeft) {}, (onRight) {
+      balance = onRight;
+    });
+    setLoading(false);
+  }
+
+  Future<void> deposit(BigInt value) async {
+    setLoading(true);
+    var response = await blockchainRepository.depositEth(amountInWei: value);
+    response.fold((onLeft) {}, (onRight) {});
+    setLoading(false);
+  }
+
+  Future<bool> withdraw(BigInt value) async {
+    bool withdrawSuccess = false;
+    setLoading(true);
+    var response = await blockchainRepository.withdrawEth(amountInWei: value);
+    response.fold((onLeft) {}, (onRight) {
+      withdrawSuccess = true;
+    });
+
+    setLoading(false);
+    return withdrawSuccess;
+  }
 }

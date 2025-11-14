@@ -1,6 +1,8 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tcc/core/events/update_vault.dart';
 import 'package:tcc/core/helpers/bigint_extensions.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/vault/vault_controller.dart';
@@ -24,16 +26,32 @@ class VaultView extends StatefulWidget {
 class _VaultViewState extends State<VaultView> {
   final VaultController vaultController = GetIt.I.get<VaultController>();
   final FocusNode _amountFocus = FocusNode();
+  final EventBus eventBus = GetIt.I.get<EventBus>();
 
   final TextEditingController _amountCtl = TextEditingController();
+
+  bool disableButton = true;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await vaultController.getWalletBalance();
-      await vaultController.getWalletBalance();
+      if (widget.flowTestamentEnum == FlowTestamentEnum.deposit) {
+        await vaultController.getWalletBalance();
+        await vaultController.getWalletBalance();
+      } else {
+        await vaultController.getVaultBalance();
+      }
     });
     super.initState();
+
+    _amountCtl.addListener(() {
+      setState(() {
+        BigInt digitedValue = BigInt.tryParse(_amountCtl.text) ?? BigInt.zero;
+        disableButton =
+            digitedValue > vaultController.balance ||
+            digitedValue == BigInt.zero;
+      });
+    });
   }
 
   @override
@@ -93,19 +111,50 @@ class _VaultViewState extends State<VaultView> {
                         style: AppFonts.bodyLargeBold,
                       ),
                       const SizedBox(height: 12),
-
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: TextFieldWidget(
-                              controller: _amountCtl,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFieldWidget(
+                                  controller: _amountCtl,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                  focusNode: _amountFocus,
+                                  hintText: 'Quantidade em wei',
+                                  onlyNumber: true,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _amountCtl.text =
+                                        vaultController.balance.toString();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary3,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: EdgeInsets.all(6),
+                                    margin: EdgeInsets.only(
+                                      left: 4,
+                                      top: 8,
+                                      bottom: 8,
+                                    ),
+                                    child: Text(
+                                      "Adicionar tudo",
+                                      style: AppFonts.bodySmallMedium,
+                                    ),
                                   ),
-                              focusNode: _amountFocus,
-                              hintText: 'Quantidade em wei',
-                              onlyNumber: true,
+                                ),
+                                Text(
+                                  "Valor em ETH: ${BigInt.parse(_amountCtl.text.isEmpty ? "0" : _amountCtl.text).weiToEth()}",
+                                  style: AppFonts.bodySmallMedium,
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -114,12 +163,13 @@ class _VaultViewState extends State<VaultView> {
                               horizontal: 12,
                               vertical: 6,
                             ),
+                            margin: EdgeInsets.only(top: 8),
                             decoration: BoxDecoration(
                               color: AppColors.primary3,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              'ETH',
+                              'WEI',
                               style: AppFonts.bodyMediumMedium,
                             ),
                           ),
@@ -130,13 +180,20 @@ class _VaultViewState extends State<VaultView> {
                   ),
                 ),
               ),
-              bottomNavigationBar: SafeArea(
+              bottomSheet: SafeArea(
                 child: ElevatedButtonWidget(
+                  inverterColor: disableButton,
                   text:
                       widget.flowTestamentEnum == FlowTestamentEnum.deposit
                           ? "Depositar"
                           : "Sacar",
-                  onTap: () async {},
+                  onTap: () async {
+                    if (disableButton) return;
+
+                    widget.flowTestamentEnum == FlowTestamentEnum.deposit
+                        ? vaultController.deposit(BigInt.parse(_amountCtl.text))
+                        : _withdraw();
+                  },
                 ),
               ),
             ),
@@ -144,5 +201,16 @@ class _VaultViewState extends State<VaultView> {
         },
       ),
     );
+  }
+
+  void _withdraw() async {
+    var response = await vaultController.withdraw(
+      BigInt.parse(_amountCtl.text),
+    );
+    if (response) {
+      _amountCtl.clear();
+      vaultController.getVaultBalance();
+      eventBus.fire(UpdateVault());
+    }
   }
 }

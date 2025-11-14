@@ -4,10 +4,13 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reown_appkit/modal/widgets/buttons/primary_button.dart';
 import 'package:tcc/core/enum/connect_state_blockchain.dart';
+import 'package:tcc/core/events/update_vault.dart';
+import 'package:tcc/core/helpers/BigInt_extensions.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/testament/widgets/flow_testament_enum.dart';
 import 'package:tcc/ui/features/testator/testator/testator_controller.dart';
 import 'package:tcc/ui/features/testator/testator/widget/buy_vault_pop_up.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
 import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_thematic_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
@@ -33,13 +36,14 @@ class _TestatorViewState extends State<TestatorView>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       testatorController.init(context);
     });
-
+    eventBus.on<UpdateVault>().listen((event) async {
+      await testatorController.checkHasVault();
+    });
     super.initState();
   }
 
   @override
   void dispose() {
-    // testatorController.dispose();
     super.dispose();
   }
 
@@ -51,7 +55,6 @@ class _TestatorViewState extends State<TestatorView>
       child: ListenableBuilder(
         listenable: testatorController,
         builder: (context, _) {
-          print(testatorController.state.name);
           return LoadingAndAlertOverlayWidget(
             isLoading: testatorController.isLoading,
             alertData: testatorController.alertData,
@@ -133,11 +136,39 @@ class _TestatorViewState extends State<TestatorView>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Seu saldo atual do cofre:", style: AppFonts.bodyHeadBold),
-                        SizedBox(height: 4),
-                        Text(
-                          "${testatorController.balance} WEI",
-                          style: AppFonts.bodyLargeMedium,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Seu saldo atual \ndo cofre:",
+                                    style: AppFonts.bodyHeadBold,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "${testatorController.balance.weiToEth()} ETH",
+                                    style: AppFonts.bodyLargeMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 24),
+                            GestureDetector(
+                              onTap: () {
+                                testatorController.checkHasVault();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary3,
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child: Icon(Icons.refresh, size: 32),
+                              ),
+                            ),
+                          ],
                         ),
                         const Spacer(),
                         Row(
