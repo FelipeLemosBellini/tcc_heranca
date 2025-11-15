@@ -2,7 +2,6 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reown_appkit/modal/widgets/buttons/primary_button.dart';
 import 'package:tcc/core/enum/connect_state_blockchain.dart';
 import 'package:tcc/core/events/update_vault.dart';
 import 'package:tcc/core/helpers/BigInt_extensions.dart';

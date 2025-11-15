@@ -41,7 +41,7 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("App", style: AppFonts.labelLargeRegular),
+            Text("Ethernium", style: AppFonts.labelLargeRegular),
             SizedBox(height: 16),
             ItemDrawerWidget(
               title: "Home",
@@ -53,13 +53,6 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
               isIn: widget.isHome,
             ),
             ItemDrawerWidget(
-              title: "Transações",
-              onTap: () {},
-              iconEnable: Icons.history,
-              iconDisable: Icons.history_outlined,
-              isIn: isHistoryTransactions,
-            ),
-            ItemDrawerWidget(
               title: "Sobre nós",
               onTap: () {
                 if (!widget.isAboutUs) widget.openAboutUs?.call();
@@ -68,28 +61,8 @@ class _DrawerHomeWidgetState extends State<DrawerHomeWidget> {
               iconDisable: Icons.people_alt_outlined,
               isIn: widget.isAboutUs,
             ),
-            ItemDrawerWidget(
-              title: "Documentação",
-              onTap: () {},
-              iconEnable: Icons.menu_book,
-              iconDisable: Icons.menu_book_outlined,
-              isIn: isDocumentation,
-            ),
-            ItemDrawerWidget(
-              title: "Roadmap",
-              onTap: () {},
-              iconEnable: Icons.rocket_launch,
-              iconDisable: Icons.rocket_launch_outlined,
-              isIn: isRoadmap,
-            ),
+
             const Spacer(),
-            ItemDrawerWidget(
-              title: "Configurações",
-              onTap: () {},
-              iconEnable: Icons.settings,
-              iconDisable: Icons.settings_outlined,
-              isIn: isInSettings,
-            ),
             SignOutWidget(onTap: () => widget.signOut?.call()),
           ],
         ),

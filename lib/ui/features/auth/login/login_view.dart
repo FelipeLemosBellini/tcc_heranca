@@ -27,7 +27,7 @@ class _LoginViewState extends State<LoginView> {
   LoginController controller = GetIt.I.get<LoginController>();
 
   TextEditingController emailController = TextEditingController(
-    text: "wallet@gmail.com",
+    text: "felipelemosbellini@gmail.com",
   );
   TextEditingController passwordController = TextEditingController(
     text: "@Abc1234",
