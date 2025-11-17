@@ -31,6 +31,28 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
+  Future<Either<ExceptionMessage, UserModel>> getUserByCpf({
+    required String cpf,
+  }) async {
+    try {
+      final details =
+          await _supabase
+              .from(DbTables.users)
+              .select()
+              .eq('id', cpf)
+              .maybeSingle();
+
+      if (details == null) {
+        return Left(ExceptionMessage("Perfil do usuário não encontrado"));
+      }
+
+      return Right(UserModel.fromMap(details));
+    } catch (e) {
+      return Left(ExceptionMessage("Erro ao buscar usuário: ${e.toString()}"));
+    }
+  }
+
+  @override
   Future<Either<ExceptionMessage, void>> createProfile(
     UserModel data,
     String id,

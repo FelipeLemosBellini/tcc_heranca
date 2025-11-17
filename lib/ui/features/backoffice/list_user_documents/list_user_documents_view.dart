@@ -346,6 +346,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                   await _controller.updateInheritanceStatus(
                     hasInvalidDocuments: hasInvalidDocuments,
                     requesterId: widget.userId,
+                    cpfTestator: _controller.currentTestatorId!,
                   );
                 } else {
                   await _controller.updateKycStatus(
