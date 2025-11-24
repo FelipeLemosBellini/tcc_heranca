@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 
 class HeaderBanner extends StatelessWidget {
   const HeaderBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            scheme.primaryContainer,
-            scheme.secondaryContainer.withOpacity(.92),
-          ],
+          colors: [AppColors.primary2, AppColors.primary2.withOpacity(.92)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -26,11 +24,7 @@ class HeaderBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'Informe CPF e RG, e anexe a frente/verso do documento e o comprovante de residência.',
-              style: TextStyle(
-                color: scheme.onPrimaryContainer,
-                fontSize: 14,
-                height: 1.25,
-              ),
+              style: AppFonts.bodySmallMedium,
             ),
           ),
         ],

@@ -127,6 +127,7 @@ class _KycViewState extends State<KycView> {
                           hintText: 'Número do RG',
                           controller: controller.rgController,
                           focusNode: rgFocus,
+                          keyboardType: TextInputType.number,
                         ),
                       ],
                     ),

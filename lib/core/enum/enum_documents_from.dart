@@ -20,11 +20,11 @@ extension EnumDocumentsFromExtension on EnumDocumentsFrom {
   String enumToString() {
     switch (this) {
       case EnumDocumentsFrom.kyc:
-        return "KYC";
+        return "Cadastro";
       case EnumDocumentsFrom.inheritanceRequest:
-        return "INHERITANCE_REQUEST";
+        return "Solicitação de distribuição";
       case EnumDocumentsFrom.balanceRequest:
-        return "BALANCE_REQUEST";
+        return "Solicitação de saldo";
     }
   }
 }

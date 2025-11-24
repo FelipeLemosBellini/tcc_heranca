@@ -66,7 +66,7 @@ abstract class AlertHelper {
         message,
         style: AppFonts.labelMediumMedium.copyWith(color: fontColor),
       ),
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 5),
       backgroundColor: background,
       behavior: SnackBarBehavior.floating,
     );
