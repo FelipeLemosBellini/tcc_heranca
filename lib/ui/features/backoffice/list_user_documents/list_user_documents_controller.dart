@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:reown_appkit/modal/services/blockchain_service/blockchain_service.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
@@ -12,17 +13,24 @@ import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/helpers/base_controller.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/repositories/backoffice_firestore/backoffice_firestore_interface.dart';
+import 'package:tcc/core/repositories/blockchain_repository/blockchain_repository.dart';
 import 'package:tcc/core/repositories/kyc/kyc_repository_interface.dart';
 import 'package:tcc/core/repositories/storage_repository/storage_repository_interface.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository.dart';
+import 'package:tcc/core/repositories/user_repository/user_repository_interface.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 
 class ListUserDocumentsController extends BaseController {
   final StorageRepositoryInterface storageRepository;
   final BackofficeFirestoreInterface backofficeFirestoreInterface;
+  final BlockchainRepository blockchainRepository;
+  final UserRepositoryInterface userRepositoryInterface;
 
   ListUserDocumentsController({
     required this.storageRepository,
     required this.backofficeFirestoreInterface,
+    required this.blockchainRepository,
+    required this.userRepositoryInterface,
   });
 
   List<Document> _documents = [];
@@ -138,6 +146,7 @@ class ListUserDocumentsController extends BaseController {
   Future<void> updateInheritanceStatus({
     required bool hasInvalidDocuments,
     required String requesterId,
+    required String cpfTestator,
   }) async {
     final testatorId = _currentTestatorId;
     if (testatorId == null || testatorId.isEmpty) return;
@@ -149,6 +158,16 @@ class ListUserDocumentsController extends BaseController {
             : (hasInvalidDocuments
                 ? HeirStatus.consultaSaldoRecusado
                 : HeirStatus.consultaSaldoAprovado);
+
+    if (status == HeirStatus.transferenciaSaldoRealizada ||
+        status == HeirStatus.consultaSaldoAprovado) {
+      var response = await userRepositoryInterface.getUserByCpf(
+        cpf: cpfTestator,
+      );
+      await response.fold((onLeft) {}, (onRight) async {
+
+      });
+    }
     final result = await backofficeFirestoreInterface.updateInheritanceStatus(
       requesterId: requesterId,
       testatorId: testatorId,

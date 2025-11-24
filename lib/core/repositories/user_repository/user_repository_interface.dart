@@ -5,6 +5,10 @@ import 'package:tcc/core/models/user_model.dart';
 abstract class UserRepositoryInterface {
   Future<Either<ExceptionMessage, UserModel>> getUser();
 
+  Future<Either<ExceptionMessage, UserModel>> getUserByCpf({
+    required String cpf,
+  });
+
   Future<Either<ExceptionMessage, void>> createProfile(
     UserModel data,
     String id,

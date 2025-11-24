@@ -136,6 +136,7 @@ abstract class DI {
       () => ListUserDocumentsController(
         storageRepository: getIt.get<StorageRepository>(),
         backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
+        blockchainRepository: getIt.get<BlockchainRepository>(),
       ),
     );
 
