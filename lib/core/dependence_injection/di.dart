@@ -137,6 +137,7 @@ abstract class DI {
         storageRepository: getIt.get<StorageRepository>(),
         backofficeFirestoreInterface: getIt.get<BackofficeFirestoreInterface>(),
         blockchainRepository: getIt.get<BlockchainRepository>(),
+        userRepositoryInterface: getIt.get<UserRepository>(),
       ),
     );
 
