@@ -55,7 +55,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
               appBar: AppBarSimpleWidget(
                 title: "Solicitar saldo do cofre",
                 onTap: () {
-                  context.pop();
+                  context.pop(false);
                 },
               ),
               body: SafeArea(
@@ -170,7 +170,7 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                                             );
                                 if (!mounted) return;
                                 if (success) {
-                                  context.pop();
+                                  context.pop(true);
                                 }
                               },
                             ),

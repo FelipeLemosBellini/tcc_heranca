@@ -36,19 +36,25 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
   final SeeDetailsInheritanceController _controller =
       GetIt.I.get<SeeDetailsInheritanceController>();
 
+  Future<void> _reloadDocuments() async {
+    final requesterId = widget.testament.requestById ?? '';
+    final testatorId = widget.testament.testatorId ?? '';
+    if (requesterId.isEmpty || testatorId.isEmpty) return;
+    await _controller.loadDocuments(
+      requesterId: requesterId,
+      testatorId: testatorId,
+    );
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    final requesterId = widget.testament.requestById ?? '';
-    final testatorId = widget.testament.testatorId ?? '';
-    if (requesterId.isNotEmpty && testatorId.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _controller.loadDocuments(
-          requesterId: requesterId,
-          testatorId: testatorId,
-        );
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reloadDocuments();
+    });
   }
 
   @override
@@ -108,11 +114,14 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Enviar documentos da herança',
-                        onTap: () {
-                          context.push(
+                        onTap: () async {
+                          final result = await context.push(
                             RouterApp.requestInheritance,
                             extra: widget.testament,
                           );
+                          if (result == true) {
+                            await _reloadDocuments();
+                          }
                         },
                       ),
                     ],
@@ -120,11 +129,14 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Corrigir documentos da consulta de saldo',
-                        onTap: () {
-                          context.push(
+                        onTap: () async {
+                          final result = await context.push(
                             RouterApp.requestVault,
                             extra: widget.testament,
                           );
+                          if (result == true) {
+                            await _reloadDocuments();
+                          }
                         },
                       ),
                     ],
@@ -132,11 +144,14 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Reenviar documentos da transferência',
-                        onTap: () {
-                          context.push(
+                        onTap: () async {
+                          final result = await context.push(
                             RouterApp.requestInheritance,
                             extra: widget.testament,
                           );
+                          if (result == true) {
+                            await _reloadDocuments();
+                          }
                         },
                       ),
                     ],

@@ -66,7 +66,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
               appBar: AppBarSimpleWidget(
                 title: "Solicitar herança",
                 onTap: () {
-                  context.pop();
+                  context.pop(false);
                 },
               ),
               body: SafeArea(
@@ -229,7 +229,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                                         );
                                 if (!mounted) return;
                                 if (success) {
-                                  context.pop();
+                                  context.pop(true);
                                 }
                               },
                             ),

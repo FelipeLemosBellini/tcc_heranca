@@ -101,9 +101,26 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       }
 
       final response = await query;
-      var docs = response.map((row) => Document.fromMap(row)).toList();
+      var docs =
+          response.map((row) => Document.fromMap(row)).toList()
+            ..sort((a, b) => b.uploadedAt.compareTo(a.uploadedAt));
 
-      return Right(docs);
+      final uniqueByType = <String, Document>{};
+      for (final doc in docs) {
+        final key = [
+          doc.typeDocument.name,
+          doc.testatorId ?? '',
+          doc.from?.name ?? '',
+        ].join('-');
+        uniqueByType.putIfAbsent(key, () => doc);
+      }
+
+      final filteredDocs =
+          uniqueByType.values.toList()..sort(
+            (a, b) => a.typeDocument.index.compareTo(b.typeDocument.index),
+          );
+
+      return Right(filteredDocs);
     } catch (e) {
       return Left(ExceptionMessage("Erro ao pegar os documentos: $e"));
     }
