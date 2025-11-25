@@ -312,12 +312,16 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
     try {
       final response =
           await _client
-              .from(DbTables.inheritance)
-              .select('id, email')
-              .eq('requestBy', requestUserId)
+              .from(DbTables.users)
+              .select()
+              .eq('id', requestUserId)
               .limit(1)
               .maybeSingle();
 
+      if (response == null) {
+        return Left(ExceptionMessage("Usuário não encontrado"));
+      }
+      UserModel requester = UserModel.fromMap(response);
       final String keyEmail = Env.keyEmail;
       final String gmailUser = 'felipelemosbellini@gmail.com';
 
@@ -326,9 +330,9 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       final message =
           Message()
             ..from = Address(gmailUser, 'Ethernium App')
-            ..recipients.add(response?['email'])
+            ..recipients.add(requester.email)
             ..subject = 'Saldo da conta de seu cliente'
-            ..text = 'Segue o saldo de ETH do seu cliente $balance';
+            ..text = 'Segue o saldo de Ethers do seu cliente $balance wei(s)';
 
       try {
         final sendReport = await send(message, smtpServer);

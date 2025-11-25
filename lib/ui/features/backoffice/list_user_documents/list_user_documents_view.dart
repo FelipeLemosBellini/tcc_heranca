@@ -5,13 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/events/update_users_event.dart';
-import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
+import 'package:tcc/ui/features/backoffice/list_user_documents/widgets/list_documents_widget.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
-import 'package:tcc/ui/widgets/text_field_widget.dart';
 
 class ListUserDocumentsView extends StatefulWidget {
   final String userId;
@@ -93,286 +92,111 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                       ],
                     ),
                   ),
-                Expanded(
-                  child:
-                      _controller.listDocuments.isEmpty
-                          ? const Center(
-                            child: Text('Nenhum documento pendente.'),
-                          )
-                          : ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            itemCount: _controller.listDocuments.length,
-                            itemBuilder: (context, index) {
-                              final doc = _controller.listDocuments[index];
-                              final docId = doc.id;
-                              final isPending =
-                                  doc.reviewStatus ==
-                                  ReviewStatusDocument.pending;
-                              final selected =
-                                  (isPending && docId != null)
-                                      ? _controller.decisions[docId]
-                                      : null;
-                              return Column(
-                                children: [
-                                  Card(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.description),
-                                              const SizedBox(width: 8),
-                                              Text(doc.typeDocument.Name),
-                                              const Spacer(),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  if (doc.pathStorage != null) {
-                                                    _controller.openPdf(
-                                                      doc.pathStorage!,
-                                                    );
-                                                  }
-                                                },
-                                                child: const Icon(
-                                                  Icons.file_open_outlined,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          if (isPending)
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: RadioListTile<bool>(
-                                                    title: const Text(
-                                                      'Aprovar',
-                                                    ),
-                                                    value: true,
-                                                    groupValue: selected,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        if (docId != null) {
-                                                          _controller
-                                                                  .decisions[docId] =
-                                                              value;
-                                                        }
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: RadioListTile<bool>(
-                                                    title: const Text(
-                                                      'Reprovar',
-                                                    ),
-                                                    value: false,
-                                                    groupValue: selected,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        if (docId != null) {
-                                                          _controller
-                                                                  .decisions[docId] =
-                                                              value;
-                                                        }
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          else
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                top: 12,
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 8,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    doc.reviewStatus ==
-                                                            ReviewStatusDocument
-                                                                .approved
-                                                        ? Colors.green
-                                                            .withOpacity(0.15)
-                                                        : Colors.red
-                                                            .withOpacity(0.15),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    doc.reviewStatus ==
-                                                            ReviewStatusDocument
-                                                                .approved
-                                                        ? Icons
-                                                            .check_circle_outline
-                                                        : Icons.highlight_off,
-                                                    color:
-                                                        doc.reviewStatus ==
-                                                                ReviewStatusDocument
-                                                                    .approved
-                                                            ? Colors
-                                                                .green
-                                                                .shade700
-                                                            : Colors
-                                                                .red
-                                                                .shade700,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      doc.reviewStatus ==
-                                                              ReviewStatusDocument
-                                                                  .approved
-                                                          ? 'Documento aprovado'
-                                                          : 'Documento recusado',
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  if (isPending)
-                                    Visibility(
-                                      visible: selected == false,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                          vertical: 8,
-                                        ),
-                                        child: TextFieldWidget(
-                                          controller:
-                                              _controller
-                                                  .reasonControllers[index],
-                                          maxLines: 3,
-                                          hintText: 'Motivo da reprovação',
-                                          focusNode:
-                                              _controller.focusNodes[index],
-                                        ),
-                                      ),
-                                    ),
-                                  if (_controller.listDocuments.length - 1 ==
-                                      index)
-                                    SizedBox(height: 200),
-                                ],
-                              );
-                            },
-                          ),
+                ListDocumentsWidget(
+                  decisions: _controller.decisions,
+                  listDocuments: _controller.listDocuments,
+                  openPdf: (String pdf) {
+                    _controller.openPdf(pdf);
+                  },
+                  approve: (bool value, String docId) {
+                    setState(() {
+                      _controller.decisions[docId] = value;
+                    });
+                  },
+                  focusNodes: _controller.focusNodes,
+                  reasonControllers: _controller.reasonControllers,
                 ),
               ],
             ),
             bottomSheet: ElevatedButtonWidget(
-              onTap: () async {
-                for (
-                  int index = 0;
-                  index < _controller.listDocuments.length;
-                  index++
-                ) {
-                  final doc = _controller.listDocuments[index];
-                  final docId = doc.id;
-                  if (doc.reviewStatus != ReviewStatusDocument.pending) {
-                    continue;
-                  }
-                  if (_controller.reasonControllers[index].text.isEmpty &&
-                      docId != null &&
-                      _controller.decisions[docId] == false) {
-                    AlertHelper.showAlertSnackBar(
-                      context: context,
-                      alertData: AlertData(
-                        message: 'Preencha o motivo da reprova',
-                        errorType: ErrorType.warning,
-                      ),
-                    );
-                    return;
-                  }
-
-                  if (docId == null || _controller.decisions[docId] == null) {
-                    AlertHelper.showAlertSnackBar(
-                      context: context,
-                      alertData: AlertData(
-                        message:
-                            'Selecione as opções de aprovação ou reprovação',
-                        errorType: ErrorType.warning,
-                      ),
-                    );
-                    return;
-                  }
-                }
-                for (
-                  int index = 0;
-                  index < _controller.listDocuments.length;
-                  index++
-                ) {
-                  final doc = _controller.listDocuments[index];
-                  if (doc.reviewStatus != ReviewStatusDocument.pending) {
-                    continue;
-                  }
-                  doc.reviewMessage = _controller.reasonControllers[index].text;
-                  await _controller.submit(documents: doc);
-                }
-
-                bool hasInvalidDocuments = false;
-
-                for (
-                  int index = 0;
-                  index < _controller.listDocuments.length;
-                  index++
-                ) {
-                  final doc = _controller.listDocuments[index];
-                  final docId = doc.id;
-                  if (doc.reviewStatus != ReviewStatusDocument.pending) {
-                    continue;
-                  }
-                  if (docId != null && _controller.decisions[docId] == false) {
-                    hasInvalidDocuments = true;
-                    break;
-                  }
-                }
-
-                if ((_controller.currentTestatorId ?? '').isNotEmpty) {
-                  await _controller.updateInheritanceStatus(
-                    hasInvalidDocuments: hasInvalidDocuments,
-                    requesterId: widget.userId,
-                    cpfTestator: _controller.currentTestatorId!,
-                  );
-                } else {
-                  await _controller.updateKycStatus(
-                    hasInvalidDocument: hasInvalidDocuments,
-                    userId: widget.userId,
-                  );
-                }
-
-                await AlertHelper.showAlertSnackBar(
-                  context: context,
-                  alertData: AlertData(
-                    message:
-                        hasInvalidDocuments
-                            ? 'Análise concluída: existem documentos reprovados.'
-                            : 'Documentos aprovados com sucesso!',
-                    errorType: ErrorType.success,
-                  ),
-                );
-                eventBus.fire(UpdateUsersEvent());
-                context.pop();
-              },
+              onTap: () => onSubmitted(context),
               text: "Enviar",
             ),
           ),
         );
       },
     );
+  }
+
+  void onSubmitted(BuildContext context) async {
+    for (int index = 0; index < _controller.listDocuments.length; index++) {
+      final doc = _controller.listDocuments[index];
+      final docId = doc.id;
+      if (doc.reviewStatus != ReviewStatusDocument.pending) {
+        continue;
+      }
+      if (_controller.reasonControllers[index].text.isEmpty &&
+          docId != null &&
+          _controller.decisions[docId] == false) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: 'Preencha o motivo da reprova',
+            errorType: ErrorType.warning,
+          ),
+        );
+        return;
+      }
+
+      if (docId == null || _controller.decisions[docId] == null) {
+        AlertHelper.showAlertSnackBar(
+          context: context,
+          alertData: AlertData(
+            message: 'Selecione as opções de aprovação ou reprovação',
+            errorType: ErrorType.warning,
+          ),
+        );
+        return;
+      }
+    }
+    for (int index = 0; index < _controller.listDocuments.length; index++) {
+      final doc = _controller.listDocuments[index];
+      if (doc.reviewStatus != ReviewStatusDocument.pending) {
+        continue;
+      }
+      doc.reviewMessage = _controller.reasonControllers[index].text;
+      // await _controller.submit(documents: doc);
+    }
+
+    bool hasInvalidDocuments = false;
+
+    for (int index = 0; index < _controller.listDocuments.length; index++) {
+      final doc = _controller.listDocuments[index];
+      final docId = doc.id;
+      if (doc.reviewStatus != ReviewStatusDocument.pending) {
+        continue;
+      }
+      if (docId != null && _controller.decisions[docId] == false) {
+        hasInvalidDocuments = true;
+        break;
+      }
+    }
+
+    if ((_controller.currentTestatorId ?? '').isNotEmpty) {
+      await _controller.updateInheritanceStatus(
+        context: context,
+        hasInvalidDocuments: false, //hasInvalidDocuments,
+        requesterId: widget.userId,
+        cpfTestator: _controller.currentTestatorId!,
+      );
+    } else {
+      await _controller.updateKycStatus(
+        hasInvalidDocument: hasInvalidDocuments,
+        userId: widget.userId,
+      );
+    }
+
+    await AlertHelper.showAlertSnackBar(
+      context: context,
+      alertData: AlertData(
+        message:
+            hasInvalidDocuments
+                ? 'Análise concluída: existem documentos reprovados.'
+                : 'Documentos aprovados com sucesso!',
+        errorType: ErrorType.success,
+      ),
+    );
+    eventBus.fire(UpdateUsersEvent());
+    context.pop();
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:http/http.dart' as http;
+import 'package:tcc/core/repositories/blockchain_repository/blockchain_repository_interface.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'package:tcc/core/enum/functions_blockchain_enum.dart';
 import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
 
-class BlockchainRepository {
+class BlockchainRepository extends BlockchainRepositoryInterface {
   StreamController<ConnectStateBlockchain>? _controllerState;
   StreamController<BigInt>? _walletBalance;
   bool _listeningConnectState = false;
@@ -27,6 +28,16 @@ class BlockchainRepository {
 
   late DeployedContract _deployedContract;
 
+  @override
+  Future<Either<ExceptionMessage, bool>> reownWasInitialized() async {
+    try {
+      return Right(_appKitModal.status == ReownAppKitModalStatus.initialized);
+    } catch (e) {
+      return Right(false);
+    }
+  }
+
+  @override
   Future<Either<ExceptionMessage, void>> init({
     required BuildContext context,
   }) async {
@@ -60,6 +71,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, String>> getAddress() async {
     try {
       if (_appKitModal.session == null) {
@@ -76,6 +88,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> connectWallet() async {
     try {
       await _selectNetwork();
@@ -86,6 +99,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> createVault() async {
     try {
       ContractFunction contractFunction = _getContractFunction(
@@ -115,6 +129,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> depositEth({
     required BigInt amountInWei,
   }) async {
@@ -147,6 +162,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> withdrawEth({
     required BigInt amountInWei,
   }) async {
@@ -175,6 +191,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> distributeVault({
     required String testatorAddress,
     required List<BigInt> amounts,
@@ -205,6 +222,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, BigInt>> myVault() async {
     try {
       var response = await _appKitModal.requestReadContract(
@@ -220,6 +238,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, BigInt>> vaultBalanceByAddress({
     required String address,
   }) async {
@@ -239,6 +258,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, Stream<ConnectStateBlockchain>>>
   watchState() async {
     try {
@@ -258,6 +278,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, Stream<BigInt>>> getWalletBalance() async {
     try {
       _walletBalance ??= StreamController<BigInt>.broadcast(sync: true);
@@ -273,6 +294,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   Future<Either<ExceptionMessage, void>> logout() async {
     try {
       if (_appKitModal.session != null) {
@@ -284,6 +306,7 @@ class BlockchainRepository {
     }
   }
 
+  @override
   void dispose() async {
     if (_listeningConnectState || _listeningWalletBalance) {
       _appKitModal.removeListener(_emit);
@@ -307,8 +330,10 @@ class BlockchainRepository {
     final controller = _walletBalance;
     if (controller == null || controller.isClosed) return;
 
-    BigInt value = await getNativeBalanceWei();
-    controller.add(value);
+    var response = await getNativeBalanceWei();
+    response.fold((onLeft) {}, (success) {
+      controller.add(success);
+    });
   }
 
   // 1) Pega o address conectado via Reown (CAIP-10 -> 0x...)
@@ -323,7 +348,8 @@ class BlockchainRepository {
   }
 
   // 2) Lê o saldo em wei direto do RPC (sem arredondar)
-  Future<BigInt> getNativeBalanceWei() async {
+  @override
+  Future<Either<ExceptionMessage, BigInt>> getNativeBalanceWei() async {
     final addr = _connectedAddressOrThrow();
     final client = Web3Client(
       'https://1rpc.io/sepolia',
@@ -331,13 +357,16 @@ class BlockchainRepository {
     ); // ou seu RPC
     try {
       final EtherAmount bal = await client.getBalance(addr);
-      return bal.getInWei; // BigInt preciso
+      return Right(bal.getInWei); // BigInt preciso
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
     } finally {
       client.dispose();
     }
   }
 
   // 3) Formata BigInt com n casas decimais (sem usar double)
+  @override
   String formatUnits(
     BigInt amount, {
     int decimals = 18,
@@ -368,20 +397,6 @@ class BlockchainRepository {
     }
 
     return fracPart.isEmpty ? intPart : '$intPart.$fracPart';
-  }
-
-  // 4) Uso
-  Future<void> showPreciseBalance() async {
-    final wei = await getNativeBalanceWei();
-    final full18 = formatUnits(
-      wei,
-      decimals: 18,
-      precision: 18,
-    ); // até 18 casas
-    final eight = formatUnits(wei, decimals: 18, precision: 8); // 8 casas
-
-    debugPrint('Saldo (18 casas): $full18 ETH');
-    debugPrint('Saldo (8 casas):  $eight ETH');
   }
 
   ConnectStateBlockchain _mapToBlockchainState(IReownAppKitModal appKit) {
@@ -459,6 +474,7 @@ class BlockchainRepository {
     );
   }
 
+  @override
   Map<String, RequiredNamespace> requiredNamespaces() {
     return <String, RequiredNamespace>{
       'eip155': RequiredNamespace.fromJson({
