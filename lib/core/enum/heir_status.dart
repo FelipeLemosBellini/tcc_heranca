@@ -8,24 +8,6 @@ enum HeirStatus {
   transferenciaSaldoRealizada,
   transferenciaSaldoRecusado;
 
-  static HeirStatus? toEnum(String value) {
-    switch (value) {
-      case "CONSULTA_SALDO_SOLICITADO":
-        return HeirStatus.consultaSaldoSolicitado;
-      case "CONSULTA_SALDO_APROVADO":
-        return HeirStatus.consultaSaldoAprovado;
-      case "CONSULTA_SALDO_RECUSADO":
-        return HeirStatus.consultaSaldoRecusado;
-      case "TRANSFERENCIA_SALDO_SOLICITADO":
-        return HeirStatus.transferenciaSaldoSolicitado;
-      case "TRANSFERENCIA_SALDO_REALIZADA":
-        return HeirStatus.transferenciaSaldoRealizada;
-      case "TRANSFERENCIA_SALDO_RECUSADO":
-        return HeirStatus.transferenciaSaldoRecusado;
-      default:
-        return null;
-    }
-  }
 }
 
 extension HeirStatusX on HeirStatus {

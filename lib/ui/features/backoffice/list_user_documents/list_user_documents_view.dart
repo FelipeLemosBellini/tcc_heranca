@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tcc/core/enum/enum_documents_from.dart';
+import 'package:tcc/core/enum/heir_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/events/update_users_event.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_documents_controller.dart';
+import 'package:tcc/ui/features/backoffice/list_user_documents/widgets/add_new_heir_widget.dart';
+import 'package:tcc/ui/features/backoffice/list_user_documents/widgets/list_address_and_amount_widget.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/widgets/list_documents_widget.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/buttons/elevated_button_widget.dart';
 import 'package:tcc/ui/widgets/dialogs/alert_helper.dart';
@@ -45,7 +49,8 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _controller.getDocumentsByUserId(
-        userId: widget.userId,
+        context: context,
+        requesterId: widget.userId,
         testatorId: widget.testatorId,
         from:
             widget.testatorId != null
@@ -70,9 +75,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                 context.pop();
               },
             ),
-            body: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            body: ListView(
               children: [
                 if (widget.testatorName != null)
                   Padding(
@@ -82,16 +85,20 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                       children: [
                         Text(
                           widget.testatorName ?? '',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: AppFonts.bodyMediumMedium,
                         ),
                         if (widget.testatorCpf != null)
-                          Text(
-                            'CPF: ${widget.testatorCpf}',
-                            style: Theme.of(context).textTheme.bodySmall,
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              'CPF: ${widget.testatorCpf}',
+                              style: AppFonts.bodySmallLight,
+                            ),
                           ),
                       ],
                     ),
                   ),
+
                 ListDocumentsWidget(
                   decisions: _controller.decisions,
                   listDocuments: _controller.listDocuments,
@@ -103,9 +110,41 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
                       _controller.decisions[docId] = value;
                     });
                   },
-                  focusNodes: _controller.focusNodes,
+                  focusNodes: _controller.reasonFocusNodes,
                   reasonControllers: _controller.reasonControllers,
                 ),
+                Visibility(
+                  visible:
+                      _controller.newEnumDocumentsFromStatus ==
+                      EnumDocumentsFrom.inheritanceRequest,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      "Adicione os endereços dos beneficiários",
+                      maxLines: 2,
+                      style: AppFonts.bodyLargeBold,
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible:
+                      _controller.newEnumDocumentsFromStatus ==
+                      EnumDocumentsFrom.inheritanceRequest,
+                  child: ListAddressAndAmountWidget(
+                    remove: _controller.removeHeir,
+                    addressController: _controller.addressesControllers,
+                    amountController: _controller.amountsControllers,
+                    addressFocusNode: _controller.addressFocusNodes,
+                    amountFocusNode: _controller.amountFocusNodes,
+                  ),
+                ),
+                Visibility(
+                  visible:
+                      _controller.newEnumDocumentsFromStatus ==
+                      EnumDocumentsFrom.inheritanceRequest,
+                  child: AddNewHeirWidget(onTap: _controller.addHeir),
+                ),
+                SizedBox(height: 300),
               ],
             ),
             bottomSheet: ElevatedButtonWidget(
@@ -155,7 +194,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
         continue;
       }
       doc.reviewMessage = _controller.reasonControllers[index].text;
-      // await _controller.submit(documents: doc);
+      await _controller.submit(documents: doc);
     }
 
     bool hasInvalidDocuments = false;
@@ -175,7 +214,7 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
     if ((_controller.currentTestatorId ?? '').isNotEmpty) {
       await _controller.updateInheritanceStatus(
         context: context,
-        hasInvalidDocuments: false, //hasInvalidDocuments,
+        hasInvalidDocuments: hasInvalidDocuments,
         requesterId: widget.userId,
         cpfTestator: _controller.currentTestatorId!,
       );
@@ -185,18 +224,6 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
         userId: widget.userId,
       );
     }
-
-    await AlertHelper.showAlertSnackBar(
-      context: context,
-      alertData: AlertData(
-        message:
-            hasInvalidDocuments
-                ? 'Análise concluída: existem documentos reprovados.'
-                : 'Documentos aprovados com sucesso!',
-        errorType: ErrorType.success,
-      ),
-    );
     eventBus.fire(UpdateUsersEvent());
-    context.pop();
   }
 }

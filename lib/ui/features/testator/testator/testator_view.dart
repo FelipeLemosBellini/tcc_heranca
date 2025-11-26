@@ -118,7 +118,7 @@ class _TestatorViewState extends State<TestatorView>
                               context: context,
                               connectWallet: () {
                                 context.pop();
-                                testatorController.buyVault();
+                                testatorController.buyVault(context);
                               },
                             );
                           },

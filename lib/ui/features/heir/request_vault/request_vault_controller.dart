@@ -171,7 +171,7 @@ class RequestVaultController extends BaseController {
 
     setLoading(true);
 
-    final sent = await submitDocuments(
+    bool sent = await submitDocuments(
       cpfTestator: inheritance.cpf ?? '',
       certificadoDeObito: certificadoDeObito,
       procuracaoAdvogado: procuracaoAdvogado,
@@ -247,7 +247,7 @@ class RequestVaultController extends BaseController {
             typeDocument: TypeDocument.deathCertificate,
             reviewStatus: ReviewStatusDocument.pending,
             reviewMessage: '',
-            from: EnumDocumentsFrom.inheritanceRequest,
+            from: EnumDocumentsFrom.balanceRequest,
             uploadedAt: DateTime.now(),
           )] =
           certificadoDeObito;
@@ -260,7 +260,7 @@ class RequestVaultController extends BaseController {
             typeDocument: TypeDocument.procuracaoAdvogado,
             reviewStatus: ReviewStatusDocument.pending,
             reviewMessage: '',
-            from: EnumDocumentsFrom.inheritanceRequest,
+            from: EnumDocumentsFrom.balanceRequest,
             uploadedAt: DateTime.now(),
           )] =
           procuracaoAdvogado;

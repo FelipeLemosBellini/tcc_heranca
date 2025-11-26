@@ -177,7 +177,7 @@ class _RequestInheritanceViewState extends State<RequestInheritanceView> {
                           Expanded(
                             child: ElevatedButtonWidget(
                               text:
-                                  _isCorrection ? 'Enviar correção' : 'Enviar',
+                                  _isCorrection ? 'Enviar novamente' : 'Enviar',
                               onTap: () async {
                                 final attachments = [
                                   procuracaoDoInventariante,

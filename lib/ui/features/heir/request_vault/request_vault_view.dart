@@ -120,59 +120,8 @@ class _RequestVaultViewState extends State<RequestVaultView> {
                           Expanded(
                             child: ElevatedButtonWidget(
                               text:
-                                  _isCorrection ? 'Enviar correção' : 'Enviar',
-                              onTap: () async {
-                                if (!_isCorrection &&
-                                    (procuracaoDoInventariante == null ||
-                                        certidaoDeObito == null)) {
-                                  _requestVaultController.setMessage(
-                                    AlertData(
-                                      message: "Anexe os documentos!",
-                                      errorType: ErrorType.error,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                if (_isCorrection &&
-                                    procuracaoDoInventariante == null &&
-                                    certidaoDeObito == null) {
-                                  _requestVaultController.setMessage(
-                                    AlertData(
-                                      message:
-                                          "Envie pelo menos um documento para correção.",
-                                      errorType: ErrorType.warning,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                final success =
-                                    _isCorrection
-                                        ? await _requestVaultController
-                                            .resendBalanceDocuments(
-                                              inheritance: widget.inheritance!,
-                                              certificadoDeObito:
-                                                  certidaoDeObito,
-                                              procuracaoAdvogado:
-                                                  procuracaoDoInventariante,
-                                            )
-                                        : await _requestVaultController
-                                            .createRequestInheritance(
-                                              certificadoDeObito:
-                                                  certidaoDeObito!,
-                                              procuracaoAdvogado:
-                                                  procuracaoDoInventariante!,
-                                              cpfTestator:
-                                                  _requestVaultController
-                                                      .cpfTestatorController
-                                                      .text,
-                                            );
-                                if (!mounted) return;
-                                if (success) {
-                                  context.pop(true);
-                                }
-                              },
+                                  _isCorrection ? 'Enviar novamente' : 'Enviar',
+                              onTap: () => onTap(),
                             ),
                           ),
                         ],
@@ -208,6 +157,45 @@ class _RequestVaultViewState extends State<RequestVaultView> {
         ),
       );
       return null;
+    }
+  }
+
+  void onTap() async {
+    if (!_isCorrection &&
+        (procuracaoDoInventariante == null || certidaoDeObito == null)) {
+      _requestVaultController.setMessage(
+        AlertData(message: "Anexe os documentos!", errorType: ErrorType.error),
+      );
+      return;
+    }
+
+    if (_isCorrection &&
+        procuracaoDoInventariante == null &&
+        certidaoDeObito == null) {
+      _requestVaultController.setMessage(
+        AlertData(
+          message: "Envie pelo menos um documento para correção.",
+          errorType: ErrorType.warning,
+        ),
+      );
+      return;
+    }
+
+    final success =
+        _isCorrection
+            ? await _requestVaultController.resendBalanceDocuments(
+              inheritance: widget.inheritance!,
+              certificadoDeObito: certidaoDeObito,
+              procuracaoAdvogado: procuracaoDoInventariante,
+            )
+            : await _requestVaultController.createRequestInheritance(
+              certificadoDeObito: certidaoDeObito!,
+              procuracaoAdvogado: procuracaoDoInventariante!,
+              cpfTestator: _requestVaultController.cpfTestatorController.text,
+            );
+    if (!mounted) return;
+    if (success) {
+      context.pop(true);
     }
   }
 }

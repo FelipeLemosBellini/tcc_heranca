@@ -8,6 +8,7 @@ import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_users/list_users_controller.dart';
 import 'package:tcc/ui/features/backoffice/list_users/widgets/drawer_list_users_widget.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_drawer_widget.dart';
 import 'package:tcc/ui/widgets/refresh_indicator_widget.dart';
 
@@ -83,6 +84,7 @@ class _ListUsersViewState extends State<ListUsersView> {
                           return ChoiceChip(
                             label: Text(
                               filter.enumToString().replaceAll('_', ' '),
+                              style: AppFonts.bodyMediumMedium,
                             ),
                             selected: isSelected,
                             onSelected: (_) {
@@ -102,10 +104,7 @@ class _ListUsersViewState extends State<ListUsersView> {
                         onTap: () {
                           context.push(
                             RouterApp.listUserTestators,
-                            extra: {
-                              "userId": user.id,
-                              "name": user.name,
-                            },
+                            extra: {"userId": user.id, "name": user.name},
                           );
                         },
                         child: Container(
@@ -116,7 +115,7 @@ class _ListUsersViewState extends State<ListUsersView> {
                           ),
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: AppColors.primary3,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: ListTile(
@@ -127,7 +126,7 @@ class _ListUsersViewState extends State<ListUsersView> {
                             leading: const Icon(Icons.person),
                             title: Text(
                               user.name.toUpperCase(),
-                              style: TextStyle(color: Colors.white),
+                              style: AppFonts.bodyMediumMedium,
                             ),
                           ),
                         ),

@@ -7,6 +7,7 @@ class ElevatedButtonWidget extends StatelessWidget {
   final Function() onTap;
   final EdgeInsets? padding;
   final bool inverterColor;
+  final bool isBig;
 
   const ElevatedButtonWidget({
     super.key,
@@ -14,6 +15,7 @@ class ElevatedButtonWidget extends StatelessWidget {
     required this.onTap,
     this.padding,
     this.inverterColor = false,
+    this.isBig = false,
   });
 
   @override
@@ -23,8 +25,9 @@ class ElevatedButtonWidget extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 48,
-            margin: padding ?? const EdgeInsets.all(24).copyWith(bottom: 40),
+            height: isBig ? 72 : 48,
+            margin:
+                padding ?? EdgeInsets.all(isBig ? 32 : 24).copyWith(bottom: 40),
             width: MediaQuery.sizeOf(context).width,
             alignment: Alignment.center,
             decoration: BoxDecoration(
@@ -46,7 +49,12 @@ class ElevatedButtonWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(text, style: AppFonts.labelHeadBold),
+            child: Text(
+              text,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: AppFonts.labelHeadBold,
+            ),
           ),
         ),
       ],

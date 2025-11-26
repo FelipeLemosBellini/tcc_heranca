@@ -32,4 +32,7 @@ abstract class InheritanceRepositoryInterface {
     required String requesterId,
     required String testatorId,
   });
+
+  Future<Either<ExceptionMessage, RequestInheritanceModel>>
+  getInheritanceByUserIdAndTestatorId(String testatorId, String requestBy);
 }

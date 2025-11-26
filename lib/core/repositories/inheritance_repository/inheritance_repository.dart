@@ -123,8 +123,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
         ..ownerId = requesterId
         ..idDocument = null
         ..testatorId = testatorId
-        ..pathStorage = storagePath
-        ..from = EnumDocumentsFrom.inheritanceRequest;
+        ..pathStorage = storagePath;
 
       final saveResult = await storageRepository.saveFile(
         xFile: xFile,
@@ -189,6 +188,32 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
   }
 
   @override
+  Future<Either<ExceptionMessage, RequestInheritanceModel>>
+  getInheritanceByUserIdAndTestatorId(
+    String testatorId,
+    String requestBy,
+  ) async {
+    try {
+      final response =
+          await _client
+              .from(DbTables.inheritance)
+              .select('''
+      id, testatorId, requestBy, status, createdAt, updatedAt,
+      testatorUser:users!inheritance_testatorId_fkey(id, name, cpf, rg)
+    ''')
+              .eq('requestBy', requestBy)
+              .eq('testatorId', testatorId)
+              .single();
+
+      final inheritance = RequestInheritanceModel.fromMap(response);
+
+      return Right(inheritance);
+    } catch (e) {
+      return Left(ExceptionMessage('Erro ao buscar heranças: ${e.toString()}'));
+    }
+  }
+
+  @override
   Future<Either<ExceptionMessage, void>> updateStatus({
     required String inheritanceId,
     required HeirStatus status,
@@ -224,11 +249,7 @@ class InheritanceRepository implements InheritanceRepositoryInterface {
           .from(DbTables.documents)
           .select()
           .eq('idUser', requesterId)
-          .eq('testatorId', testatorId)
-          .eq(
-            'numFlux',
-            DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!,
-          );
+          .eq('testatorId', testatorId);
 
       final documents =
           response.map((row) => Document.fromMap(row)).toList()

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tcc/core/routers/routers.dart';
 import 'package:tcc/ui/features/backoffice/list_user_documents/list_user_testators_controller.dart';
 import 'package:tcc/ui/helpers/app_colors.dart';
+import 'package:tcc/ui/helpers/app_fonts.dart';
 import 'package:tcc/ui/widgets/app_bars/app_bar_simple_widget.dart';
 import 'package:tcc/ui/widgets/loading_and_alert_overlay_widget.dart';
 
@@ -54,9 +55,7 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                   onTap: () {
                     context.push(
                       RouterApp.listDocuments,
-                      extra: {
-                        'userId': widget.requesterId,
-                      },
+                      extra: {'userId': widget.requesterId},
                     );
                   },
                   child: Container(
@@ -66,16 +65,18 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const ListTile(
+                    child: ListTile(
                       iconColor: Colors.white,
                       leading: Icon(Icons.person_outline),
                       title: Text(
                         'Documentos do solicitante',
-                        style: TextStyle(color: Colors.white),
+                        style: AppFonts.bodyMediumMedium,
                       ),
                       subtitle: Text(
                         'Inclui KYC e outros documentos do usuário.',
-                        style: TextStyle(color: Colors.white70),
+                        style: AppFonts.bodySmallLight.copyWith(
+                          color: Colors.white.withOpacity(0.7),
+                        ),
                       ),
                       trailing: Icon(
                         Icons.arrow_forward_ios,
@@ -86,57 +87,60 @@ class _ListUserTestatorsViewState extends State<ListUserTestatorsView> {
                   ),
                 ),
                 if (_controller.testators.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Text('Nenhum processo de herança pendente.'),
+                    child: Text(
+                      'Nenhum processo de herança pendente.',
+                      style: AppFonts.bodyMediumBold,
+                    ),
                   )
                 else
-                  ..._controller.testators.map(
-                    (testator) {
-                      return GestureDetector(
-                        onTap: () {
-                          context.push(
-                      RouterApp.listDocuments,
-                      extra: {
-                        'userId': widget.requesterId,
-                        'testatorId': testator.userId,
-                        'testatorCpf': testator.cpf,
-                        'testatorName': testator.name,
+                  ..._controller.testators.map((testator) {
+                    return GestureDetector(
+                      onTap: () {
+                        context.push(
+                          RouterApp.listDocuments,
+                          extra: {
+                            'userId': widget.requesterId,
+                            'testatorId': testator.userId,
+                            'testatorCpf': testator.cpf,
+                            'testatorName': testator.name,
+                          },
+                        );
                       },
-                    );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(
-                            left: 24,
-                            right: 24,
-                            top: 12,
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          top: 12,
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ListTile(
+                          iconColor: Colors.white,
+                          leading: const Icon(Icons.assignment_ind_outlined),
+                          title: Text(
+                            testator.name.toUpperCase(),
+                            style: AppFonts.bodyMediumMedium,
                           ),
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(8),
+                          subtitle: Text(
+                            'CPF: ${testator.cpf}',
+                            style: AppFonts.bodySmallLight.copyWith(
+                              color: Colors.white.withOpacity(0.7),
+                            ),
                           ),
-                          child: ListTile(
-                            iconColor: Colors.white,
-                            leading: const Icon(Icons.assignment_ind_outlined),
-                            title: Text(
-                              testator.name.toUpperCase(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              'CPF: ${testator.cpf}',
-                              style: const TextStyle(color: Colors.white70),
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.white,
-                            ),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Colors.white,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  }),
               ],
             ),
           ),

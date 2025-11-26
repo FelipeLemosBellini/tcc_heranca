@@ -100,7 +100,7 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> createVault() async {
+  Future<Either<ExceptionMessage, String>> createVault() async {
     try {
       ContractFunction contractFunction = _getContractFunction(
         FunctionsBlockchainEnum.createVault,
@@ -116,14 +116,15 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
         parameters: [],
       );
       await _selectNetwork();
-      await _appKitModal.requestWriteContract(
+      var response = await _appKitModal.requestWriteContract(
         topic: _appKitModal.session?.topic,
         chainId: BlockchainConstants.chainId,
         deployedContract: _deployedContract,
         functionName: FunctionsBlockchainEnum.createVault.functionName,
         transaction: transaction,
       );
-      return Right(null);
+      print(response);
+      return Right(response);
     } catch (e) {
       return Left(ExceptionMessage(e.toString()));
     }
@@ -201,7 +202,15 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
       ContractFunction contractFunction = _getContractFunction(
         FunctionsBlockchainEnum.distributeVault,
       );
-      List<dynamic> parameters = [testatorAddress, addresses, amounts];
+      List<EthereumAddress> address = [];
+      addresses.forEach((action) {
+        address.add(EthereumAddress.fromHex(action));
+      });
+      List<dynamic> parameters = [
+        EthereumAddress.fromHex(testatorAddress),
+        address,
+        amounts,
+      ];
       Transaction transaction = Transaction.callContract(
         contract: _deployedContract,
         function: contractFunction,
@@ -216,8 +225,10 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
         transaction: transaction,
         parameters: parameters,
       );
+
       return Right(null);
     } catch (e) {
+      print(e);
       return Left(ExceptionMessage(e.toString()));
     }
   }
@@ -365,6 +376,40 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
     }
   }
 
+  @override
+  Future<Either<ExceptionMessage, bool>> checkTransactionWasExecuted(
+    String hash,
+  ) async {
+    Duration pollInterval = const Duration(seconds: 3);
+    int maxTries = 60;
+    final client = Web3Client('https://1rpc.io/sepolia', http.Client());
+
+    try {
+      for (int i = 0; i < maxTries; i++) {
+        final TransactionReceipt? receipt = await client.getTransactionReceipt(
+          hash,
+        );
+
+        if (receipt != null && receipt.status != null) {
+          final bool status = receipt.status!;
+          return Right(status);
+        }
+
+        await Future.delayed(pollInterval);
+      }
+
+      return Left(
+        ExceptionMessage(
+          'Timeout ao aguardar a confirmação da transação ($hash).',
+        ),
+      );
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    } finally {
+      client.dispose();
+    }
+  }
+
   // 3) Formata BigInt com n casas decimais (sem usar double)
   @override
   String formatUnits(
@@ -483,5 +528,21 @@ class BlockchainRepository extends BlockchainRepositoryInterface {
         'events': NetworkUtils.defaultNetworkEvents['eip155']!.toList(),
       }),
     };
+  }
+
+  @override
+  Future<Either<ExceptionMessage, bool>> checkIHaveVault() async {
+    try {
+      List<dynamic> response = await _appKitModal.requestReadContract(
+        topic: _appKitModal.session?.topic,
+        chainId: BlockchainConstants.chainId,
+        deployedContract: _deployedContract,
+        functionName: FunctionsBlockchainEnum.iHaveVault.functionName,
+      );
+
+      return Right(response.first);
+    } catch (e) {
+      return Left(ExceptionMessage(e.toString()));
+    }
   }
 }

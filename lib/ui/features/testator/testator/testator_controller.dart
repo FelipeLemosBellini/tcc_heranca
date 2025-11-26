@@ -72,39 +72,70 @@ class TestatorController extends BaseController {
   Future<void> checkHasVault() async {
     _homeController.setLoading(true);
 
-    var responseMyVault = await blockchainRepository.myVault();
-    responseMyVault.fold((onLeft) {}, (onRight) {
-      balance = onRight;
+    var responseMyVault = await blockchainRepository.checkIHaveVault();
+    await responseMyVault.fold((onLeft) {}, (iHaveVault) async {
+      hasVault = iHaveVault;
+      if (iHaveVault) {
+        var responseBalance = await blockchainRepository.myVault();
+        responseBalance.fold((onLeft) {}, (success) {
+          balance = success;
+        });
+
+        var responseAddress = await blockchainRepository.getAddress();
+        await responseAddress.fold((onLeft) {}, (address) async {
+          await userRepository.setAddressUserAndHasVault(address);
+        });
+      }
       notifyListeners();
     });
-    var response = await userRepository.getUser();
-    await response.fold(
-      (error) {
-        setMessage(
-          AlertData(
-            message: "Não foi possível buscar os dados do usuário",
-            errorType: ErrorType.error,
-          ),
-        );
-      },
-      (success) async {
-        hasVault = success.hasVault;
-        if (success.address == null || success.address == "") {
-          var responseAddress = await blockchainRepository.getAddress();
-          await responseAddress.fold((onLeft) {}, (address) async {
-            await userRepository.setAddressUser(address);
-          });
-        }
-        notifyListeners();
-      },
-    );
+
     _homeController.setLoading(false);
   }
 
-  Future<void> buyVault() async {
+  Future<void> buyVault(BuildContext context) async {
     setLoading(true);
     var response = await blockchainRepository.createVault();
-    response.fold((onLeft) {}, (onRight) {});
+    await response.fold((onLeft) {}, (hash) async {
+      AlertHelper.showAlertSnackBar(
+        context: context,
+        alertData: AlertData(
+          message: "Aguarde a blockchain aprovar a transação...",
+          errorType: ErrorType.success,
+        ),
+      );
+      var response = await blockchainRepository.checkTransactionWasExecuted(
+        hash,
+      );
+      await response.fold(
+        (onLeft) {
+          AlertHelper.showAlertSnackBar(
+            context: context,
+            alertData: AlertData(
+              message: "Houve um erro ao verificar o cofre",
+              errorType: ErrorType.error,
+            ),
+          );
+        },
+        (onRight) async {
+          hasVault = onRight;
+          if (onRight) {
+            hasVault = true;
+            var responseAddress = await blockchainRepository.getAddress();
+            await responseAddress.fold((onLeft) {}, (address) async {
+              await userRepository.setAddressUserAndHasVault(address);
+            });
+          } else {
+            AlertHelper.showAlertSnackBar(
+              context: context,
+              alertData: AlertData(
+                message: "Houve um erro ao verificar o cofre",
+                errorType: ErrorType.error,
+              ),
+            );
+          }
+        },
+      );
+    });
     setLoading(false);
   }
 }

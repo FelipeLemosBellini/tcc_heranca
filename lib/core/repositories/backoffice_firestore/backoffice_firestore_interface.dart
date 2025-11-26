@@ -45,5 +45,6 @@ abstract class BackofficeFirestoreInterface {
   Future<Either<ExceptionMessage, void>> sendEmailWithBalance({
     required String balance,
     required String requestUserId,
+    required String cpf,
   });
 }

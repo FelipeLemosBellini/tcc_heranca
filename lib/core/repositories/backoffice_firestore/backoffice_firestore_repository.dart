@@ -10,6 +10,7 @@ import 'package:tcc/core/enum/kyc_status.dart';
 import 'package:tcc/core/enum/review_status_document.dart';
 import 'package:tcc/core/environment/env.dart';
 import 'package:tcc/core/exceptions/exception_message.dart';
+import 'package:tcc/core/helpers/extensions.dart';
 import 'package:tcc/core/models/document.dart';
 import 'package:tcc/core/models/request_inheritance_model.dart';
 import 'package:tcc/core/models/testator_summary.dart';
@@ -133,15 +134,12 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       final pendingStatusId = DbMappings.documentStatusToId(
         ReviewStatusDocument.pending,
       );
-      final inheritanceFluxId =
-          DbMappings.fluxToId(EnumDocumentsFrom.inheritanceRequest)!;
 
       final docs = await _client
           .from(DbTables.documents)
           .select('testatorId')
           .eq('idUser', requesterId)
-          .eq('numStatus', pendingStatusId)
-          .eq('numFlux', inheritanceFluxId);
+          .eq('numStatus', pendingStatusId);
 
       final testatorIdSet = <String>{};
       final orderedIds = <String>[];
@@ -325,6 +323,7 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
   Future<Either<ExceptionMessage, void>> sendEmailWithBalance({
     required String balance,
     required String requestUserId,
+    required String cpf,
   }) async {
     try {
       final response =
@@ -347,9 +346,13 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       final message =
           Message()
             ..from = Address(gmailUser, 'Ethernium App')
-            ..recipients.add(requester.email)
+            ..recipients.add(
+              // requester.email
+              gmailUser,
+            )
             ..subject = 'Saldo da conta de seu cliente'
-            ..text = 'Segue o saldo de Ethers do seu cliente $balance wei(s)';
+            ..text =
+                'Segue o saldo de Ethers do seu cliente CPF ${cpf.formatCpf()} - $balance wei(s)';
 
       try {
         final sendReport = await send(message, smtpServer);

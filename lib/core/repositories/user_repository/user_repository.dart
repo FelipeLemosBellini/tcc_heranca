@@ -113,12 +113,18 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
-  Future<Either<ExceptionMessage, void>> setAddressUser(String address) async {
+  Future<Either<ExceptionMessage, void>> setAddressUserAndHasVault(
+    String address,
+  ) async {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) throw Exception('Sem usuário autenticado');
 
-      Map<String, dynamic> data = {'address': address, 'id': user.id};
+      Map<String, dynamic> data = {
+        'address': address,
+        'hasVault': true,
+        'id': user.id,
+      };
       await _supabase.from(DbTables.users).upsert(data, onConflict: 'id');
 
       return Right(null);

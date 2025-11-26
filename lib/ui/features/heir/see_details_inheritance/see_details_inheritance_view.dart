@@ -114,6 +114,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Enviar documentos da herança',
+                        isBig: true,
                         onTap: () async {
                           final result = await context.push(
                             RouterApp.requestInheritance,
@@ -129,6 +130,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Corrigir documentos da consulta de saldo',
+                        isBig: true,
                         onTap: () async {
                           final result = await context.push(
                             RouterApp.requestVault,
@@ -144,6 +146,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                       const SizedBox(height: 24),
                       ElevatedButtonWidget(
                         text: 'Reenviar documentos da transferência',
+                        isBig: true,
                         onTap: () async {
                           final result = await context.push(
                             RouterApp.requestInheritance,
@@ -163,7 +166,10 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                   ),
                   const SizedBox(height: 12),
                   if (_controller.documents.isEmpty)
-                    const Text('Nenhum documento disponível.')
+                    Text(
+                      'Nenhum documento disponível.',
+                      style: AppFonts.bodyMediumMedium,
+                    )
                   else
                     ..._controller.documents.map(_buildDocumentTile),
                 ],
@@ -220,7 +226,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
               Expanded(
                 child: Text(
                   document.typeDocument.Name,
-                  style: theme.textTheme.titleSmall,
+                  style: AppFonts.bodySmallLight,
                 ),
               ),
               Container(
@@ -234,7 +240,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
                 ),
                 child: Text(
                   statusData.label,
-                  style: theme.textTheme.labelMedium?.copyWith(
+                  style: AppFonts.bodySmallLight.copyWith(
                     color: statusData.foreground,
                     fontWeight: FontWeight.w600,
                   ),
@@ -243,13 +249,13 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
             ],
           ),
           const SizedBox(height: 8),
-          Text('Enviado em $uploadedAt', style: theme.textTheme.bodySmall),
+          Text('Enviado em $uploadedAt', style: AppFonts.bodySmallLight),
           if (document.reviewStatus == ReviewStatusDocument.invalid &&
               (document.reviewMessage?.isNotEmpty ?? false)) ...[
             const SizedBox(height: 8),
             Text(
               'Motivo da reprovação: ${document.reviewMessage}',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: AppFonts.bodySmallLight.copyWith(
                 color: Colors.red.shade400,
               ),
             ),
@@ -260,7 +266,7 @@ class _SeeDetailsInheritanceViewState extends State<SeeDetailsInheritanceView> {
               child: TextButton.icon(
                 onPressed: () => _controller.openDocument(document),
                 icon: const Icon(Icons.open_in_new),
-                label: const Text('Abrir documento'),
+                label: Text('Abrir documento', style: AppFonts.bodySmallLight),
               ),
             ),
         ],

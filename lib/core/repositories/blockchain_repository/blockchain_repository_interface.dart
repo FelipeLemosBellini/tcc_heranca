@@ -55,4 +55,10 @@ abstract class BlockchainRepositoryInterface {
   });
 
   Map<String, RequiredNamespace> requiredNamespaces();
+
+  Future<Either<ExceptionMessage, bool>> checkTransactionWasExecuted(
+    String hash,
+  );
+
+  Future<Either<ExceptionMessage, bool>> checkIHaveVault();
 }
