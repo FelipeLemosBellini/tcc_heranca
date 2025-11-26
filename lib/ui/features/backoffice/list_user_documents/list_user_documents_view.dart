@@ -225,5 +225,6 @@ class _ListUserDocumentsViewState extends State<ListUserDocumentsView> {
       );
     }
     eventBus.fire(UpdateUsersEvent());
+    context.pop();
   }
 }
