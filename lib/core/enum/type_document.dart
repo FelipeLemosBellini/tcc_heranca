@@ -35,9 +35,9 @@ enum TypeDocument {
       case TypeDocument.proofResidence:
         return "Comprovante de Residencia";
       case TypeDocument.deathCertificate:
-        return "Certidao de Obito";
+        return "Certidão de óbito";
       case TypeDocument.procuracaoAdvogado:
-        return "Procuracao do Advogado";
+        return "Procuração do Advogado";
       case TypeDocument.testamentDocument:
         return "Testamento";
       case TypeDocument.transferAssetsOrder:
