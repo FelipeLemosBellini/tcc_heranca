@@ -88,6 +88,7 @@ class _TestatorViewState extends State<TestatorView>
                     child: Text(
                       "Conectando, abra sua carteira...",
                       style: AppFonts.bodyHeadBold,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 if (testatorController.state ==

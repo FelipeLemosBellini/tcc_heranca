@@ -5,7 +5,7 @@ abstract class BlockchainConstants {
   static const String urlProject =
       'https://github.com/FelipeLemosBellini/tcc_heranca';
   static const String addressSmartContract =
-      '0x4080b89c0e83a945585d8b1d5cecf2225c0ac97a';
+      '0x2b6C512E6F251B5b8490b37a1EFBeD5465678f33';
   static const String chainId = 'eip155:11155111';
   static const String nameChain = 'Sepolia';
   static const String currency = 'ETH';

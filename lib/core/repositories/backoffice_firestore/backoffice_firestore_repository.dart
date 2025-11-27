@@ -339,17 +339,14 @@ class BackofficeFirestoreRepository implements BackofficeFirestoreInterface {
       }
       UserModel requester = UserModel.fromMap(response);
       final String keyEmail = Env.keyEmail;
-      final String gmailUser = 'felipelemosbellini@gmail.com';
+      final String gmailUser = "felipelemosbellini@gmail.com";
 
       final smtpServer = gmail(gmailUser, keyEmail);
 
       final message =
           Message()
             ..from = Address(gmailUser, 'Ethernium App')
-            ..recipients.add(
-              // requester.email
-              gmailUser,
-            )
+            ..recipients.add(requester.email)
             ..subject = 'Saldo da conta de seu cliente'
             ..text =
                 'Segue o saldo de Ethers do seu cliente CPF ${cpf.formatCpf()} - $balance wei(s)';

@@ -26,12 +26,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   LoginController controller = GetIt.I.get<LoginController>();
 
-  TextEditingController emailController = TextEditingController(
-    text: "backoffice@gmail.com",
-  );
-  TextEditingController passwordController = TextEditingController(
-    text: "@Abc1234",
-  );
+  TextEditingController emailController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -102,7 +98,8 @@ class _LoginViewState extends State<LoginView> {
                               text: "Criar conta",
                             ),
                             GestureDetector(
-                              onTap: () => context.push(RouterApp.forgotPassword),
+                              onTap:
+                                  () => context.push(RouterApp.forgotPassword),
                               child: Text(
                                 "Esqueci minha senha",
                                 style: AppFonts.labelMediumMedium,
